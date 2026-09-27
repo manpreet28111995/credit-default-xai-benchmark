@@ -1,0 +1,2 @@
+model,predictive_quality,robustness_retention,explanation_diagnostics,inverse_group_gap,reliability_score,score_status
+XGBoost,0.1909333406042727,0.9891717231512999,0.4613883295292093,,,not_scored_fairness_unavailable

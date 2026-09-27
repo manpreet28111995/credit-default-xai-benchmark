@@ -1,0 +1,2 @@
+model,predictive_quality,robustness_retention,explanation_diagnostics,inverse_group_gap,reliability_score,score_status
+CatBoost,0.41787783987375005,0.9830591964362202,0.43585028935142595,0.5081148564294631,0.5492019376271517,descriptive_only

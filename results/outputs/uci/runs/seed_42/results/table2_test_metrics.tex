@@ -1,0 +1,17 @@
+\begin{table}
+\centering
+\caption{Classification Performance on Held-Out Test Set}
+\label{tab:results}
+\begin{tabular}{lccccccccc}
+\toprule
+Model & AUROC & AUPRC & F1 & Precision & Recall & Specificity & G-Mean & MCC & Brier \\
+\midrule
+XGBoost & 0.7777 & 0.5547 & 0.5401 & 0.5184 & 0.5637 & 0.8513 & 0.6927 & 0.4030 & 0.1355 \\
+LightGBM & 0.7811 & 0.5566 & 0.5399 & 0.5554 & 0.5252 & 0.8806 & 0.6801 & 0.4141 & 0.1347 \\
+CatBoost & 0.7843 & 0.5627 & 0.5392 & 0.5707 & 0.5109 & 0.8909 & 0.6747 & 0.4185 & 0.1340 \\
+Random Forest & 0.7790 & 0.5562 & 0.5443 & 0.5468 & 0.5418 & 0.8725 & 0.6875 & 0.4156 & 0.1796 \\
+Logistic Reg. & 0.7567 & 0.5059 & 0.5284 & 0.5249 & 0.5320 & 0.8633 & 0.6777 & 0.3934 & 0.1900 \\
+TabNet & 0.7700 & 0.5404 & 0.5341 & 0.4824 & 0.5983 & 0.8177 & 0.6995 & 0.3870 & 0.1368 \\
+\bottomrule
+\end{tabular}
+\end{table}

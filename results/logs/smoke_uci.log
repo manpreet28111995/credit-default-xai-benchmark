@@ -1,0 +1,99 @@
+Matplotlib is building the font cache; this may take a moment.
+00:58:28  INFO      pipeline  ╔══════════════════════════════════════════════╗
+00:58:28  INFO      pipeline  ║  Credit Default Prediction with XAI         ║
+00:58:28  INFO      pipeline  ║  Dataset: uci                                ║
+00:58:28  INFO      pipeline  ║  Seed: 42                                    ║
+00:58:28  INFO      pipeline  ╚══════════════════════════════════════════════╝
+00:58:28  INFO      pipeline  ============================================================
+00:58:28  INFO      pipeline  STAGE 1: Data Loading & Feature Engineering
+00:58:28  INFO      pipeline  ============================================================
+00:58:28  INFO      data.data_loader  Loading cached UCI dataset from /Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/data/uci_credit.csv
+00:58:30  INFO      data.data_loader  Dataset loaded | train=21000  val=3000  test=6000 | default rate  train=22.12%  test=22.12%
+00:58:30  INFO      pipeline  Imbalance stats: {
+  "n_total": 21000,
+  "n_majority": 16355,
+  "n_minority": 4645,
+  "imbalance_ratio": 3.521,
+  "minority_pct": 22.12
+}
+00:58:33  INFO      visualization.plots  Fig 1 saved → /Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/uci/runs/seed_42/figures/fig01_class_distribution.pdf
+00:58:33  INFO      pipeline  ============================================================
+00:58:33  INFO      pipeline  STAGE 2: SMOTE Strategy Ablation
+00:58:33  INFO      pipeline  ============================================================
+00:58:33  INFO      preprocessing.imbalance_handler  Before resampling | class 0: 16355 (77.9%)  class 1: 4645 (22.1%)  IR=3.52
+00:58:34  INFO      preprocessing.imbalance_handler  After SMOTE | class 0: 16355 (50.0%)  class 1: 16355 (50.0%)  IR=1.00
+00:58:34  INFO      preprocessing.imbalance_handler  Before resampling | class 0: 16355 (77.9%)  class 1: 4645 (22.1%)  IR=3.52
+00:58:36  INFO      preprocessing.imbalance_handler  After BorderlineSMOTE | class 0: 16355 (50.0%)  class 1: 16355 (50.0%)  IR=1.00
+00:58:36  INFO      preprocessing.imbalance_handler  Before resampling | class 0: 16355 (77.9%)  class 1: 4645 (22.1%)  IR=3.52
+00:59:07  INFO      preprocessing.imbalance_handler  After SVMSMOTE | class 0: 16355 (50.0%)  class 1: 16355 (50.0%)  IR=1.00
+00:59:07  INFO      preprocessing.imbalance_handler  Before resampling | class 0: 16355 (77.9%)  class 1: 4645 (22.1%)  IR=3.52
+00:59:09  INFO      preprocessing.imbalance_handler  After ADASYN | class 0: 16355 (49.7%)  class 1: 16561 (50.3%)  IR=0.99
+00:59:09  INFO      preprocessing.imbalance_handler  Before resampling | class 0: 16355 (77.9%)  class 1: 4645 (22.1%)  IR=3.52
+00:59:09  INFO      preprocessing.imbalance_handler  No resampling applied.
+00:59:09  INFO      pipeline  Ablation | strategy=SMOTE | n=32710
+00:59:24  INFO      models.gradient_boosting  LightGBM trained | best_iteration=363
+00:59:25  INFO      pipeline  Ablation | strategy=BorderlineSMOTE | n=32710
+00:59:40  INFO      models.gradient_boosting  LightGBM trained | best_iteration=499
+00:59:40  INFO      pipeline  Ablation | strategy=SVMSMOTE | n=32710
+00:59:51  INFO      models.gradient_boosting  LightGBM trained | best_iteration=499
+00:59:51  INFO      pipeline  Ablation | strategy=ADASYN | n=32916
+01:00:06  INFO      models.gradient_boosting  LightGBM trained | best_iteration=487
+01:00:06  INFO      pipeline  Ablation | strategy=None | n=21000
+01:00:10  INFO      models.gradient_boosting  LightGBM trained | best_iteration=87
+01:00:10  INFO      pipeline  Best SMOTE strategy (validation AUROC): None → 0.7932  [model used: LightGBM]
+01:00:10  INFO      pipeline  Resampling did not improve validation AUROC; treating 'None' as the selected strategy for final training.
+01:00:10  INFO      pipeline  ============================================================
+01:00:10  INFO      pipeline  STAGE 3: Model Training
+01:00:10  INFO      pipeline  ============================================================
+01:00:10  INFO      pipeline  Training XGBoost …
+01:00:12  INFO      models.gradient_boosting  XGBoost trained | best_iteration=68
+01:00:12  INFO      pipeline  Training LightGBM …
+01:00:17  INFO      models.gradient_boosting  LightGBM trained | best_iteration=87
+01:00:17  INFO      pipeline  Training Logistic Reg. …
+01:00:17  INFO      pipeline  YAML saved → /Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/uci/runs/seed_42/results/best_params.yaml
+01:00:17  INFO      pipeline  ============================================================
+01:00:17  INFO      pipeline  STAGE 4: Evaluation
+01:00:17  INFO      pipeline  ============================================================
+01:00:17  INFO      pipeline  XGBoost | val_F1*=0.5405 @ t=0.31 | test AUROC=0.7817  F1=0.5467  G-Mean=0.6888  MCC=0.4192
+01:00:17  INFO      pipeline  LightGBM | val_F1*=0.5397 @ t=0.27 | test AUROC=0.7805  F1=0.5462  G-Mean=0.7002  MCC=0.4088
+01:00:17  INFO      pipeline  Logistic Reg. | val_F1*=0.5376 @ t=0.63 | test AUROC=0.7569  F1=0.5316  G-Mean=0.6757  MCC=0.4018
+01:00:18  INFO      pipeline  LaTeX table → /Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/uci/runs/seed_42/results/table2_test_metrics.tex
+01:00:18  INFO      pipeline  
+                AUROC   AUPRC      F1  Precision  Recall  Specificity  G-Mean     MCC   Brier
+Model                                                                                        
+XGBoost        0.7817  0.5574  0.5467     0.5509  0.5426       0.8744  0.6888  0.4192  0.1344
+LightGBM       0.7805  0.5524  0.5462     0.5165  0.5795       0.8459  0.7002  0.4088  0.1347
+Logistic Reg.  0.7569  0.5060  0.5316     0.5414  0.5222       0.8744  0.6757  0.4018  0.1899
+01:00:18  INFO      visualization.plots  Fig 2 saved → /Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/uci/runs/seed_42/figures/fig02_roc_curves.pdf
+01:00:19  INFO      visualization.plots  Fig 3 saved → /Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/uci/runs/seed_42/figures/fig03_pr_curves.pdf
+01:00:19  INFO      visualization.plots  Fig 4 saved → /Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/uci/runs/seed_42/figures/fig04_confusion_xgboost.pdf
+01:00:20  INFO      pipeline  Top pair XGBoost vs LightGBM | DeLong z=0.9080 p=0.3639 | McNemar chi2=34.4450 p=0.0000
+01:00:53  INFO      models.gradient_boosting  XGBoost trained | best_iteration=25
+01:00:55  INFO      models.gradient_boosting  XGBoost trained | best_iteration=22
+01:00:56  INFO      models.gradient_boosting  XGBoost trained | best_iteration=66
+01:00:57  INFO      models.gradient_boosting  XGBoost trained | best_iteration=9
+01:00:59  INFO      models.gradient_boosting  XGBoost trained | best_iteration=68
+01:01:10  INFO      models.gradient_boosting  LightGBM trained | best_iteration=363
+01:01:24  INFO      models.gradient_boosting  LightGBM trained | best_iteration=499
+01:01:34  INFO      models.gradient_boosting  LightGBM trained | best_iteration=499
+01:01:46  INFO      models.gradient_boosting  LightGBM trained | best_iteration=487
+01:01:50  INFO      models.gradient_boosting  LightGBM trained | best_iteration=87
+01:01:51  INFO      visualization.plots  Fig 10 saved → /Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/uci/runs/seed_42/figures/fig10_smote_ablation.pdf
+01:01:51  INFO      pipeline  Skipping SHAP/LIME because --skip-xai was passed.
+01:01:55  INFO      models.gradient_boosting  XGBoost trained | best_iteration=25
+01:01:56  INFO      models.gradient_boosting  XGBoost trained | best_iteration=22
+01:01:57  INFO      models.gradient_boosting  XGBoost trained | best_iteration=66
+01:01:58  INFO      models.gradient_boosting  XGBoost trained | best_iteration=9
+01:02:00  INFO      models.gradient_boosting  XGBoost trained | best_iteration=68
+01:02:00  INFO      data.data_loader  Loading cached UCI dataset from /Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/data/uci_credit.csv
+01:02:00  INFO      data.data_loader  Dataset loaded | train=21000  val=3000  test=6000 | default rate  train=22.12%  test=22.12%
+01:02:02  INFO      models.gradient_boosting  XGBoost trained | best_iteration=91
+01:02:12  INFO      pipeline  ============================================================
+01:02:12  INFO      pipeline  SEED 42 COMPLETE
+01:02:12  INFO      pipeline  Figures    -> /Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/uci/runs/seed_42/figures
+01:02:12  INFO      pipeline  Results    -> /Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/uci/runs/seed_42/results
+01:02:12  INFO      pipeline  Best model -> XGBoost (AUROC=0.7817)
+01:02:12  INFO      pipeline  ============================================================
+01:02:12  INFO      pipeline  YAML saved → /Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/uci/runs/summary/all_seed_best_params.yaml
+01:02:12  INFO      pipeline  Multi-seed summary -> /Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/uci/runs/summary
+01:02:12  INFO      pipeline  ALL RUNS COMPLETE | seeds=[42]

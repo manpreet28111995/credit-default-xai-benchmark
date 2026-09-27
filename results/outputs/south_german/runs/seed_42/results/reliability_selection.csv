@@ -1,0 +1,7 @@
+model,AUROC,Brier,base_rate_brier,robustness_retention,max_fairness_gap,ranking_component,probability_quality_component,robustness_component,inverse_group_gap_component,reliability_score,fairness_constraint_ok,robustness_constraint_ok,feasible,constraint_violation,selected,selection_role
+XGBoost,0.8771,0.2042,0.21,0.9722570592482803,1.0,0.8771,0.027619047619047654,0.9722570592482803,0.0,0.0,False,True,False,0.9,True,infeasible_fallback
+LightGBM,0.8614,0.1291,0.21,0.9645344787555142,1.0,0.8614,0.38523809523809527,0.9645344787555142,0.0,0.0,False,True,False,0.9,False,not_selected
+CatBoost,0.9095,0.1188,0.21,0.9853032801905809,1.0,0.9095,0.4342857142857143,0.9853032801905809,0.0,0.0,False,True,False,0.9,False,not_selected
+Random Forest,0.889,0.1331,0.21,0.9837739032620924,1.0,0.889,0.3661904761904762,0.9837739032620924,0.0,0.0,False,True,False,0.9,False,not_selected
+Logistic Reg.,0.901,0.149,0.21,0.99492230854606,1.0,0.901,0.29047619047619044,0.99492230854606,0.0,0.0,False,True,False,0.9,False,not_selected
+TabNet,0.8019,0.2826,0.21,0.9469281290268946,1.0,0.8019,0.0,0.9469281290268946,0.0,0.0,False,True,False,0.9,False,not_selected

@@ -1,0 +1,14 @@
+rank,feature,mean_|shap|
+1,int_rate,0.5472777
+2,loan_amnt,0.17905308
+3,installment,0.13312235
+4,dti,0.12720582
+5,open_acc,0.102568656
+6,annual_inc,0.09846473
+7,revol_bal,0.0902832
+8,funded_amnt,0.07303607
+9,total_acc,0.059843615
+10,revol_util,0.033287473
+11,pub_rec,0.029769009
+12,inq_last_6mths,0.021269543
+13,delinq_2yrs,0.014650928

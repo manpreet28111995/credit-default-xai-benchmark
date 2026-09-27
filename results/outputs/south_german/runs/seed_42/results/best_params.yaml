@@ -1,0 +1,98 @@
+seed: 42
+imbalance_strategy: "SVMSMOTE"
+tuning_enabled: true
+models:
+  XGBoost:
+    enabled: true
+    model: "XGBoost"
+    seed: 42
+    search: "RandomizedSearchCV"
+    scoring: "roc_auc"
+    cv_folds: 3
+    n_iter_requested: 12
+    best_score: 0.9115512087410385
+    best_params:
+      subsample: 0.8
+      reg_lambda: 0.5
+      reg_alpha: 0
+      n_estimators: 300
+      max_depth: 8
+      learning_rate: 0.01
+      gamma: 0
+      colsample_bytree: 0.7
+    status: "success"
+    n_iter_actual: 12
+  LightGBM:
+    enabled: true
+    model: "LightGBM"
+    seed: 42
+    search: "RandomizedSearchCV"
+    scoring: "roc_auc"
+    cv_folds: 3
+    n_iter_requested: 12
+    best_score: 0.9061829958319908
+    best_params:
+      subsample: 1.0
+      reg_lambda: 0.5
+      reg_alpha: 0.1
+      num_leaves: 31
+      n_estimators: 300
+      min_child_samples: 10
+      max_depth: 6
+      learning_rate: 0.1
+      colsample_bytree: 0.8
+    status: "success"
+    n_iter_actual: 12
+  CatBoost:
+    enabled: true
+    model: "CatBoost"
+    seed: 42
+    search: "RandomizedSearchCV"
+    scoring: "roc_auc"
+    cv_folds: 3
+    n_iter_requested: 12
+    best_score: 0.9145253637789867
+    best_params:
+      learning_rate: 0.03
+      l2_leaf_reg: 1
+      iterations: 300
+      depth: 8
+    status: "success"
+    n_iter_actual: 12
+  Random Forest:
+    enabled: true
+    model: "Random Forest"
+    seed: 42
+    search: "RandomizedSearchCV"
+    scoring: "roc_auc"
+    cv_folds: 3
+    n_iter_requested: 12
+    best_score: 0.906890770985319
+    best_params:
+      n_estimators: 500
+      min_samples_split: 5
+      min_samples_leaf: 2
+      max_features: "log2"
+      max_depth: 20
+    status: "success"
+    n_iter_actual: 12
+  Logistic Reg.:
+    enabled: true
+    model: "Logistic Reg."
+    seed: 42
+    search: "RandomizedSearchCV"
+    scoring: "roc_auc"
+    cv_folds: 3
+    n_iter_requested: 12
+    best_score: 0.8313505378081368
+    best_params:
+      C: 0.01
+    status: "success"
+    n_iter_actual: 7
+  TabNet:
+    enabled: false
+    model: "TabNet"
+    seed: 42
+    search: "none"
+    status: "skipped_expensive_model"
+    best_params:

@@ -1,0 +1,850 @@
+08:26:53  INFO      pipeline  ╔══════════════════════════════════════════════╗
+08:26:53  INFO      pipeline  ║  Credit Default Prediction with XAI         ║
+08:26:53  INFO      pipeline  ║  Dataset: south_german                       ║
+08:26:53  INFO      pipeline  ║  Seed: 42                                    ║
+08:26:53  INFO      pipeline  ╚══════════════════════════════════════════════╝
+08:26:53  INFO      pipeline  ============================================================
+08:26:53  INFO      pipeline  STAGE 1: Data Loading & Feature Engineering
+08:26:53  INFO      pipeline  ============================================================
+08:26:53  INFO      data.data_loader  South German data not found locally; downloading from https://archive.ics.uci.edu/static/public/573/south+german+credit+update.zip
+08:26:53  INFO      data.data_loader  Saved South German data to /Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/data/SouthGermanCredit.asc
+08:26:53  INFO      data.data_loader  Skipping UCI-specific engineered features; required columns not present.
+08:26:53  INFO      data.data_loader  Skipping UCI-specific engineered features; required columns not present.
+08:26:53  INFO      data.data_loader  Skipping UCI-specific engineered features; required columns not present.
+08:26:53  INFO      data.data_loader  Dataset loaded | train=700  val=100  test=200 | default rate  train=30.00%  test=30.00%
+08:26:53  INFO      pipeline  Imbalance stats: {
+  "n_total": 700,
+  "n_majority": 490,
+  "n_minority": 210,
+  "imbalance_ratio": 2.3333,
+  "minority_pct": 30.0
+}
+08:26:54  INFO      visualization.plots  Fig 1 saved → /Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/south_german/runs/seed_42/figures/fig01_class_distribution.pdf
+08:26:54  INFO      pipeline  ============================================================
+08:26:54  INFO      pipeline  STAGE 2: SMOTE Strategy Ablation
+08:26:54  INFO      pipeline  ============================================================
+08:26:54  INFO      preprocessing.imbalance_handler  Before resampling | class 0: 490 (70.0%)  class 1: 210 (30.0%)  IR=2.33
+08:26:54  INFO      preprocessing.imbalance_handler  After SMOTE | class 0: 490 (50.0%)  class 1: 490 (50.0%)  IR=1.00
+08:26:54  INFO      preprocessing.imbalance_handler  Before resampling | class 0: 490 (70.0%)  class 1: 210 (30.0%)  IR=2.33
+08:26:54  INFO      preprocessing.imbalance_handler  After BorderlineSMOTE | class 0: 490 (50.0%)  class 1: 490 (50.0%)  IR=1.00
+08:26:54  INFO      preprocessing.imbalance_handler  Before resampling | class 0: 490 (70.0%)  class 1: 210 (30.0%)  IR=2.33
+08:26:54  INFO      preprocessing.imbalance_handler  After SVMSMOTE | class 0: 490 (50.0%)  class 1: 490 (50.0%)  IR=1.00
+08:26:54  INFO      preprocessing.imbalance_handler  Before resampling | class 0: 490 (70.0%)  class 1: 210 (30.0%)  IR=2.33
+08:26:54  INFO      preprocessing.imbalance_handler  After ADASYN | class 0: 490 (50.8%)  class 1: 474 (49.2%)  IR=1.03
+08:26:54  INFO      preprocessing.imbalance_handler  Before resampling | class 0: 490 (70.0%)  class 1: 210 (30.0%)  IR=2.33
+08:26:54  INFO      preprocessing.imbalance_handler  No resampling applied.
+08:26:54  INFO      pipeline  Ablation | strategy=SMOTE | n=980
+08:26:54  INFO      models.gradient_boosting  LightGBM trained | best_iteration=241
+08:26:54  INFO      pipeline  Ablation | strategy=BorderlineSMOTE | n=980
+08:26:55  INFO      models.gradient_boosting  LightGBM trained | best_iteration=106
+08:26:55  INFO      pipeline  Ablation | strategy=SVMSMOTE | n=980
+08:26:56  INFO      models.gradient_boosting  LightGBM trained | best_iteration=184
+08:26:56  INFO      pipeline  Ablation | strategy=ADASYN | n=964
+08:26:56  INFO      models.gradient_boosting  LightGBM trained | best_iteration=130
+08:26:56  INFO      pipeline  Ablation | strategy=None | n=700
+08:26:57  INFO      models.gradient_boosting  LightGBM trained | best_iteration=109
+08:26:57  INFO      pipeline  Best SMOTE strategy (validation AUROC): SVMSMOTE → 0.8919  [model used: LightGBM]
+08:26:57  INFO      pipeline  ============================================================
+08:26:57  INFO      pipeline  STAGE 3: Model Training
+08:26:57  INFO      pipeline  ============================================================
+08:26:57  INFO      pipeline  Training XGBoost …
+08:26:57  INFO      pipeline  RandomizedSearchCV | model=XGBoost seed=42 n_iter=12 cv=3 scoring=roc_auc
+08:26:57  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:26:57  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:26:58  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:26:59  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:27:00  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:27:01  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:27:02  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:27:02  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:27:03  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:27:03  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:27:04  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:27:05  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:27:06  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:27:06  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:27:07  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:27:08  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:27:10  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:27:12  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:27:13  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:27:14  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:27:16  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:27:16  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:27:17  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:27:17  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:27:18  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:27:19  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:27:19  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:27:19  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:27:20  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:27:20  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:27:20  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:27:21  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:27:22  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:27:23  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:27:23  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:27:24  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:27:24  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:27:25  INFO      models.gradient_boosting  XGBoost trained | best_iteration=36
+08:27:25  INFO      pipeline  Training LightGBM …
+08:27:25  INFO      pipeline  RandomizedSearchCV | model=LightGBM seed=42 n_iter=12 cv=3 scoring=roc_auc
+08:27:26  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:27:27  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:27:28  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:27:29  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:27:29  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:27:29  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:27:30  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:27:30  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:27:31  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:27:32  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:27:33  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:27:34  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:27:35  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:27:35  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:27:36  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:27:37  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:27:38  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:27:38  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:27:39  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:27:39  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:27:40  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:27:41  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:27:41  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:27:42  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:27:43  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:27:43  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:27:44  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:27:45  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:27:46  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:27:47  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:27:49  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:27:52  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:27:54  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:27:55  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:27:56  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:27:57  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:27:58  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:27:59  INFO      models.gradient_boosting  LightGBM trained | best_iteration=113
+08:27:59  INFO      pipeline  Training CatBoost …
+08:27:59  INFO      pipeline  RandomizedSearchCV | model=CatBoost seed=42 n_iter=12 cv=3 scoring=roc_auc
+08:28:00  INFO      models.gradient_boosting  CatBoost trained
+08:28:01  INFO      models.gradient_boosting  CatBoost trained
+08:28:02  INFO      models.gradient_boosting  CatBoost trained
+08:28:03  INFO      models.gradient_boosting  CatBoost trained
+08:28:05  INFO      models.gradient_boosting  CatBoost trained
+08:28:07  INFO      models.gradient_boosting  CatBoost trained
+08:28:07  INFO      models.gradient_boosting  CatBoost trained
+08:28:07  INFO      models.gradient_boosting  CatBoost trained
+08:28:08  INFO      models.gradient_boosting  CatBoost trained
+08:28:08  INFO      models.gradient_boosting  CatBoost trained
+08:28:08  INFO      models.gradient_boosting  CatBoost trained
+08:28:08  INFO      models.gradient_boosting  CatBoost trained
+08:28:09  INFO      models.gradient_boosting  CatBoost trained
+08:28:10  INFO      models.gradient_boosting  CatBoost trained
+08:28:11  INFO      models.gradient_boosting  CatBoost trained
+08:28:12  INFO      models.gradient_boosting  CatBoost trained
+08:28:13  INFO      models.gradient_boosting  CatBoost trained
+08:28:14  INFO      models.gradient_boosting  CatBoost trained
+08:28:14  INFO      models.gradient_boosting  CatBoost trained
+08:28:15  INFO      models.gradient_boosting  CatBoost trained
+08:28:16  INFO      models.gradient_boosting  CatBoost trained
+08:28:16  INFO      models.gradient_boosting  CatBoost trained
+08:28:17  INFO      models.gradient_boosting  CatBoost trained
+08:28:17  INFO      models.gradient_boosting  CatBoost trained
+08:28:18  INFO      models.gradient_boosting  CatBoost trained
+08:28:18  INFO      models.gradient_boosting  CatBoost trained
+08:28:18  INFO      models.gradient_boosting  CatBoost trained
+08:28:19  INFO      models.gradient_boosting  CatBoost trained
+08:28:19  INFO      models.gradient_boosting  CatBoost trained
+08:28:20  INFO      models.gradient_boosting  CatBoost trained
+08:28:21  INFO      models.gradient_boosting  CatBoost trained
+08:28:21  INFO      models.gradient_boosting  CatBoost trained
+08:28:22  INFO      models.gradient_boosting  CatBoost trained
+08:28:23  INFO      models.gradient_boosting  CatBoost trained
+08:28:23  INFO      models.gradient_boosting  CatBoost trained
+08:28:24  INFO      models.gradient_boosting  CatBoost trained
+08:28:25  INFO      models.gradient_boosting  CatBoost trained
+08:28:26  INFO      models.gradient_boosting  CatBoost trained
+08:28:26  INFO      pipeline  Training Random Forest …
+08:28:26  INFO      pipeline  RandomizedSearchCV | model=Random Forest seed=42 n_iter=12 cv=3 scoring=roc_auc
+08:28:45  INFO      pipeline  Training Logistic Reg. …
+08:28:45  INFO      pipeline  RandomizedSearchCV | model=Logistic Reg. seed=42 n_iter=12 cv=3 scoring=roc_auc
+08:28:45  INFO      pipeline  Training TabNet …
+08:28:47  INFO      models.tabnet_model  Apple MPS backend passed smoke test — using GPU acceleration.
+08:28:47  INFO      models.tabnet_model  TabNet starting | device=mps  max_epochs=200  patience=15  batch_size=1024  n_train=980
+08:28:52  INFO      models.tabnet_model  TabNet trained | device=mps  best_epoch=6  elapsed=5.4s
+08:28:52  INFO      pipeline  YAML saved → /Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/south_german/runs/seed_42/results/best_params.yaml
+08:28:52  INFO      pipeline  ============================================================
+08:28:52  INFO      pipeline  STAGE 4: Evaluation
+08:28:52  INFO      pipeline  ============================================================
+08:28:52  INFO      pipeline  XGBoost | val_F1*=0.7463 @ t=0.49 | test AUROC=0.7638  F1=0.5512  G-Mean=0.6708  MCC=0.3444
+08:28:52  INFO      pipeline  LightGBM | val_F1*=0.7213 @ t=0.34 | test AUROC=0.7306  F1=0.5038  G-Mean=0.6330  MCC=0.2668
+08:28:52  INFO      pipeline  CatBoost | val_F1*=0.7869 @ t=0.45 | test AUROC=0.7645  F1=0.5891  G-Mean=0.7022  MCC=0.3971
+08:28:53  INFO      pipeline  Random Forest | val_F1*=0.7429 @ t=0.40 | test AUROC=0.7620  F1=0.5816  G-Mean=0.6986  MCC=0.3712
+08:28:53  INFO      pipeline  Logistic Reg. | val_F1*=0.7742 @ t=0.56 | test AUROC=0.7411  F1=0.5345  G-Mean=0.6515  MCC=0.3451
+08:28:53  INFO      pipeline  TabNet | val_F1*=0.6588 @ t=0.66 | test AUROC=0.6457  F1=0.5195  G-Mean=0.6399  MCC=0.2580
+08:28:53  INFO      pipeline  LaTeX table → /Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/south_german/runs/seed_42/results/table2_test_metrics.tex
+08:28:53  INFO      pipeline  
+                AUROC   AUPRC      F1  Precision  Recall  Specificity  G-Mean     MCC   Brier
+Model                                                                                        
+XGBoost        0.7638  0.6164  0.5512     0.5224  0.5833       0.7714  0.6708  0.3444  0.2171
+LightGBM       0.7306  0.6025  0.5038     0.4648  0.5500       0.7286  0.6330  0.2668  0.1893
+CatBoost       0.7645  0.6582  0.5891     0.5507  0.6333       0.7786  0.7022  0.3971  0.1714
+Random Forest  0.7620  0.6483  0.5816     0.5062  0.6833       0.7143  0.6986  0.3712  0.1723
+Logistic Reg.  0.7411  0.5597  0.5345     0.5536  0.5167       0.8214  0.6515  0.3451  0.1980
+TabNet         0.6457  0.4149  0.5195     0.4255  0.6667       0.6143  0.6399  0.2580  0.3384
+08:28:53  INFO      visualization.plots  Fig 2 saved → /Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/south_german/runs/seed_42/figures/fig02_roc_curves.pdf
+08:28:53  INFO      visualization.plots  Fig 3 saved → /Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/south_german/runs/seed_42/figures/fig03_pr_curves.pdf
+08:28:53  INFO      visualization.plots  Fig 4 saved → /Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/south_german/runs/seed_42/figures/fig04_confusion_catboost.pdf
+08:28:53  INFO      pipeline  Top pair CatBoost vs XGBoost | DeLong z=0.0354 p=0.9718 | McNemar chi2=0.3462 p=0.5563
+08:34:41  INFO      models.gradient_boosting  XGBoost trained | best_iteration=35
+08:34:41  INFO      models.gradient_boosting  XGBoost trained | best_iteration=25
+08:34:41  INFO      models.gradient_boosting  XGBoost trained | best_iteration=25
+08:34:41  INFO      models.gradient_boosting  XGBoost trained | best_iteration=68
+08:34:42  INFO      models.gradient_boosting  XGBoost trained | best_iteration=73
+08:34:42  INFO      models.gradient_boosting  LightGBM trained | best_iteration=241
+08:34:43  INFO      models.gradient_boosting  LightGBM trained | best_iteration=106
+08:34:43  INFO      models.gradient_boosting  LightGBM trained | best_iteration=184
+08:34:44  INFO      models.gradient_boosting  LightGBM trained | best_iteration=130
+08:34:44  INFO      models.gradient_boosting  LightGBM trained | best_iteration=109
+08:34:44  INFO      models.gradient_boosting  CatBoost trained
+08:34:44  INFO      models.gradient_boosting  CatBoost trained
+08:34:44  INFO      models.gradient_boosting  CatBoost trained
+08:34:44  INFO      models.gradient_boosting  CatBoost trained
+08:34:44  INFO      models.gradient_boosting  CatBoost trained
+08:34:46  INFO      pipeline  Skipping TabNet in SMOTE ablation (Fig 10) — its single official result is already in Table II. Pass --full-ablation to include it (runs in isolated subprocesses to avoid the MPS stall seen previously).
+08:34:46  INFO      visualization.plots  Fig 10 saved → /Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/south_german/runs/seed_42/figures/fig10_smote_ablation.pdf
+08:34:46  INFO      pipeline  ============================================================
+08:34:46  INFO      pipeline  STAGE 5: SHAP Explanations
+08:34:46  INFO      pipeline  ============================================================
+08:34:46  WARNING   shap  Background dataset has 200 samples but max_samples=100. Subsampling to 100 samples for SHAP value computation. To use all samples, set max_samples=200 when initializing the masker.
+08:34:46  INFO      explainability.shap_explainer  SHAP TreeExplainer initialised
+08:34:48  INFO      explainability.shap_explainer  SHAP values computed | shape=(200, 20)
+08:34:48  INFO      explainability.shap_explainer  SHAP additivity check | MAE=0.00000 | PASS ✓
+08:34:49  INFO      explainability.shap_explainer  Saved SHAP summary → /Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/south_german/runs/seed_42/figures/fig05a_shap_summary_CatBoost.pdf
+08:34:49  INFO      explainability.shap_explainer  Saved SHAP bar → /Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/south_german/runs/seed_42/figures/fig05b_shap_bar_CatBoost.pdf
+08:34:49  INFO      explainability.shap_explainer  Saved SHAP dependence → /Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/south_german/runs/seed_42/figures/fig06_shap_dep_status.pdf
+08:34:49  INFO      pipeline  LaTeX table → /Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/south_german/runs/seed_42/results/table3_shap_ranking.tex
+08:34:49  INFO      visualization.plots  Fig 8 saved → /Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/south_german/runs/seed_42/figures/fig08_importance_comparison.pdf
+08:34:50  INFO      visualization.plots  Fig 9 saved → /Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/south_german/runs/seed_42/figures/fig09_threshold_sweep.pdf
+08:34:50  INFO      pipeline  ============================================================
+08:34:50  INFO      pipeline  STAGE 6: LIME Explanations
+08:34:50  INFO      pipeline  ============================================================
+08:34:50  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:50  INFO      pipeline  Local instances selected: {'TP': 33, 'FP': 38, 'FN': 58, 'TN': 171}
+08:34:50  INFO      explainability.lime_explainer  Saved LIME explanation → /Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/south_german/runs/seed_42/figures/fig07_tp_lime.pdf
+08:34:50  INFO      explainability.lime_explainer  Saved LIME explanation → /Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/south_german/runs/seed_42/figures/fig07_fp_lime.pdf
+08:34:50  INFO      explainability.lime_explainer  Saved LIME explanation → /Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/south_german/runs/seed_42/figures/fig07_fn_lime.pdf
+08:34:50  INFO      explainability.lime_explainer  Saved LIME explanation → /Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/south_german/runs/seed_42/figures/fig07_tn_lime.pdf
+08:34:51  INFO      explainability.lime_explainer  Saved LIME multi-instance grid → /Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/south_german/runs/seed_42/figures/fig07_lime_multi_instance.pdf
+08:34:53  INFO      explainability.lime_explainer  LIME batch complete | n=200
+08:34:53  INFO      explainability.lime_explainer  SHAP–LIME agreement | mean ρ=0.415 ± 0.174
+08:34:53  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:53  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:53  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:53  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:53  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:53  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:53  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:53  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:53  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:53  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:53  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:53  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:53  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:53  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:53  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:53  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:53  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:53  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:53  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:53  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:53  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:53  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:53  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:54  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:55  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:56  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:57  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:58  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:58  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:58  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:58  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:58  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:58  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:58  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:58  INFO      explainability.lime_explainer  LIME tabular explainer initialised | features=20
+08:34:58  INFO      pipeline  LaTeX table → /Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/south_german/runs/seed_42/results/table5_explanation_quality.tex
+08:34:58  INFO      pipeline  SHAP–LIME agreement | mean ρ=0.415 ± 0.174
+08:34:58  INFO      pipeline  LaTeX table → /Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/south_german/runs/seed_42/results/table4_shap_lime_agreement.tex
+08:35:01  INFO      models.gradient_boosting  CatBoost trained
+08:35:01  INFO      models.gradient_boosting  CatBoost trained
+08:35:02  INFO      models.gradient_boosting  CatBoost trained
+08:35:02  INFO      models.gradient_boosting  CatBoost trained
+08:35:02  INFO      models.gradient_boosting  CatBoost trained
+08:35:27  INFO      pipeline  ============================================================
+08:35:27  INFO      pipeline  SEED 42 COMPLETE
+08:35:27  INFO      pipeline  Figures    -> /Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/south_german/runs/seed_42/figures
+08:35:27  INFO      pipeline  Results    -> /Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/south_german/runs/seed_42/results
+08:35:27  INFO      pipeline  Best model -> CatBoost (AUROC=0.7645)
+08:35:27  INFO      pipeline  ============================================================
+08:35:27  INFO      pipeline  ╔══════════════════════════════════════════════╗
+08:35:27  INFO      pipeline  ║  Credit Default Prediction with XAI         ║
+08:35:27  INFO      pipeline  ║  Dataset: south_german                       ║
+08:35:27  INFO      pipeline  ║  Seed: 99                                    ║
+08:35:27  INFO      pipeline  ╚══════════════════════════════════════════════╝
+08:35:27  INFO      pipeline  ============================================================
+08:35:27  INFO      pipeline  STAGE 1: Data Loading & Feature Engineering
+08:35:27  INFO      pipeline  ============================================================
+08:35:27  INFO      data.data_loader  Skipping UCI-specific engineered features; required columns not present.
+08:35:27  INFO      data.data_loader  Skipping UCI-specific engineered features; required columns not present.
+08:35:27  INFO      data.data_loader  Skipping UCI-specific engineered features; required columns not present.
+08:35:27  INFO      data.data_loader  Dataset loaded | train=700  val=100  test=200 | default rate  train=30.00%  test=30.00%
+08:35:27  INFO      pipeline  Imbalance stats: {
+  "n_total": 700,
+  "n_majority": 490,
+  "n_minority": 210,
+  "imbalance_ratio": 2.3333,
+  "minority_pct": 30.0
+}
+08:35:27  INFO      visualization.plots  Fig 1 saved → /Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/south_german/runs/seed_99/figures/fig01_class_distribution.pdf
+08:35:27  INFO      pipeline  ============================================================
+08:35:27  INFO      pipeline  STAGE 2: SMOTE Strategy Ablation
+08:35:27  INFO      pipeline  ============================================================
+08:35:27  INFO      preprocessing.imbalance_handler  Before resampling | class 0: 490 (70.0%)  class 1: 210 (30.0%)  IR=2.33
+08:35:27  INFO      preprocessing.imbalance_handler  After SMOTE | class 0: 490 (50.0%)  class 1: 490 (50.0%)  IR=1.00
+08:35:27  INFO      preprocessing.imbalance_handler  Before resampling | class 0: 490 (70.0%)  class 1: 210 (30.0%)  IR=2.33
+08:35:27  INFO      preprocessing.imbalance_handler  After BorderlineSMOTE | class 0: 490 (50.0%)  class 1: 490 (50.0%)  IR=1.00
+08:35:27  INFO      preprocessing.imbalance_handler  Before resampling | class 0: 490 (70.0%)  class 1: 210 (30.0%)  IR=2.33
+08:35:27  INFO      preprocessing.imbalance_handler  After SVMSMOTE | class 0: 490 (50.0%)  class 1: 490 (50.0%)  IR=1.00
+08:35:27  INFO      preprocessing.imbalance_handler  Before resampling | class 0: 490 (70.0%)  class 1: 210 (30.0%)  IR=2.33
+08:35:27  INFO      preprocessing.imbalance_handler  After ADASYN | class 0: 490 (50.4%)  class 1: 482 (49.6%)  IR=1.02
+08:35:27  INFO      preprocessing.imbalance_handler  Before resampling | class 0: 490 (70.0%)  class 1: 210 (30.0%)  IR=2.33
+08:35:27  INFO      preprocessing.imbalance_handler  No resampling applied.
+08:35:27  INFO      pipeline  Ablation | strategy=SMOTE | n=980
+08:35:27  INFO      models.gradient_boosting  LightGBM trained | best_iteration=144
+08:35:27  INFO      pipeline  Ablation | strategy=BorderlineSMOTE | n=980
+08:35:28  INFO      models.gradient_boosting  LightGBM trained | best_iteration=177
+08:35:28  INFO      pipeline  Ablation | strategy=SVMSMOTE | n=980
+08:35:29  INFO      models.gradient_boosting  LightGBM trained | best_iteration=167
+08:35:29  INFO      pipeline  Ablation | strategy=ADASYN | n=972
+08:35:29  INFO      models.gradient_boosting  LightGBM trained | best_iteration=132
+08:35:29  INFO      pipeline  Ablation | strategy=None | n=700
+08:35:30  INFO      models.gradient_boosting  LightGBM trained | best_iteration=71
+08:35:30  INFO      pipeline  Best SMOTE strategy (validation AUROC): SVMSMOTE → 0.8414  [model used: LightGBM]
+08:35:30  INFO      pipeline  ============================================================
+08:35:30  INFO      pipeline  STAGE 3: Model Training
+08:35:30  INFO      pipeline  ============================================================
+08:35:30  INFO      pipeline  Training XGBoost …
+08:35:30  INFO      pipeline  RandomizedSearchCV | model=XGBoost seed=99 n_iter=12 cv=3 scoring=roc_auc
+08:35:31  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:35:32  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:35:33  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:35:34  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:35:35  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:35:36  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:35:37  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:35:37  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:35:38  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:35:38  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:35:39  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:35:40  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:35:40  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:35:40  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:35:40  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:35:41  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:35:43  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:35:44  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:35:44  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:35:45  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:35:45  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:35:46  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:35:47  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:35:48  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:35:49  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:35:49  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:35:50  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:35:50  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:35:51  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:35:51  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:35:52  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:35:53  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:35:55  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:35:56  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:35:57  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:35:58  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:36:00  INFO      models.gradient_boosting  XGBoost trained | best_iteration=N/A
+08:36:00  INFO      models.gradient_boosting  XGBoost trained | best_iteration=71
+08:36:00  INFO      pipeline  Training LightGBM …
+08:36:00  INFO      pipeline  RandomizedSearchCV | model=LightGBM seed=99 n_iter=12 cv=3 scoring=roc_auc
+08:36:04  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:36:07  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:36:11  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:36:12  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:36:13  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:36:14  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:36:15  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:36:16  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:36:17  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:36:17  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:36:17  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:36:18  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:36:18  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:36:19  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:36:19  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:36:21  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:36:24  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:36:26  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:36:27  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:36:27  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:36:28  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:36:29  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:36:30  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:36:32  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:36:32  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:36:33  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:36:34  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:36:35  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:36:36  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:36:36  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:36:36  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:36:37  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:36:37  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:36:37  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:36:38  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:36:38  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:36:42  INFO      models.gradient_boosting  LightGBM trained | best_iteration=0
+08:36:43  INFO      models.gradient_boosting  LightGBM trained | best_iteration=72
+08:36:43  INFO      pipeline  Training CatBoost …
+08:36:43  INFO      pipeline  RandomizedSearchCV | model=CatBoost seed=99 n_iter=12 cv=3 scoring=roc_auc
+08:36:43  INFO      models.gradient_boosting  CatBoost trained
+08:36:44  INFO      models.gradient_boosting  CatBoost trained
+08:36:44  INFO      models.gradient_boosting  CatBoost trained
+08:36:44  INFO      models.gradient_boosting  CatBoost trained
+08:36:45  INFO      models.gradient_boosting  CatBoost trained
+08:36:45  INFO      models.gradient_boosting  CatBoost trained
+08:36:47  INFO      models.gradient_boosting  CatBoost trained
+08:36:49  INFO      models.gradient_boosting  CatBoost trained
+08:36:50  INFO      models.gradient_boosting  CatBoost trained
+08:36:51  INFO      models.gradient_boosting  CatBoost trained
+08:36:52  INFO      models.gradient_boosting  CatBoost trained
+08:36:53  INFO      models.gradient_boosting  CatBoost trained
+08:36:54  INFO      models.gradient_boosting  CatBoost trained
+08:36:55  INFO      models.gradient_boosting  CatBoost trained
+08:36:55  INFO      models.gradient_boosting  CatBoost trained
+08:36:58  INFO      models.gradient_boosting  CatBoost trained
+08:37:00  INFO      models.gradient_boosting  CatBoost trained
+08:37:03  INFO      models.gradient_boosting  CatBoost trained
+08:37:03  INFO      models.gradient_boosting  CatBoost trained
+08:37:03  INFO      models.gradient_boosting  CatBoost trained
+08:37:04  INFO      models.gradient_boosting  CatBoost trained
+08:37:04  INFO      models.gradient_boosting  CatBoost trained
+08:37:04  INFO      models.gradient_boosting  CatBoost trained
+08:37:05  INFO      models.gradient_boosting  CatBoost trained
+08:37:05  INFO      models.gradient_boosting  CatBoost trained
+08:37:05  INFO      models.gradient_boosting  CatBoost trained
+08:37:05  INFO      models.gradient_boosting  CatBoost trained
+08:37:06  INFO      models.gradient_boosting  CatBoost trained
+08:37:06  INFO      models.gradient_boosting  CatBoost trained
+08:37:06  INFO      models.gradient_boosting  CatBoost trained
+08:37:07  INFO      models.gradient_boosting  CatBoost trained
+08:37:08  INFO      models.gradient_boosting  CatBoost trained
+08:37:09  INFO      models.gradient_boosting  CatBoost trained
+08:37:09  INFO      models.gradient_boosting  CatBoost trained
+08:37:09  INFO      models.gradient_boosting  CatBoost trained
+08:37:10  INFO      models.gradient_boosting  CatBoost trained
+08:37:12  INFO      models.gradient_boosting  CatBoost trained
+08:37:12  INFO      models.gradient_boosting  CatBoost trained
+08:37:12  INFO      pipeline  Training Random Forest …
+08:37:12  INFO      pipeline  RandomizedSearchCV | model=Random Forest seed=99 n_iter=12 cv=3 scoring=roc_auc
+08:37:24  INFO      pipeline  Training Logistic Reg. …
+08:37:24  INFO      pipeline  RandomizedSearchCV | model=Logistic Reg. seed=99 n_iter=12 cv=3 scoring=roc_auc
+08:37:24  INFO      pipeline  Training TabNet …
+08:37:24  INFO      models.tabnet_model  Apple MPS backend passed smoke test — using GPU acceleration.
+08:37:24  INFO      models.tabnet_model  TabNet starting | device=mps  max_epochs=200  patience=15  batch_size=1024  n_train=980
+08:37:28  INFO      models.tabnet_model  TabNet trained | device=mps  best_epoch=14  elapsed=3.3s
+08:37:28  INFO      pipeline  YAML saved → /Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/south_german/runs/seed_99/results/best_params.yaml
+08:37:28  INFO      pipeline  ============================================================
+08:37:28  INFO      pipeline  STAGE 4: Evaluation
+08:37:28  INFO      pipeline  ============================================================
+08:37:28  INFO      pipeline  XGBoost | val_F1*=0.7077 @ t=0.46 | test AUROC=0.7768  F1=0.5614  G-Mean=0.6705  MCC=0.3883
+08:37:28  INFO      pipeline  LightGBM | val_F1*=0.6500 @ t=0.20 | test AUROC=0.7693  F1=0.5882  G-Mean=0.7037  MCC=0.3866
+08:37:28  INFO      pipeline  CatBoost | val_F1*=0.6769 @ t=0.53 | test AUROC=0.7769  F1=0.5439  G-Mean=0.6571  MCC=0.3637
+08:37:28  INFO      pipeline  Random Forest | val_F1*=0.7164 @ t=0.41 | test AUROC=0.7762  F1=0.5760  G-Mean=0.6897  MCC=0.3844
+08:37:28  INFO      pipeline  Logistic Reg. | val_F1*=0.6765 @ t=0.53 | test AUROC=0.7621  F1=0.5614  G-Mean=0.6705  MCC=0.3883
+08:37:28  INFO      pipeline  TabNet | val_F1*=0.6667 @ t=0.62 | test AUROC=0.6589  F1=0.4248  G-Mean=0.5632  MCC=0.2003
+08:37:28  INFO      pipeline  LaTeX table → /Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/south_german/runs/seed_99/results/table2_test_metrics.tex
+08:37:28  INFO      pipeline  
+                AUROC   AUPRC      F1  Precision  Recall  Specificity  G-Mean     MCC   Brier
+Model                                                                                        
+XGBoost        0.7768  0.6635  0.5614     0.5926  0.5333       0.8429  0.6705  0.3883  0.1632
+LightGBM       0.7693  0.6392  0.5882     0.5263  0.6667       0.7429  0.7037  0.3866  0.1758
+CatBoost       0.7769  0.6111  0.5439     0.5741  0.5167       0.8357  0.6571  0.3637  0.1851
+Random Forest  0.7762  0.6236  0.5760     0.5538  0.6000       0.7929  0.6897  0.3844  0.1654
+Logistic Reg.  0.7621  0.6919  0.5614     0.5926  0.5333       0.8429  0.6705  0.3883  0.1706
+TabNet         0.6589  0.4388  0.4248     0.4528  0.4000       0.7929  0.5632  0.2003  0.2573
+08:37:28  INFO      visualization.plots  Fig 2 saved → /Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/south_german/runs/seed_99/figures/fig02_roc_curves.pdf
+08:37:28  INFO      visualization.plots  Fig 3 saved → /Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/south_german/runs/seed_99/figures/fig03_pr_curves.pdf
+08:37:29  INFO      visualization.plots  Fig 4 saved → /Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/south_german/runs/seed_99/figures/fig04_confusion_random_forest.pdf
+08:37:29  INFO      pipeline  Top pair CatBoost vs XGBoost | DeLong z=0.0084 p=0.9933 | McNemar chi2=0.0833 p=0.7728
+08:43:48  INFO      models.gradient_boosting  XGBoost trained | best_iteration=61
+08:43:48  INFO      models.gradient_boosting  XGBoost trained | best_iteration=1
+08:43:48  INFO      models.gradient_boosting  XGBoost trained | best_iteration=1
+08:43:48  INFO      models.gradient_boosting  XGBoost trained | best_iteration=16
+08:43:48  INFO      models.gradient_boosting  XGBoost trained | best_iteration=8
+08:43:49  INFO      models.gradient_boosting  LightGBM trained | best_iteration=144
+08:43:49  INFO      models.gradient_boosting  LightGBM trained | best_iteration=177
+08:43:50  INFO      models.gradient_boosting  LightGBM trained | best_iteration=167
+08:43:50  INFO      models.gradient_boosting  LightGBM trained | best_iteration=132
+08:43:51  INFO      models.gradient_boosting  LightGBM trained | best_iteration=71
+08:43:51  INFO      models.gradient_boosting  CatBoost trained
+08:43:51  INFO      models.gradient_boosting  CatBoost trained
+08:43:51  INFO      models.gradient_boosting  CatBoost trained
+08:43:51  INFO      models.gradient_boosting  CatBoost trained
+08:43:52  INFO      models.gradient_boosting  CatBoost trained
+08:43:53  INFO      pipeline  Skipping TabNet in SMOTE ablation (Fig 10) — its single official result is already in Table II. Pass --full-ablation to include it (runs in isolated subprocesses to avoid the MPS stall seen previously).
+08:43:54  INFO      visualization.plots  Fig 10 saved → /Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/south_german/runs/seed_99/figures/fig10_smote_ablation.pdf
+08:43:54  INFO      pipeline  ============================================================
+08:43:54  INFO      pipeline  STAGE 5: SHAP Explanations
+08:43:54  INFO      pipeline  ============================================================
+08:43:54  WARNING   shap  Background dataset has 200 samples but max_samples=100. Subsampling to 100 samples for SHAP value computation. To use all samples, set max_samples=200 when initializing the masker.
+08:43:54  INFO      explainability.shap_explainer  SHAP TreeExplainer initialised
+100%|===================| 399/400 [00:11<00:00]       08:44:05  INFO      explainability.shap_explainer  SHAP values computed | shape=(200, 20)
+epoch 0  | loss: 1.87274 | val_auc: 0.58143 |  0:00:02s
+epoch 1  | loss: 1.5279  | val_auc: 0.57071 |  0:00:02s
+epoch 2  | loss: 1.16963 | val_auc: 0.62762 |  0:00:02s
+epoch 3  | loss: 0.89782 | val_auc: 0.69048 |  0:00:02s
+epoch 4  | loss: 0.86203 | val_auc: 0.66    |  0:00:02s
+epoch 5  | loss: 0.78675 | val_auc: 0.74333 |  0:00:02s
+epoch 6  | loss: 0.71181 | val_auc: 0.8019  |  0:00:02s
+epoch 7  | loss: 0.68553 | val_auc: 0.79952 |  0:00:02s
+epoch 8  | loss: 0.58189 | val_auc: 0.79071 |  0:00:03s
+epoch 9  | loss: 0.52547 | val_auc: 0.7481  |  0:00:03s
+epoch 10 | loss: 0.57247 | val_auc: 0.76976 |  0:00:03s
+epoch 11 | loss: 0.66973 | val_auc: 0.77024 |  0:00:03s
+epoch 12 | loss: 0.5829  | val_auc: 0.76476 |  0:00:03s
+epoch 13 | loss: 0.57689 | val_auc: 0.75976 |  0:00:03s
+epoch 14 | loss: 0.5557  | val_auc: 0.74619 |  0:00:03s
+epoch 15 | loss: 0.52016 | val_auc: 0.77095 |  0:00:03s
+epoch 16 | loss: 0.47211 | val_auc: 0.78143 |  0:00:03s
+epoch 17 | loss: 0.45938 | val_auc: 0.74429 |  0:00:03s
+epoch 18 | loss: 0.46438 | val_auc: 0.72    |  0:00:03s
+epoch 19 | loss: 0.46703 | val_auc: 0.72524 |  0:00:04s
+epoch 20 | loss: 0.46154 | val_auc: 0.70571 |  0:00:04s
+epoch 21 | loss: 0.42887 | val_auc: 0.70762 |  0:00:04s
+
+Early stopping occurred at epoch 21 with best_epoch = 6 and best_val_auc = 0.8019
+epoch 0  | loss: 1.37687 | val_auc: 0.63762 |  0:00:00s
+epoch 1  | loss: 1.52184 | val_auc: 0.6881  |  0:00:00s
+epoch 2  | loss: 0.8253  | val_auc: 0.70714 |  0:00:00s
+epoch 3  | loss: 0.96345 | val_auc: 0.6681  |  0:00:00s
+epoch 4  | loss: 0.8886  | val_auc: 0.70857 |  0:00:00s
+epoch 5  | loss: 0.71258 | val_auc: 0.6619  |  0:00:00s
+epoch 6  | loss: 0.8121  | val_auc: 0.65762 |  0:00:00s
+epoch 7  | loss: 0.59221 | val_auc: 0.67524 |  0:00:00s
+epoch 8  | loss: 0.63444 | val_auc: 0.58    |  0:00:01s
+epoch 9  | loss: 0.59411 | val_auc: 0.64381 |  0:00:01s
+epoch 10 | loss: 0.52472 | val_auc: 0.60048 |  0:00:01s
+epoch 11 | loss: 0.54558 | val_auc: 0.62714 |  0:00:01s
+epoch 12 | loss: 0.50416 | val_auc: 0.68    |  0:00:01s
+epoch 13 | loss: 0.48668 | val_auc: 0.73381 |  0:00:01s
+epoch 14 | loss: 0.43711 | val_auc: 0.74905 |  0:00:01s
+epoch 15 | loss: 0.4672  | val_auc: 0.73238 |  0:00:01s
+epoch 16 | loss: 0.42572 | val_auc: 0.72524 |  0:00:01s
+epoch 17 | loss: 0.43634 | val_auc: 0.72952 |  0:00:01s
+epoch 18 | loss: 0.40804 | val_auc: 0.72476 |  0:00:01s
+epoch 19 | loss: 0.41113 | val_auc: 0.72429 |  0:00:02s
+epoch 20 | loss: 0.39737 | val_auc: 0.71524 |  0:00:02s
+epoch 21 | loss: 0.42499 | val_auc: 0.71667 |  0:00:02s
+epoch 22 | loss: 0.37968 | val_auc: 0.70667 |  0:00:02s
+epoch 23 | loss: 0.39748 | val_auc: 0.71952 |  0:00:02s
+epoch 24 | loss: 0.37351 | val_auc: 0.72571 |  0:00:02s
+epoch 25 | loss: 0.3745  | val_auc: 0.71143 |  0:00:02s
+epoch 26 | loss: 0.37257 | val_auc: 0.68714 |  0:00:02s
+epoch 27 | loss: 0.34971 | val_auc: 0.68048 |  0:00:02s
+epoch 28 | loss: 0.35981 | val_auc: 0.67524 |  0:00:02s
+epoch 29 | loss: 0.36108 | val_auc: 0.67952 |  0:00:02s
+
+Early stopping occurred at epoch 29 with best_epoch = 14 and best_val_auc = 0.74905
+Traceback (most recent call last):
+  File "/Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/pipeline.py", line 1782, in <module>
+    main()
+  File "/Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/pipeline.py", line 1774, in main
+    seed_runs.append(_run_one_seed(args, seed))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/pipeline.py", line 1504, in _run_one_seed
+    shap_out = stage_shap(data_out, eval_out, args)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/pipeline.py", line 926, in stage_shap
+    shap_consistency_check(sv, proba, ev_c1)
+  File "/Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/explainability/shap_explainer.py", line 351, in shap_consistency_check
+    pred_from_shap = shap_vals[:n].sum(axis=1) + expected_value
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~
+ValueError: operands could not be broadcast together with shapes (200,) (2,) 

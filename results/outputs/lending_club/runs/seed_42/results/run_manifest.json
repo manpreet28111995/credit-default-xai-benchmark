@@ -1,0 +1,41 @@
+{
+  "seed": 42,
+  "dataset": "lending_club",
+  "split_mode": "temporal",
+  "temporal_column": "issue_time",
+  "external_datasets": [],
+  "fast": false,
+  "tune": true,
+  "tune_iter": 12,
+  "skip_xai": false,
+  "full_ablation": false,
+  "best_model": "LightGBM",
+  "best_validation_AUROC": 0.6937,
+  "best_test_AUROC": 0.6758,
+  "best_threshold": 0.14,
+  "best_smote_strategy": "None",
+  "resampling_helped": false,
+  "seed_list": [
+    42,
+    99,
+    123,
+    326,
+    456,
+    515,
+    689,
+    777,
+    872,
+    999
+  ],
+  "dataset_file_sha256": null,
+  "dataset_checksums": {
+    "lending_club": null
+  },
+  "split_indices": "/Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/lending_club/runs/seed_42/results/split_indices.json",
+  "source_fingerprint": "3ff7b561eb577f8a461dbd8c0d472ffec7bdbe3b1e8d0e783bfc7d80b4eaad8c",
+  "revision_analyses": true,
+  "reliability_selected_model": null,
+  "figures_dir": "/Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/lending_club/runs/seed_42/figures",
+  "results_dir": "/Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/lending_club/runs/seed_42/results",
+  "models_dir": "/Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/lending_club/runs/seed_42/models"
+}

@@ -1,0 +1,2 @@
+model,predictive_quality,robustness_retention,explanation_diagnostics,inverse_group_gap,reliability_score,score_status
+Random Forest,0.40601735829653296,0.9870415700420855,0.5575090042691837,,,not_scored_fairness_unavailable

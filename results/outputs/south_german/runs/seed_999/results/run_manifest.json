@@ -1,0 +1,41 @@
+{
+  "seed": 999,
+  "dataset": "south_german",
+  "split_mode": "random",
+  "temporal_column": null,
+  "external_datasets": [],
+  "fast": false,
+  "tune": true,
+  "tune_iter": 12,
+  "skip_xai": false,
+  "full_ablation": false,
+  "best_model": "LightGBM",
+  "best_validation_AUROC": 0.8129,
+  "best_test_AUROC": 0.7713,
+  "best_threshold": 0.29000000000000004,
+  "best_smote_strategy": "SMOTE",
+  "resampling_helped": true,
+  "seed_list": [
+    42,
+    99,
+    123,
+    326,
+    456,
+    515,
+    689,
+    777,
+    872,
+    999
+  ],
+  "dataset_file_sha256": null,
+  "dataset_checksums": {
+    "south_german": "5f363343f356ca38a0236baab849e472846399b2176ccc5bd686483dd8a7562f"
+  },
+  "split_indices": "/Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/south_german/runs/seed_999/results/split_indices.json",
+  "source_fingerprint": "102102ae5c3f95eebd190656563b1e872d211362518c9cd9ed5b81567235ee55",
+  "revision_analyses": true,
+  "reliability_selected_model": null,
+  "figures_dir": "/Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/south_german/runs/seed_999/figures",
+  "results_dir": "/Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/south_german/runs/seed_999/results",
+  "models_dir": "/Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/south_german/runs/seed_999/models"
+}

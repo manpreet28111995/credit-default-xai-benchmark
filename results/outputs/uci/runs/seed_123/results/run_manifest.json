@@ -1,0 +1,41 @@
+{
+  "seed": 123,
+  "dataset": "uci",
+  "split_mode": "random",
+  "temporal_column": null,
+  "external_datasets": [],
+  "fast": false,
+  "tune": true,
+  "tune_iter": 12,
+  "skip_xai": false,
+  "full_ablation": false,
+  "best_model": "XGBoost",
+  "best_validation_AUROC": 0.7981,
+  "best_test_AUROC": 0.7882,
+  "best_threshold": 0.27,
+  "best_smote_strategy": "None",
+  "resampling_helped": false,
+  "seed_list": [
+    42,
+    99,
+    123,
+    326,
+    456,
+    515,
+    689,
+    777,
+    872,
+    999
+  ],
+  "dataset_file_sha256": "4edce6da569b2c30788a85fd98a9bafb1a983e8ca1a7aac875dd7ff853cbd0bb",
+  "dataset_checksums": {
+    "uci": "4edce6da569b2c30788a85fd98a9bafb1a983e8ca1a7aac875dd7ff853cbd0bb"
+  },
+  "split_indices": "/Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/uci/runs/seed_123/results/split_indices.json",
+  "source_fingerprint": "3ff7b561eb577f8a461dbd8c0d472ffec7bdbe3b1e8d0e783bfc7d80b4eaad8c",
+  "revision_analyses": true,
+  "reliability_selected_model": null,
+  "figures_dir": "/Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/uci/runs/seed_123/figures",
+  "results_dir": "/Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/uci/runs/seed_123/results",
+  "models_dir": "/Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/uci/runs/seed_123/models"
+}

@@ -1,0 +1,36 @@
+{
+  "dataset": "south_german",
+  "split_mode": "random",
+  "temporal_column": null,
+  "external_datasets": [],
+  "seed_list": [
+    42,
+    99,
+    123,
+    326,
+    456,
+    515,
+    689,
+    777,
+    872,
+    999
+  ],
+  "dataset_file_sha256": null,
+  "dataset_checksums": {
+    "south_german": "5f363343f356ca38a0236baab849e472846399b2176ccc5bd686483dd8a7562f"
+  },
+  "source_fingerprint": "102102ae5c3f95eebd190656563b1e872d211362518c9cd9ed5b81567235ee55",
+  "revision_analyses": true,
+  "run_manifests": [
+    "/Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/south_german/runs/seed_42/results/run_manifest.json",
+    "/Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/south_german/runs/seed_99/results/run_manifest.json",
+    "/Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/south_german/runs/seed_123/results/run_manifest.json",
+    "/Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/south_german/runs/seed_326/results/run_manifest.json",
+    "/Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/south_german/runs/seed_456/results/run_manifest.json",
+    "/Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/south_german/runs/seed_515/results/run_manifest.json",
+    "/Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/south_german/runs/seed_689/results/run_manifest.json",
+    "/Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/south_german/runs/seed_777/results/run_manifest.json",
+    "/Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/south_german/runs/seed_872/results/run_manifest.json",
+    "/Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/south_german/runs/seed_999/results/run_manifest.json"
+  ]
+}

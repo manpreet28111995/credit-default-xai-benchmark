@@ -1,0 +1,11 @@
+seed,selection_metric,model_used,best_strategy,best_validation_AUROC,none_validation_AUROC,resampling_helped
+42,validation_AUROC,LightGBM,SVMSMOTE,0.8919,0.8667,True
+99,validation_AUROC,LightGBM,SVMSMOTE,0.8414,0.8171,True
+123,validation_AUROC,LightGBM,SVMSMOTE,0.8081,0.7929,True
+326,validation_AUROC,LightGBM,None,0.7376,0.7376,False
+456,validation_AUROC,LightGBM,SMOTE,0.8105,0.8086,True
+515,validation_AUROC,LightGBM,SVMSMOTE,0.7614,0.7295,True
+689,validation_AUROC,LightGBM,SMOTE,0.7757,0.7395,True
+777,validation_AUROC,LightGBM,SVMSMOTE,0.7986,0.7914,True
+872,validation_AUROC,LightGBM,None,0.8457,0.8457,False
+999,validation_AUROC,LightGBM,SMOTE,0.799,0.7967,True

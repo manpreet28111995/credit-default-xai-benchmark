@@ -1,0 +1,950 @@
+seed_42:
+  XGBoost:
+    enabled: true
+    model: "XGBoost"
+    seed: 42
+    search: "RandomizedSearchCV"
+    scoring: "roc_auc"
+    cv_folds: 3
+    n_iter_requested: 12
+    best_score: 0.9115512087410385
+    best_params:
+      subsample: 0.8
+      reg_lambda: 0.5
+      reg_alpha: 0
+      n_estimators: 300
+      max_depth: 8
+      learning_rate: 0.01
+      gamma: 0
+      colsample_bytree: 0.7
+    status: "success"
+    n_iter_actual: 12
+  LightGBM:
+    enabled: true
+    model: "LightGBM"
+    seed: 42
+    search: "RandomizedSearchCV"
+    scoring: "roc_auc"
+    cv_folds: 3
+    n_iter_requested: 12
+    best_score: 0.9061829958319908
+    best_params:
+      subsample: 1.0
+      reg_lambda: 0.5
+      reg_alpha: 0.1
+      num_leaves: 31
+      n_estimators: 300
+      min_child_samples: 10
+      max_depth: 6
+      learning_rate: 0.1
+      colsample_bytree: 0.8
+    status: "success"
+    n_iter_actual: 12
+  CatBoost:
+    enabled: true
+    model: "CatBoost"
+    seed: 42
+    search: "RandomizedSearchCV"
+    scoring: "roc_auc"
+    cv_folds: 3
+    n_iter_requested: 12
+    best_score: 0.9145253637789867
+    best_params:
+      learning_rate: 0.03
+      l2_leaf_reg: 1
+      iterations: 300
+      depth: 8
+    status: "success"
+    n_iter_actual: 12
+  Random Forest:
+    enabled: true
+    model: "Random Forest"
+    seed: 42
+    search: "RandomizedSearchCV"
+    scoring: "roc_auc"
+    cv_folds: 3
+    n_iter_requested: 12
+    best_score: 0.906890770985319
+    best_params:
+      n_estimators: 500
+      min_samples_split: 5
+      min_samples_leaf: 2
+      max_features: "log2"
+      max_depth: 20
+    status: "success"
+    n_iter_actual: 12
+  Logistic Reg.:
+    enabled: true
+    model: "Logistic Reg."
+    seed: 42
+    search: "RandomizedSearchCV"
+    scoring: "roc_auc"
+    cv_folds: 3
+    n_iter_requested: 12
+    best_score: 0.8313505378081368
+    best_params:
+      C: 0.01
+    status: "success"
+    n_iter_actual: 7
+  TabNet:
+    enabled: false
+    model: "TabNet"
+    seed: 42
+    search: "none"
+    status: "skipped_expensive_model"
+    best_params:
+seed_99:
+  XGBoost:
+    enabled: true
+    model: "XGBoost"
+    seed: 99
+    search: "RandomizedSearchCV"
+    scoring: "roc_auc"
+    cv_folds: 3
+    n_iter_requested: 12
+    best_score: 0.9106813307396878
+    best_params:
+      subsample: 0.7
+      reg_lambda: 2.0
+      reg_alpha: 0.1
+      n_estimators: 500
+      max_depth: 5
+      learning_rate: 0.05
+      gamma: 0.2
+      colsample_bytree: 0.8
+    status: "success"
+    n_iter_actual: 12
+  LightGBM:
+    enabled: true
+    model: "LightGBM"
+    seed: 99
+    search: "RandomizedSearchCV"
+    scoring: "roc_auc"
+    cv_folds: 3
+    n_iter_requested: 12
+    best_score: 0.9055303769568238
+    best_params:
+      subsample: 0.8
+      reg_lambda: 0.5
+      reg_alpha: 0
+      num_leaves: 63
+      n_estimators: 800
+      min_child_samples: 10
+      max_depth: 8
+      learning_rate: 0.08
+      colsample_bytree: 0.8
+    status: "success"
+    n_iter_actual: 12
+  CatBoost:
+    enabled: true
+    model: "CatBoost"
+    seed: 99
+    search: "RandomizedSearchCV"
+    scoring: "roc_auc"
+    cv_folds: 3
+    n_iter_requested: 12
+    best_score: 0.9124587245910097
+    best_params:
+      learning_rate: 0.03
+      l2_leaf_reg: 10
+      iterations: 500
+      depth: 8
+    status: "success"
+    n_iter_actual: 12
+  Random Forest:
+    enabled: true
+    model: "Random Forest"
+    seed: 99
+    search: "RandomizedSearchCV"
+    scoring: "roc_auc"
+    cv_folds: 3
+    n_iter_requested: 12
+    best_score: 0.9123847493885381
+    best_params:
+      n_estimators: 200
+      min_samples_split: 5
+      min_samples_leaf: 1
+      max_features: "sqrt"
+      max_depth: null
+    status: "success"
+    n_iter_actual: 12
+  Logistic Reg.:
+    enabled: true
+    model: "Logistic Reg."
+    seed: 99
+    search: "RandomizedSearchCV"
+    scoring: "roc_auc"
+    cv_folds: 3
+    n_iter_requested: 12
+    best_score: 0.8394790891151036
+    best_params:
+      C: 0.03
+    status: "success"
+    n_iter_actual: 7
+  TabNet:
+    enabled: false
+    model: "TabNet"
+    seed: 99
+    search: "none"
+    status: "skipped_expensive_model"
+    best_params:
+seed_123:
+  XGBoost:
+    enabled: true
+    model: "XGBoost"
+    seed: 123
+    search: "RandomizedSearchCV"
+    scoring: "roc_auc"
+    cv_folds: 3
+    n_iter_requested: 12
+    best_score: 0.9108766344541762
+    best_params:
+      subsample: 0.8
+      reg_lambda: 0.5
+      reg_alpha: 0.5
+      n_estimators: 500
+      max_depth: 6
+      learning_rate: 0.05
+      gamma: 0.2
+      colsample_bytree: 0.9
+    status: "success"
+    n_iter_actual: 12
+  LightGBM:
+    enabled: true
+    model: "LightGBM"
+    seed: 123
+    search: "RandomizedSearchCV"
+    scoring: "roc_auc"
+    cv_folds: 3
+    n_iter_requested: 12
+    best_score: 0.9090764436945434
+    best_params:
+      subsample: 0.9
+      reg_lambda: 5.0
+      reg_alpha: 0.5
+      num_leaves: 31
+      n_estimators: 500
+      min_child_samples: 10
+      max_depth: 6
+      learning_rate: 0.03
+      colsample_bytree: 0.7
+    status: "success"
+    n_iter_actual: 12
+  CatBoost:
+    enabled: true
+    model: "CatBoost"
+    seed: 123
+    search: "RandomizedSearchCV"
+    scoring: "roc_auc"
+    cv_folds: 3
+    n_iter_requested: 12
+    best_score: 0.918471523907531
+    best_params:
+      learning_rate: 0.08
+      l2_leaf_reg: 1
+      iterations: 800
+      depth: 8
+    status: "success"
+    n_iter_actual: 12
+  Random Forest:
+    enabled: true
+    model: "Random Forest"
+    seed: 123
+    search: "RandomizedSearchCV"
+    scoring: "roc_auc"
+    cv_folds: 3
+    n_iter_requested: 12
+    best_score: 0.9111544813366761
+    best_params:
+      n_estimators: 500
+      min_samples_split: 2
+      min_samples_leaf: 1
+      max_features: null
+      max_depth: 14
+    status: "success"
+    n_iter_actual: 12
+  Logistic Reg.:
+    enabled: true
+    model: "Logistic Reg."
+    seed: 123
+    search: "RandomizedSearchCV"
+    scoring: "roc_auc"
+    cv_folds: 3
+    n_iter_requested: 12
+    best_score: 0.8500423961294827
+    best_params:
+      C: 0.1
+    status: "success"
+    n_iter_actual: 7
+  TabNet:
+    enabled: false
+    model: "TabNet"
+    seed: 123
+    search: "none"
+    status: "skipped_expensive_model"
+    best_params:
+seed_326:
+  XGBoost:
+    enabled: true
+    model: "XGBoost"
+    seed: 326
+    search: "RandomizedSearchCV"
+    scoring: "roc_auc"
+    cv_folds: 3
+    n_iter_requested: 12
+    best_score: 0.7831054986711129
+    best_params:
+      subsample: 0.8
+      reg_lambda: 1.0
+      reg_alpha: 0.05
+      n_estimators: 800
+      max_depth: 4
+      learning_rate: 0.01
+      gamma: 0
+      colsample_bytree: 1.0
+    status: "success"
+    n_iter_actual: 12
+  LightGBM:
+    enabled: true
+    model: "LightGBM"
+    seed: 326
+    search: "RandomizedSearchCV"
+    scoring: "roc_auc"
+    cv_folds: 3
+    n_iter_requested: 12
+    best_score: 0.7742379384792972
+    best_params:
+      subsample: 0.8
+      reg_lambda: 2.0
+      reg_alpha: 0.5
+      num_leaves: 15
+      n_estimators: 300
+      min_child_samples: 10
+      max_depth: 5
+      learning_rate: 0.01
+      colsample_bytree: 0.7
+    status: "success"
+    n_iter_actual: 12
+  CatBoost:
+    enabled: true
+    model: "CatBoost"
+    seed: 326
+    search: "RandomizedSearchCV"
+    scoring: "roc_auc"
+    cv_folds: 3
+    n_iter_requested: 12
+    best_score: 0.7884098245014002
+    best_params:
+      learning_rate: 0.01
+      l2_leaf_reg: 7
+      iterations: 800
+      depth: 6
+    status: "success"
+    n_iter_actual: 12
+  Random Forest:
+    enabled: true
+    model: "Random Forest"
+    seed: 326
+    search: "RandomizedSearchCV"
+    scoring: "roc_auc"
+    cv_folds: 3
+    n_iter_requested: 12
+    best_score: 0.7916545534868145
+    best_params:
+      n_estimators: 300
+      min_samples_split: 2
+      min_samples_leaf: 2
+      max_features: "sqrt"
+      max_depth: 6
+    status: "success"
+    n_iter_actual: 12
+  Logistic Reg.:
+    enabled: true
+    model: "Logistic Reg."
+    seed: 326
+    search: "RandomizedSearchCV"
+    scoring: "roc_auc"
+    cv_folds: 3
+    n_iter_requested: 12
+    best_score: 0.7776620494075231
+    best_params:
+      C: 0.01
+    status: "success"
+    n_iter_actual: 7
+  TabNet:
+    enabled: false
+    model: "TabNet"
+    seed: 326
+    search: "none"
+    status: "skipped_expensive_model"
+    best_params:
+seed_456:
+  XGBoost:
+    enabled: true
+    model: "XGBoost"
+    seed: 456
+    search: "RandomizedSearchCV"
+    scoring: "roc_auc"
+    cv_folds: 3
+    n_iter_requested: 12
+    best_score: 0.8969458874836405
+    best_params:
+      subsample: 0.9
+      reg_lambda: 5.0
+      reg_alpha: 0.1
+      n_estimators: 800
+      max_depth: 8
+      learning_rate: 0.08
+      gamma: 0.1
+      colsample_bytree: 0.8
+    status: "success"
+    n_iter_actual: 12
+  LightGBM:
+    enabled: true
+    model: "LightGBM"
+    seed: 456
+    search: "RandomizedSearchCV"
+    scoring: "roc_auc"
+    cv_folds: 3
+    n_iter_requested: 12
+    best_score: 0.8939376135829181
+    best_params:
+      subsample: 0.8
+      reg_lambda: 5.0
+      reg_alpha: 0.1
+      num_leaves: 127
+      n_estimators: 500
+      min_child_samples: 10
+      max_depth: 6
+      learning_rate: 0.1
+      colsample_bytree: 0.8
+    status: "success"
+    n_iter_actual: 12
+  CatBoost:
+    enabled: true
+    model: "CatBoost"
+    seed: 456
+    search: "RandomizedSearchCV"
+    scoring: "roc_auc"
+    cv_folds: 3
+    n_iter_requested: 12
+    best_score: 0.9082926278470508
+    best_params:
+      learning_rate: 0.01
+      l2_leaf_reg: 1
+      iterations: 800
+      depth: 6
+    status: "success"
+    n_iter_actual: 12
+  Random Forest:
+    enabled: true
+    model: "Random Forest"
+    seed: 456
+    search: "RandomizedSearchCV"
+    scoring: "roc_auc"
+    cv_folds: 3
+    n_iter_requested: 12
+    best_score: 0.9097250080860174
+    best_params:
+      n_estimators: 300
+      min_samples_split: 2
+      min_samples_leaf: 1
+      max_features: "log2"
+      max_depth: null
+    status: "success"
+    n_iter_actual: 12
+  Logistic Reg.:
+    enabled: true
+    model: "Logistic Reg."
+    seed: 456
+    search: "RandomizedSearchCV"
+    scoring: "roc_auc"
+    cv_folds: 3
+    n_iter_requested: 12
+    best_score: 0.8122940819532024
+    best_params:
+      C: 0.03
+    status: "success"
+    n_iter_actual: 7
+  TabNet:
+    enabled: false
+    model: "TabNet"
+    seed: 456
+    search: "none"
+    status: "skipped_expensive_model"
+    best_params:
+seed_515:
+  XGBoost:
+    enabled: true
+    model: "XGBoost"
+    seed: 515
+    search: "RandomizedSearchCV"
+    scoring: "roc_auc"
+    cv_folds: 3
+    n_iter_requested: 12
+    best_score: 0.8990906328574746
+    best_params:
+      subsample: 0.8
+      reg_lambda: 1.0
+      reg_alpha: 0.5
+      n_estimators: 300
+      max_depth: 8
+      learning_rate: 0.05
+      gamma: 0
+      colsample_bytree: 0.7
+    status: "success"
+    n_iter_actual: 12
+  LightGBM:
+    enabled: true
+    model: "LightGBM"
+    seed: 515
+    search: "RandomizedSearchCV"
+    scoring: "roc_auc"
+    cv_folds: 3
+    n_iter_requested: 12
+    best_score: 0.8948221795251939
+    best_params:
+      subsample: 0.9
+      reg_lambda: 0.5
+      reg_alpha: 0
+      num_leaves: 63
+      n_estimators: 500
+      min_child_samples: 10
+      max_depth: 6
+      learning_rate: 0.1
+      colsample_bytree: 0.8
+    status: "success"
+    n_iter_actual: 12
+  CatBoost:
+    enabled: true
+    model: "CatBoost"
+    seed: 515
+    search: "RandomizedSearchCV"
+    scoring: "roc_auc"
+    cv_folds: 3
+    n_iter_requested: 12
+    best_score: 0.9128249286181371
+    best_params:
+      learning_rate: 0.03
+      l2_leaf_reg: 1
+      iterations: 500
+      depth: 8
+    status: "success"
+    n_iter_actual: 12
+  Random Forest:
+    enabled: true
+    model: "Random Forest"
+    seed: 515
+    search: "RandomizedSearchCV"
+    scoring: "roc_auc"
+    cv_folds: 3
+    n_iter_requested: 12
+    best_score: 0.907055168824111
+    best_params:
+      n_estimators: 500
+      min_samples_split: 2
+      min_samples_leaf: 1
+      max_features: "sqrt"
+      max_depth: 10
+    status: "success"
+    n_iter_actual: 12
+  Logistic Reg.:
+    enabled: true
+    model: "Logistic Reg."
+    seed: 515
+    search: "RandomizedSearchCV"
+    scoring: "roc_auc"
+    cv_folds: 3
+    n_iter_requested: 12
+    best_score: 0.8095960143048305
+    best_params:
+      C: 0.01
+    status: "success"
+    n_iter_actual: 7
+  TabNet:
+    enabled: false
+    model: "TabNet"
+    seed: 515
+    search: "none"
+    status: "skipped_expensive_model"
+    best_params:
+seed_689:
+  XGBoost:
+    enabled: true
+    model: "XGBoost"
+    seed: 689
+    search: "RandomizedSearchCV"
+    scoring: "roc_auc"
+    cv_folds: 3
+    n_iter_requested: 12
+    best_score: 0.9050045180718284
+    best_params:
+      subsample: 0.8
+      reg_lambda: 1.0
+      reg_alpha: 0.5
+      n_estimators: 300
+      max_depth: 8
+      learning_rate: 0.05
+      gamma: 0.05
+      colsample_bytree: 0.7
+    status: "success"
+    n_iter_actual: 12
+  LightGBM:
+    enabled: true
+    model: "LightGBM"
+    seed: 689
+    search: "RandomizedSearchCV"
+    scoring: "roc_auc"
+    cv_folds: 3
+    n_iter_requested: 12
+    best_score: 0.8972991630627661
+    best_params:
+      subsample: 1.0
+      reg_lambda: 2.0
+      reg_alpha: 0
+      num_leaves: 31
+      n_estimators: 500
+      min_child_samples: 10
+      max_depth: -1
+      learning_rate: 0.1
+      colsample_bytree: 1.0
+    status: "success"
+    n_iter_actual: 12
+  CatBoost:
+    enabled: true
+    model: "CatBoost"
+    seed: 689
+    search: "RandomizedSearchCV"
+    scoring: "roc_auc"
+    cv_folds: 3
+    n_iter_requested: 12
+    best_score: 0.9164103926974007
+    best_params:
+      learning_rate: 0.08
+      l2_leaf_reg: 10
+      iterations: 300
+      depth: 8
+    status: "success"
+    n_iter_actual: 12
+  Random Forest:
+    enabled: true
+    model: "Random Forest"
+    seed: 689
+    search: "RandomizedSearchCV"
+    scoring: "roc_auc"
+    cv_folds: 3
+    n_iter_requested: 12
+    best_score: 0.916635454792201
+    best_params:
+      n_estimators: 200
+      min_samples_split: 2
+      min_samples_leaf: 1
+      max_features: "log2"
+      max_depth: 14
+    status: "success"
+    n_iter_actual: 12
+  Logistic Reg.:
+    enabled: true
+    model: "Logistic Reg."
+    seed: 689
+    search: "RandomizedSearchCV"
+    scoring: "roc_auc"
+    cv_folds: 3
+    n_iter_requested: 12
+    best_score: 0.8205234598546444
+    best_params:
+      C: 0.01
+    status: "success"
+    n_iter_actual: 7
+  TabNet:
+    enabled: false
+    model: "TabNet"
+    seed: 689
+    search: "none"
+    status: "skipped_expensive_model"
+    best_params:
+seed_777:
+  XGBoost:
+    enabled: true
+    model: "XGBoost"
+    seed: 777
+    search: "RandomizedSearchCV"
+    scoring: "roc_auc"
+    cv_folds: 3
+    n_iter_requested: 12
+    best_score: 0.9058631506184082
+    best_params:
+      subsample: 0.7
+      reg_lambda: 2.0
+      reg_alpha: 0.05
+      n_estimators: 500
+      max_depth: 5
+      learning_rate: 0.03
+      gamma: 0.1
+      colsample_bytree: 0.7
+    status: "success"
+    n_iter_actual: 12
+  LightGBM:
+    enabled: true
+    model: "LightGBM"
+    seed: 777
+    search: "RandomizedSearchCV"
+    scoring: "roc_auc"
+    cv_folds: 3
+    n_iter_requested: 12
+    best_score: 0.8958954702084189
+    best_params:
+      subsample: 0.9
+      reg_lambda: 1.0
+      reg_alpha: 0.1
+      num_leaves: 63
+      n_estimators: 500
+      min_child_samples: 40
+      max_depth: -1
+      learning_rate: 0.1
+      colsample_bytree: 0.8
+    status: "success"
+    n_iter_actual: 12
+  CatBoost:
+    enabled: true
+    model: "CatBoost"
+    seed: 777
+    search: "RandomizedSearchCV"
+    scoring: "roc_auc"
+    cv_folds: 3
+    n_iter_requested: 12
+    best_score: 0.9179281465929945
+    best_params:
+      learning_rate: 0.01
+      l2_leaf_reg: 1
+      iterations: 800
+      depth: 8
+    status: "success"
+    n_iter_actual: 12
+  Random Forest:
+    enabled: true
+    model: "Random Forest"
+    seed: 777
+    search: "RandomizedSearchCV"
+    scoring: "roc_auc"
+    cv_folds: 3
+    n_iter_requested: 12
+    best_score: 0.9090556740280791
+    best_params:
+      n_estimators: 200
+      min_samples_split: 2
+      min_samples_leaf: 1
+      max_features: "log2"
+      max_depth: 20
+    status: "success"
+    n_iter_actual: 12
+  Logistic Reg.:
+    enabled: true
+    model: "Logistic Reg."
+    seed: 777
+    search: "RandomizedSearchCV"
+    scoring: "roc_auc"
+    cv_folds: 3
+    n_iter_requested: 12
+    best_score: 0.8238994677763406
+    best_params:
+      C: 0.01
+    status: "success"
+    n_iter_actual: 7
+  TabNet:
+    enabled: false
+    model: "TabNet"
+    seed: 777
+    search: "none"
+    status: "skipped_expensive_model"
+    best_params:
+seed_872:
+  XGBoost:
+    enabled: true
+    model: "XGBoost"
+    seed: 872
+    search: "RandomizedSearchCV"
+    scoring: "roc_auc"
+    cv_folds: 3
+    n_iter_requested: 12
+    best_score: 0.7512113179852218
+    best_params:
+      subsample: 0.8
+      reg_lambda: 1.0
+      reg_alpha: 0
+      n_estimators: 300
+      max_depth: 8
+      learning_rate: 0.03
+      gamma: 0.2
+      colsample_bytree: 0.8
+    status: "success"
+    n_iter_actual: 12
+  LightGBM:
+    enabled: true
+    model: "LightGBM"
+    seed: 872
+    search: "RandomizedSearchCV"
+    scoring: "roc_auc"
+    cv_folds: 3
+    n_iter_requested: 12
+    best_score: 0.757045239164048
+    best_params:
+      subsample: 0.8
+      reg_lambda: 2.0
+      reg_alpha: 0.5
+      num_leaves: 63
+      n_estimators: 800
+      min_child_samples: 80
+      max_depth: 6
+      learning_rate: 0.01
+      colsample_bytree: 0.9
+    status: "success"
+    n_iter_actual: 12
+  CatBoost:
+    enabled: true
+    model: "CatBoost"
+    seed: 872
+    search: "RandomizedSearchCV"
+    scoring: "roc_auc"
+    cv_folds: 3
+    n_iter_requested: 12
+    best_score: 0.7741433487954511
+    best_params:
+      learning_rate: 0.01
+      l2_leaf_reg: 5
+      iterations: 500
+      depth: 4
+    status: "success"
+    n_iter_actual: 12
+  Random Forest:
+    enabled: true
+    model: "Random Forest"
+    seed: 872
+    search: "RandomizedSearchCV"
+    scoring: "roc_auc"
+    cv_folds: 3
+    n_iter_requested: 12
+    best_score: 0.7766117654603365
+    best_params:
+      n_estimators: 500
+      min_samples_split: 5
+      min_samples_leaf: 4
+      max_features: "sqrt"
+      max_depth: 20
+    status: "success"
+    n_iter_actual: 12
+  Logistic Reg.:
+    enabled: true
+    model: "Logistic Reg."
+    seed: 872
+    search: "RandomizedSearchCV"
+    scoring: "roc_auc"
+    cv_folds: 3
+    n_iter_requested: 12
+    best_score: 0.7816798842835054
+    best_params:
+      C: 0.01
+    status: "success"
+    n_iter_actual: 7
+  TabNet:
+    enabled: false
+    model: "TabNet"
+    seed: 872
+    search: "none"
+    status: "skipped_expensive_model"
+    best_params:
+seed_999:
+  XGBoost:
+    enabled: true
+    model: "XGBoost"
+    seed: 999
+    search: "RandomizedSearchCV"
+    scoring: "roc_auc"
+    cv_folds: 3
+    n_iter_requested: 12
+    best_score: 0.9184139961389075
+    best_params:
+      subsample: 0.7
+      reg_lambda: 0.5
+      reg_alpha: 0.5
+      n_estimators: 800
+      max_depth: 6
+      learning_rate: 0.01
+      gamma: 0.05
+      colsample_bytree: 0.8
+    status: "success"
+    n_iter_actual: 12
+  LightGBM:
+    enabled: true
+    model: "LightGBM"
+    seed: 999
+    search: "RandomizedSearchCV"
+    scoring: "roc_auc"
+    cv_folds: 3
+    n_iter_requested: 12
+    best_score: 0.917169881642736
+    best_params:
+      subsample: 1.0
+      reg_lambda: 2.0
+      reg_alpha: 0.05
+      num_leaves: 127
+      n_estimators: 500
+      min_child_samples: 10
+      max_depth: 8
+      learning_rate: 0.05
+      colsample_bytree: 0.8
+    status: "success"
+    n_iter_actual: 12
+  CatBoost:
+    enabled: true
+    model: "CatBoost"
+    seed: 999
+    search: "RandomizedSearchCV"
+    scoring: "roc_auc"
+    cv_folds: 3
+    n_iter_requested: 12
+    best_score: 0.9303047258143927
+    best_params:
+      learning_rate: 0.1
+      l2_leaf_reg: 1
+      iterations: 500
+      depth: 8
+    status: "success"
+    n_iter_actual: 12
+  Random Forest:
+    enabled: true
+    model: "Random Forest"
+    seed: 999
+    search: "RandomizedSearchCV"
+    scoring: "roc_auc"
+    cv_folds: 3
+    n_iter_requested: 12
+    best_score: 0.9130519797049376
+    best_params:
+      n_estimators: 500
+      min_samples_split: 2
+      min_samples_leaf: 2
+      max_features: "log2"
+      max_depth: 20
+    status: "success"
+    n_iter_actual: 12
+  Logistic Reg.:
+    enabled: true
+    model: "Logistic Reg."
+    seed: 999
+    search: "RandomizedSearchCV"
+    scoring: "roc_auc"
+    cv_folds: 3
+    n_iter_requested: 12
+    best_score: 0.7870754228826492
+    best_params:
+      C: 0.03
+    status: "success"
+    n_iter_actual: 7
+  TabNet:
+    enabled: false
+    model: "TabNet"
+    seed: 999
+    search: "none"
+    status: "skipped_expensive_model"
+    best_params:

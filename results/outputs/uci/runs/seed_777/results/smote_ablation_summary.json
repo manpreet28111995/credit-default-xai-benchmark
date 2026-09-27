@@ -1,0 +1,8 @@
+{
+  "selection_metric": "validation_AUROC",
+  "model_used": "LightGBM",
+  "best_strategy": "None",
+  "best_validation_AUROC": 0.7911,
+  "none_validation_AUROC": 0.7911,
+  "resampling_helped": false
+}

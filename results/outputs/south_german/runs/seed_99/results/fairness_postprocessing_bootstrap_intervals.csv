@@ -1,0 +1,73 @@
+comparison,model,group_column,metric,difference_candidate_minus_reference,ci_low,ci_high,valid_bootstrap_reps,requested_bootstrap_reps,seed
+validation_equal_opportunity_minus_global_validation_f1,XGBoost,personal_status_sex,accuracy,-0.10458999999999999,-0.17499999999999993,-0.040000000000000036,2000,2000,2100
+validation_equal_opportunity_minus_global_validation_f1,XGBoost,personal_status_sex,utility,0.1730225,-0.039999999999999925,0.39999999999999997,2000,2000,2100
+validation_equal_opportunity_minus_global_validation_f1,XGBoost,personal_status_sex,max_group_gap,0.16810626369685816,0.0,0.5190922619047615,2000,2000,2100
+validation_equal_opportunity_minus_global_validation_f1,XGBoost,personal_status_sex,personal_status_sex_selection_gap,0.34599029865656133,0.1538194444444444,0.6030905084312723,2000,2000,2100
+validation_equal_opportunity_minus_global_validation_f1,XGBoost,personal_status_sex,personal_status_sex_tpr_gap,0.1639418094078083,0.0,0.5263299377475948,2000,2000,2100
+validation_equal_opportunity_minus_global_validation_f1,XGBoost,personal_status_sex,personal_status_sex_fpr_gap,0.38527598014856435,0.11057268885758761,0.6875288865546217,2000,2000,2100
+validation_equal_opportunity_minus_global_validation_f1,XGBoost,age,accuracy,-0.010555000000000007,-0.03500000000000003,0.015000000000000013,2000,2000,2101
+validation_equal_opportunity_minus_global_validation_f1,XGBoost,age,utility,-0.087355,-0.20500000000000002,0.0050000000000000044,2000,2000,2101
+validation_equal_opportunity_minus_global_validation_f1,XGBoost,age,max_group_gap,0.0,0.0,0.0,2000,2000,2101
+validation_equal_opportunity_minus_global_validation_f1,XGBoost,age,age_selection_gap,9.999999999999998e-05,0.0,0.0,2000,2000,2101
+validation_equal_opportunity_minus_global_validation_f1,XGBoost,age,age_tpr_gap,0.0,0.0,0.0,2000,2000,2101
+validation_equal_opportunity_minus_global_validation_f1,XGBoost,age,age_fpr_gap,0.0012555555555555555,0.0,0.0,2000,2000,2101
+validation_equal_opportunity_minus_global_validation_f1,LightGBM,personal_status_sex,accuracy,-0.05577749999999998,-0.09999999999999998,-0.010000000000000009,2000,2000,2103
+validation_equal_opportunity_minus_global_validation_f1,LightGBM,personal_status_sex,utility,-0.030940000000000006,-0.18,0.125,2000,2000,2103
+validation_equal_opportunity_minus_global_validation_f1,LightGBM,personal_status_sex,max_group_gap,0.28584304306146513,-0.06864253393665168,0.6222916666666662,2000,2000,2103
+validation_equal_opportunity_minus_global_validation_f1,LightGBM,personal_status_sex,personal_status_sex_selection_gap,0.227687045429083,-0.14052130835303359,0.4759445995656606,2000,2000,2103
+validation_equal_opportunity_minus_global_validation_f1,LightGBM,personal_status_sex,personal_status_sex_tpr_gap,0.3157032345954574,-0.05212053571428575,0.7096485507246375,2000,2000,2103
+validation_equal_opportunity_minus_global_validation_f1,LightGBM,personal_status_sex,personal_status_sex_fpr_gap,0.07163689507082403,-0.3692022627538239,0.39643886743886714,2000,2000,2103
+validation_equal_opportunity_minus_global_validation_f1,LightGBM,age,accuracy,0.03023000000000001,-0.015000000000000013,0.07999999999999996,2000,2000,2104
+validation_equal_opportunity_minus_global_validation_f1,LightGBM,age,utility,-0.11830750000000001,-0.29,0.035124999999999344,2000,2000,2104
+validation_equal_opportunity_minus_global_validation_f1,LightGBM,age,max_group_gap,0.0,0.0,0.0,2000,2000,2104
+validation_equal_opportunity_minus_global_validation_f1,LightGBM,age,age_selection_gap,0.0,0.0,0.0,2000,2000,2104
+validation_equal_opportunity_minus_global_validation_f1,LightGBM,age,age_tpr_gap,0.00016666666666666663,0.0,0.0,2000,2000,2104
+validation_equal_opportunity_minus_global_validation_f1,LightGBM,age,age_fpr_gap,-0.0003333333333333334,0.0,0.0,2000,2000,2104
+validation_equal_opportunity_minus_global_validation_f1,CatBoost,personal_status_sex,accuracy,-0.13457999999999998,-0.20999999999999996,-0.05999999999999994,2000,2000,2106
+validation_equal_opportunity_minus_global_validation_f1,CatBoost,personal_status_sex,utility,0.23992000000000002,-0.0050000000000000044,0.51,2000,2000,2106
+validation_equal_opportunity_minus_global_validation_f1,CatBoost,personal_status_sex,max_group_gap,0.12768694310188045,-0.0869884910485934,0.3529411764705882,2000,2000,2106
+validation_equal_opportunity_minus_global_validation_f1,CatBoost,personal_status_sex,personal_status_sex_selection_gap,0.3371136893778028,0.14701138519924103,0.5453132412239088,2000,2000,2106
+validation_equal_opportunity_minus_global_validation_f1,CatBoost,personal_status_sex,personal_status_sex_tpr_gap,0.1258638402685624,-0.09999999999999998,0.3529411764705882,2000,2000,2106
+validation_equal_opportunity_minus_global_validation_f1,CatBoost,personal_status_sex,personal_status_sex_fpr_gap,0.35494770207476667,0.10947943431250197,0.5658296084391203,2000,2000,2106
+validation_equal_opportunity_minus_global_validation_f1,CatBoost,age,accuracy,-0.030002500000000005,-0.06000000000000005,0.0,2000,2000,2107
+validation_equal_opportunity_minus_global_validation_f1,CatBoost,age,utility,-0.12916500000000003,-0.255,-0.030000000000000027,2000,2000,2107
+validation_equal_opportunity_minus_global_validation_f1,CatBoost,age,max_group_gap,0.0,0.0,0.0,2000,2000,2107
+validation_equal_opportunity_minus_global_validation_f1,CatBoost,age,age_selection_gap,0.000275,0.0,0.0,2000,2000,2107
+validation_equal_opportunity_minus_global_validation_f1,CatBoost,age,age_tpr_gap,0.0,0.0,0.0,2000,2000,2107
+validation_equal_opportunity_minus_global_validation_f1,CatBoost,age,age_fpr_gap,0.001946031746031746,0.0,0.0,2000,2000,2107
+validation_equal_opportunity_minus_global_validation_f1,Random Forest,personal_status_sex,accuracy,-0.049564999999999984,-0.10499999999999998,0.0050000000000000044,2000,2000,2109
+validation_equal_opportunity_minus_global_validation_f1,Random Forest,personal_status_sex,utility,0.14952249999999997,-0.050000000000000044,0.36,2000,2000,2109
+validation_equal_opportunity_minus_global_validation_f1,Random Forest,personal_status_sex,max_group_gap,0.2774382076684395,0.0,0.5952380952380951,2000,2000,2109
+validation_equal_opportunity_minus_global_validation_f1,Random Forest,personal_status_sex,personal_status_sex_selection_gap,0.22957113353143216,-0.1269983442919764,0.5493312937062934,2000,2000,2109
+validation_equal_opportunity_minus_global_validation_f1,Random Forest,personal_status_sex,personal_status_sex_tpr_gap,0.2853589931850658,0.0,0.6328690476190476,2000,2000,2109
+validation_equal_opportunity_minus_global_validation_f1,Random Forest,personal_status_sex,personal_status_sex_fpr_gap,0.17596981853356017,-0.33333333333333326,0.5929711596477155,2000,2000,2109
+validation_equal_opportunity_minus_global_validation_f1,Random Forest,age,accuracy,-0.004910000000000002,-0.03500000000000003,0.024999999999999915,2000,2000,2110
+validation_equal_opportunity_minus_global_validation_f1,Random Forest,age,utility,-0.12925999999999999,-0.2749999999999999,-0.010000000000000009,2000,2000,2110
+validation_equal_opportunity_minus_global_validation_f1,Random Forest,age,max_group_gap,0.0,0.0,0.0,2000,2000,2110
+validation_equal_opportunity_minus_global_validation_f1,Random Forest,age,age_selection_gap,-0.0003939393939393939,0.0,0.0,2000,2000,2110
+validation_equal_opportunity_minus_global_validation_f1,Random Forest,age,age_tpr_gap,0.0,0.0,0.0,2000,2000,2110
+validation_equal_opportunity_minus_global_validation_f1,Random Forest,age,age_fpr_gap,-0.0004238095238095239,0.0,0.0,2000,2000,2110
+validation_equal_opportunity_minus_global_validation_f1,Logistic Reg.,personal_status_sex,accuracy,-0.09045749999999998,-0.15000000000000002,-0.029999999999999916,2000,2000,2112
+validation_equal_opportunity_minus_global_validation_f1,Logistic Reg.,personal_status_sex,utility,0.20616750000000003,-0.010125,0.43999999999999995,2000,2000,2112
+validation_equal_opportunity_minus_global_validation_f1,Logistic Reg.,personal_status_sex,max_group_gap,-0.046575254353954244,-0.4571616541353384,0.32266006842619704,2000,2000,2112
+validation_equal_opportunity_minus_global_validation_f1,Logistic Reg.,personal_status_sex,personal_status_sex_selection_gap,0.19331743012206215,-0.26169588153296375,0.5555575117370892,2000,2000,2112
+validation_equal_opportunity_minus_global_validation_f1,Logistic Reg.,personal_status_sex,personal_status_sex_tpr_gap,-0.24238479543681893,-0.7600789473684211,0.2592995169082124,2000,2000,2112
+validation_equal_opportunity_minus_global_validation_f1,Logistic Reg.,personal_status_sex,personal_status_sex_fpr_gap,0.457888778789889,-0.02598794063079778,0.7800121951219512,2000,2000,2112
+validation_equal_opportunity_minus_global_validation_f1,Logistic Reg.,age,accuracy,0.005015000000000002,-0.020000000000000018,0.030000000000000027,2000,2000,2113
+validation_equal_opportunity_minus_global_validation_f1,Logistic Reg.,age,utility,-0.0696975,-0.18499999999999994,0.020000000000000018,2000,2000,2113
+validation_equal_opportunity_minus_global_validation_f1,Logistic Reg.,age,max_group_gap,0.0,0.0,0.0,2000,2000,2113
+validation_equal_opportunity_minus_global_validation_f1,Logistic Reg.,age,age_selection_gap,-1.785714285714285e-05,0.0,0.0,2000,2000,2113
+validation_equal_opportunity_minus_global_validation_f1,Logistic Reg.,age,age_tpr_gap,0.0,0.0,0.0,2000,2000,2113
+validation_equal_opportunity_minus_global_validation_f1,Logistic Reg.,age,age_fpr_gap,-0.00015476190476190478,0.0,0.0,2000,2000,2113
+validation_equal_opportunity_minus_global_validation_f1,TabNet,personal_status_sex,accuracy,-0.10917750000000001,-0.17999999999999994,-0.03500000000000003,2000,2000,2115
+validation_equal_opportunity_minus_global_validation_f1,TabNet,personal_status_sex,utility,0.31679749999999995,0.08499999999999996,0.585,2000,2000,2115
+validation_equal_opportunity_minus_global_validation_f1,TabNet,personal_status_sex,max_group_gap,0.07324561203817957,-0.2790697674418605,0.3333455612619222,2000,2000,2115
+validation_equal_opportunity_minus_global_validation_f1,TabNet,personal_status_sex,personal_status_sex_selection_gap,0.23485181899437707,-0.01591478696741849,0.483907397037712,2000,2000,2115
+validation_equal_opportunity_minus_global_validation_f1,TabNet,personal_status_sex,personal_status_sex_tpr_gap,-0.19697956647548573,-0.5769736842105263,0.19999999999999996,2000,2000,2115
+validation_equal_opportunity_minus_global_validation_f1,TabNet,personal_status_sex,personal_status_sex_fpr_gap,0.4112413200224413,0.04698125404007752,0.6990318876188439,2000,2000,2115
+validation_equal_opportunity_minus_global_validation_f1,TabNet,age,accuracy,-0.010372499999999998,-0.05500000000000005,0.03500000000000003,2000,2000,2116
+validation_equal_opportunity_minus_global_validation_f1,TabNet,age,utility,0.0377025,-0.14,0.2351249999999993,2000,2000,2116
+validation_equal_opportunity_minus_global_validation_f1,TabNet,age,max_group_gap,0.0,0.0,0.0,2000,2000,2116
+validation_equal_opportunity_minus_global_validation_f1,TabNet,age,age_selection_gap,0.0036695887445887445,0.0,0.0,2000,2000,2116
+validation_equal_opportunity_minus_global_validation_f1,TabNet,age,age_tpr_gap,9.999999999999998e-05,0.0,0.0,2000,2000,2116
+validation_equal_opportunity_minus_global_validation_f1,TabNet,age,age_fpr_gap,0.024717478354978357,0.0,0.33333333333333337,2000,2000,2116
