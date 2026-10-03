@@ -1,0 +1,18 @@
+{
+  "selection_metric": "OOF_AUROC_inner_cv",
+  "inner_cv": "ObservableTimeSeriesSplit",
+  "model_used": "LightGBM",
+  "best_strategy": "BorderlineSMOTE",
+  "best_oof_AUROC": 0.6147670473211237,
+  "none_oof_AUROC": 0.5974822953759127,
+  "classweight_oof_AUROC": 0.5259324191274853,
+  "resampling_helped": true,
+  "strategies_evaluated": [
+    "SMOTE",
+    "BorderlineSMOTE",
+    "SVMSMOTE",
+    "ADASYN",
+    "None",
+    "ClassWeight"
+  ]
+}

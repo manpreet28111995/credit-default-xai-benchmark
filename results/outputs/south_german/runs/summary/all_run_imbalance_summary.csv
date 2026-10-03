@@ -1,0 +1,11 @@
+run_id,seed,cutoff,selection_metric,inner_cv,model_used,best_strategy,best_oof_AUROC,none_oof_AUROC,classweight_oof_AUROC,resampling_helped,strategies_evaluated
+seed_42,42,,OOF_AUROC_inner_cv,StratifiedKFold,LightGBM,SVMSMOTE,0.783623511904762,0.7833184523809523,0.7723735119047619,True,"['SMOTE', 'BorderlineSMOTE', 'SVMSMOTE', 'ADASYN', 'None', 'ClassWeight']"
+seed_99,99,,OOF_AUROC_inner_cv,StratifiedKFold,LightGBM,None,0.7815401785714287,0.7815401785714287,0.7759002976190476,False,"['SMOTE', 'BorderlineSMOTE', 'SVMSMOTE', 'ADASYN', 'None', 'ClassWeight']"
+seed_123,123,,OOF_AUROC_inner_cv,StratifiedKFold,LightGBM,BorderlineSMOTE,0.7732291666666665,0.74921875,0.7445982142857143,True,"['SMOTE', 'BorderlineSMOTE', 'SVMSMOTE', 'ADASYN', 'None', 'ClassWeight']"
+seed_326,326,,OOF_AUROC_inner_cv,StratifiedKFold,LightGBM,SVMSMOTE,0.7523065476190477,0.7465848214285714,0.7280654761904761,True,"['SMOTE', 'BorderlineSMOTE', 'SVMSMOTE', 'ADASYN', 'None', 'ClassWeight']"
+seed_456,456,,OOF_AUROC_inner_cv,StratifiedKFold,LightGBM,None,0.7725223214285715,0.7725223214285715,0.7705729166666667,False,"['SMOTE', 'BorderlineSMOTE', 'SVMSMOTE', 'ADASYN', 'None', 'ClassWeight']"
+seed_515,515,,OOF_AUROC_inner_cv,StratifiedKFold,LightGBM,None,0.7768377976190476,0.7768377976190476,0.7504203869047619,False,"['SMOTE', 'BorderlineSMOTE', 'SVMSMOTE', 'ADASYN', 'None', 'ClassWeight']"
+seed_689,689,,OOF_AUROC_inner_cv,StratifiedKFold,LightGBM,None,0.7710193452380952,0.7710193452380952,0.7619717261904763,False,"['SMOTE', 'BorderlineSMOTE', 'SVMSMOTE', 'ADASYN', 'None', 'ClassWeight']"
+seed_777,777,,OOF_AUROC_inner_cv,StratifiedKFold,LightGBM,SVMSMOTE,0.771986607142857,0.7612574404761905,0.7407626488095238,True,"['SMOTE', 'BorderlineSMOTE', 'SVMSMOTE', 'ADASYN', 'None', 'ClassWeight']"
+seed_872,872,,OOF_AUROC_inner_cv,StratifiedKFold,LightGBM,SVMSMOTE,0.7864136904761905,0.7766294642857143,0.7738839285714286,True,"['SMOTE', 'BorderlineSMOTE', 'SVMSMOTE', 'ADASYN', 'None', 'ClassWeight']"
+seed_999,999,,OOF_AUROC_inner_cv,StratifiedKFold,LightGBM,None,0.7884970238095237,0.7884970238095237,0.7633221726190476,False,"['SMOTE', 'BorderlineSMOTE', 'SVMSMOTE', 'ADASYN', 'None', 'ClassWeight']"

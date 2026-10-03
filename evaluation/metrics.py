@@ -77,26 +77,34 @@ def compute_metrics(
         "TN"         : int(tn),
         "threshold"  : threshold,
     }
-    return {k: round(float(v), 4) for k, v in metrics.items()}
+    # Full precision: rounding here would quantise bootstrap distributions.
+    return {k: (int(v) if k in {"TP", "FP", "FN", "TN"} else float(v)) for k, v in metrics.items()}
 
 
 def optimal_threshold(
     y_true: np.ndarray,
     y_proba: np.ndarray,
     criterion: str = "f1",
+    cost_fp: float = 1.0,
+    cost_fn: float = 5.0,
 ) -> Tuple[float, float]:
     """
     Sweep probability thresholds and pick the one maximising `criterion`.
 
     Parameters
     ──────────
-    criterion : 'f1' | 'g_mean' | 'youden'
+    criterion : 'f1' | 'g_mean' | 'youden' | 'cost'
+                'cost' maximises expected utility per row:
+                (TP - cost_fp*FP - cost_fn*FN) / n, consistent with the
+                fairness--utility analysis.
 
     Returns
     ───────
     (best_threshold, best_score)
     """
-    thresholds = np.arange(0.05, 0.95, 0.01)
+    y_true = np.asarray(y_true).astype(int)
+    y_proba = np.asarray(y_proba, dtype=float)
+    thresholds = np.arange(0.01, 0.99, 0.01)
     scores     = []
 
     for t in thresholds:
@@ -116,6 +124,8 @@ def optimal_threshold(
             score = np.sqrt(sens * spec)
         elif criterion == "youden":
             score = sens + spec - 1
+        elif criterion == "cost":
+            score = (tp - cost_fp * fp - cost_fn * fn) / max(len(y_true), 1)
         else:
             raise ValueError(f"Unknown criterion '{criterion}'.")
         scores.append(score)
@@ -202,8 +212,7 @@ def mcnemar_test(
     chi2 = (abs(b - c) - 1) ** 2 / (b + c)   # with continuity correction
     from scipy.stats import chi2 as chi2_dist
     p_val = 1 - chi2_dist.cdf(chi2, df=1)
-    return {"chi2": round(float(chi2), 4), "p_value": round(float(p_val), 4),
-            "b": int(b), "c": int(c)}
+    return {"chi2": float(chi2), "p_value": float(p_val), "b": int(b), "c": int(c)}
 
 
 def delong_test(
@@ -241,8 +250,9 @@ def delong_test(
     auc_b = vp_b.mean()
 
     # Covariance
-    s11 = (np.var(vp_a) / m + np.var(vn_a) / n)
-    s22 = (np.var(vp_b) / m + np.var(vn_b) / n)
+    # Unbiased (ddof=1) estimates throughout, matching np.cov's default.
+    s11 = (np.var(vp_a, ddof=1) / m + np.var(vn_a, ddof=1) / n)
+    s22 = (np.var(vp_b, ddof=1) / m + np.var(vn_b, ddof=1) / n)
     s12 = (np.cov(vp_a, vp_b)[0, 1] / m + np.cov(vn_a, vn_b)[0, 1] / n)
 
     var_diff = s11 + s22 - 2 * s12
@@ -253,10 +263,10 @@ def delong_test(
     p_val = 2 * (1 - norm.cdf(abs(z)))
 
     return {
-        "z"      : round(z, 4),
-        "p_value": round(p_val, 4),
-        "auc_a"  : round(auc_a, 4),
-        "auc_b"  : round(auc_b, 4),
+        "z"      : float(z),
+        "p_value": float(p_val),
+        "auc_a"  : float(auc_a),
+        "auc_b"  : float(auc_b),
     }
 
 
@@ -282,3 +292,90 @@ def build_results_table(
             "Specificity", "G-Mean", "MCC", "Brier"]
     df   = df[[c for c in keep if c in df.columns]]
     return df.round(4)
+
+
+# ── Out-of-fold prediction (works for partition and forward-chaining splitters) ──
+
+def oof_predict_proba(
+    estimator,
+    X: pd.DataFrame,
+    y: pd.Series,
+    cv,
+    fit_params: Optional[dict] = None,
+) -> Tuple[np.ndarray, np.ndarray]:
+    """
+    Out-of-fold positive-class probabilities.
+
+    Unlike ``cross_val_predict`` this accepts splitters whose test folds do not
+    partition the data (e.g. TimeSeriesSplit). Rows never held out receive NaN;
+    the boolean ``covered`` mask marks rows with a prediction.
+
+    The estimator is cloned per fold, so any sampler/preprocessing inside an
+    imblearn Pipeline is re-fitted fold-locally.
+    """
+    from sklearn.base import clone
+
+    y_arr = np.asarray(y).astype(int)
+    proba = np.full(len(y_arr), np.nan, dtype=float)
+    for train_idx, test_idx in cv.split(X, y_arr):
+        est = clone(estimator)
+        est.fit(X.iloc[train_idx], y_arr[train_idx], **(fit_params or {}))
+        proba[test_idx] = est.predict_proba(X.iloc[test_idx])[:, 1]
+    covered = ~np.isnan(proba)
+    return proba, covered
+
+
+# ── Cross-run model comparison (Demšar 2006) ──────────────────────────────────
+
+# Studentised range statistic q_alpha (alpha = 0.05) divided by sqrt(2), k = 2..10
+_NEMENYI_Q05 = {2: 1.960, 3: 2.343, 4: 2.569, 5: 2.728, 6: 2.850,
+                7: 2.949, 8: 3.031, 9: 3.102, 10: 3.164}
+
+
+def friedman_nemenyi(
+    scores: pd.DataFrame,
+    higher_is_better: bool = True,
+) -> Dict[str, object]:
+    """
+    Friedman test with Nemenyi critical difference across runs.
+
+    Parameters
+    ──────────
+    scores : DataFrame indexed by run (seed or cutoff), one column per model.
+
+    Returns
+    ───────
+    dict with average ranks, Friedman chi², p-value, Nemenyi CD (alpha 0.05),
+    and the pairwise |rank difference| matrix flagged against the CD.
+    """
+    from scipy.stats import friedmanchisquare
+
+    frame = scores.dropna(axis=0, how="any")
+    n_runs, k = frame.shape
+    if n_runs < 2 or k < 2:
+        return {"status": "insufficient_runs_or_models", "n_runs": int(n_runs), "k": int(k)}
+    ranks = frame.rank(axis=1, ascending=not higher_is_better)
+    avg_rank = ranks.mean(axis=0).sort_values()
+    if k == 2:
+        chi2, p = np.nan, np.nan
+    else:
+        chi2, p = friedmanchisquare(*[frame[c].to_numpy() for c in frame.columns])
+    q = _NEMENYI_Q05.get(int(k))
+    cd = float(q * np.sqrt(k * (k + 1) / (6.0 * n_runs))) if q else float("nan")
+    diff = pd.DataFrame(
+        np.abs(avg_rank.to_numpy()[:, None] - avg_rank.to_numpy()[None, :]),
+        index=avg_rank.index, columns=avg_rank.index,
+    )
+    return {
+        "status": "ok",
+        "n_runs": int(n_runs), "k": int(k),
+        "average_rank": avg_rank.to_dict(),
+        "friedman_chi2": float(chi2) if np.isfinite(chi2) else None,
+        "friedman_p": float(p) if np.isfinite(p) else None,
+        "nemenyi_cd_alpha_0.05": cd,
+        "pairwise_rank_difference": diff.round(4).to_dict(),
+        "significant_pairs_alpha_0.05": [
+            [a, b] for i, a in enumerate(avg_rank.index) for b in avg_rank.index[i + 1:]
+            if np.isfinite(cd) and diff.loc[a, b] > cd
+        ],
+    }

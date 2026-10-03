@@ -1,0 +1,8 @@
+{
+  "model": "Logistic Reg.",
+  "output_space": "probability",
+  "n_explained": 200,
+  "mae": 4.65599780952175e-17,
+  "pass": true,
+  "tol": 0.05
+}

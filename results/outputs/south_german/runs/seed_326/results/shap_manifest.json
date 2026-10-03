@@ -1,0 +1,8 @@
+{
+  "model": "Random Forest",
+  "output_space": "probability",
+  "n_explained": 200,
+  "mae": 4.3789624704082543e-16,
+  "pass": true,
+  "tol": 0.05
+}

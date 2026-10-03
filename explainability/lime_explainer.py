@@ -60,6 +60,8 @@ class CreditLimeExplainer:
         num_features: int = 15,
         num_samples: int = 1000,
         random_state: int = 42,
+        categorical_features: Optional[list[int]] = None,
+        categorical_names: Optional[dict] = None,
     ):
         LimeTabularExplainer = _import_lime()
 
@@ -72,6 +74,8 @@ class CreditLimeExplainer:
             training_data   = X_train.values.astype("float32"),
             feature_names   = feature_names,
             class_names     = class_names or ["Non-default", "Default"],
+            categorical_features = categorical_features or [],
+            categorical_names    = categorical_names or {},
             discretize_continuous = True,
             random_state    = random_state,
             verbose         = False,

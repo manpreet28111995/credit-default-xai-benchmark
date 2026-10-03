@@ -1,24 +1,19 @@
-# ── Gradient boosting ─────────────────────────────────────────────────────────
-xgboost>=2.0
-lightgbm>=4.0
-catboost>=1.2
-
-# ── Imbalanced learning ───────────────────────────────────────────────────────
-imbalanced-learn>=0.11
-
-# ── Explainability ────────────────────────────────────────────────────────────
-shap>=0.44
-lime>=0.2.0.1
-
-# ── Tabular transformer ───────────────────────────────────────────────────────
-pytorch-tabnet>=4.1
-torch>=2.0
-
-# ── Visualisation ─────────────────────────────────────────────────────────────
-matplotlib>=3.7
-seaborn>=0.13
-
-# ── Data I/O ──────────────────────────────────────────────────────────────────
-requests>=2.31
-openpyxl>=3.1          # for reading UCI .xls
-xlrd>=2.0.1
+# Pinned to the versions used for the protocol v3 runs (see run_manifest.json package_versions).
+numpy==2.5.3
+pandas==3.0.6
+scikit-learn==1.9.1
+scipy==1.18.1
+imbalanced-learn==0.14.2
+xgboost==3.4.1
+lightgbm==4.7.0
+catboost==1.2.10
+shap==0.52.0
+lime==0.2.0.1
+pytorch-tabnet==4.1.0
+torch==2.14.0
+matplotlib==3.11.2
+seaborn==0.13.2
+requests==2.34.2
+openpyxl==3.1.5
+xlrd==2.0.2
+pytest==9.1.1

@@ -1,0 +1,11 @@
+run_id,seed,cutoff,selection_metric,inner_cv,model_used,best_strategy,best_oof_AUROC,none_oof_AUROC,classweight_oof_AUROC,resampling_helped,strategies_evaluated
+seed_42,42,,OOF_AUROC_inner_cv,StratifiedKFold,LightGBM,None,0.7853120822637237,0.7853120822637237,0.7808766071252736,False,"['SMOTE', 'BorderlineSMOTE', 'SVMSMOTE', 'ADASYN', 'None', 'ClassWeight']"
+seed_99,99,,OOF_AUROC_inner_cv,StratifiedKFold,LightGBM,None,0.7811335442073017,0.7811335442073017,0.7760639647566492,False,"['SMOTE', 'BorderlineSMOTE', 'SVMSMOTE', 'ADASYN', 'None', 'ClassWeight']"
+seed_123,123,,OOF_AUROC_inner_cv,StratifiedKFold,LightGBM,None,0.7837763299413963,0.7837763299413963,0.7802726296332281,False,"['SMOTE', 'BorderlineSMOTE', 'SVMSMOTE', 'ADASYN', 'None', 'ClassWeight']"
+seed_326,326,,OOF_AUROC_inner_cv,StratifiedKFold,LightGBM,None,0.7853682746534865,0.7853682746534865,0.7799954518024843,False,"['SMOTE', 'BorderlineSMOTE', 'SVMSMOTE', 'ADASYN', 'None', 'ClassWeight']"
+seed_456,456,,OOF_AUROC_inner_cv,StratifiedKFold,LightGBM,None,0.7833708599266723,0.7833708599266723,0.7789385138658803,False,"['SMOTE', 'BorderlineSMOTE', 'SVMSMOTE', 'ADASYN', 'None', 'ClassWeight']"
+seed_515,515,,OOF_AUROC_inner_cv,StratifiedKFold,LightGBM,None,0.7805869079451252,0.7805869079451252,0.7771305720974814,False,"['SMOTE', 'BorderlineSMOTE', 'SVMSMOTE', 'ADASYN', 'None', 'ClassWeight']"
+seed_689,689,,OOF_AUROC_inner_cv,StratifiedKFold,LightGBM,None,0.7822750881712107,0.7822750881712107,0.7776754699831813,False,"['SMOTE', 'BorderlineSMOTE', 'SVMSMOTE', 'ADASYN', 'None', 'ClassWeight']"
+seed_777,777,,OOF_AUROC_inner_cv,StratifiedKFold,LightGBM,None,0.7838776596542844,0.7838776596542844,0.7794065452786758,False,"['SMOTE', 'BorderlineSMOTE', 'SVMSMOTE', 'ADASYN', 'None', 'ClassWeight']"
+seed_872,872,,OOF_AUROC_inner_cv,StratifiedKFold,LightGBM,None,0.7853386063616175,0.7853386063616175,0.782396069096444,False,"['SMOTE', 'BorderlineSMOTE', 'SVMSMOTE', 'ADASYN', 'None', 'ClassWeight']"
+seed_999,999,,OOF_AUROC_inner_cv,StratifiedKFold,LightGBM,None,0.782371308568889,0.782371308568889,0.7791180453263578,False,"['SMOTE', 'BorderlineSMOTE', 'SVMSMOTE', 'ADASYN', 'None', 'ClassWeight']"

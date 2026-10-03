@@ -1,8 +1,18 @@
 {
-  "selection_metric": "validation_AUROC",
+  "selection_metric": "OOF_AUROC_inner_cv",
+  "inner_cv": "StratifiedKFold",
   "model_used": "LightGBM",
   "best_strategy": "None",
-  "best_validation_AUROC": 0.7759,
-  "none_validation_AUROC": 0.7759,
-  "resampling_helped": false
+  "best_oof_AUROC": 0.7822750881712107,
+  "none_oof_AUROC": 0.7822750881712107,
+  "classweight_oof_AUROC": 0.7776754699831813,
+  "resampling_helped": false,
+  "strategies_evaluated": [
+    "SMOTE",
+    "BorderlineSMOTE",
+    "SVMSMOTE",
+    "ADASYN",
+    "None",
+    "ClassWeight"
+  ]
 }

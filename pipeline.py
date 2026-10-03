@@ -1,34 +1,44 @@
 """
-pipeline.py — End-to-end experiment pipeline.
+pipeline.py — Training-only CV selection, OOF postprocessing, held-out evaluation.
 
-Orchestrates:
-  1. Data loading and feature engineering
-  2. Imbalance analysis
-  3. SMOTE strategy ablation
-  4. Model training (XGBoost, LightGBM, CatBoost, TabNet, baselines)
-  5. Evaluation (cross-validation + held-out test)
-  6. SHAP global and local explanations
-  7. LIME local explanations
-  8. SHAP–LIME agreement analysis
-  9. Figure generation (Figs 1–10)
-  10. Results export (CSV / LaTeX tables)
-  11. Optional revision analyses (robustness, XAI quality, ablations, fairness)
+Stages
+  1. Data loading, labelling, and partitioning (train / test only)
+  2. Imbalance-strategy ablation, selected on out-of-fold (OOF) AUROC
+  3. Model training: RandomizedSearchCV over an imblearn Pipeline
+     (preprocessor -> sampler -> model) so imputation, winsorisation,
+     scaling and resampling are all re-fitted inside every fold; OOF
+     predictions from the tuned pipeline; refit on the full train partition
+  4. Evaluation: thresholds, calibration maps, champion, and fairness
+     thresholds are all chosen on OOF predictions; the test partition is
+     used for reporting, not selection
+  5. SHAP global and local explanations (random test subsample)
+  6. LIME local explanations and SHAP–LIME agreement
+  7. Revision analyses (robustness, XAI quality, controlled ablations,
+     fairness–utility, descriptive reliability diagnostics)
+  8. Multi-run summary with descriptive model ranks across dependent runs
+
+Replication unit
+  * random split   : one run per seed (split + model RNG)
+  * temporal split : rolling-origin blocks; one run per (cutoff, seed).
+                     Training rows have labels observable at the cutoff;
+                     test rows are originated in the following window.
 
 Run with:
-  python pipeline.py [--dataset uci|lending_club|south_german] [--fast]
-                     [--seeds 42 99 123 326 456 515 689 777 872 999]
-                     [--revision-analyses] [--external-datasets south_german]
-
-  --fast  : use fewer models and samples (for development/CI)
+  python pipeline.py --dataset uci --seeds 42 99 ...
+  python pipeline.py --dataset prosper --split-mode temporal \
+                     --cutoffs 2010-01 2010-07 2011-01 2011-07 2012-01 2012-07 --seeds 42
 """
 
 from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib
 import json
 import logging
 import os
+import platform
+import pickle
 import signal
 import sys
 import warnings
@@ -39,27 +49,29 @@ from typing import Dict, Tuple
 import numpy as np
 import pandas as pd
 
-# Local imports ─────────────────────────────────────────────────────────────
 sys.path.insert(0, str(Path(__file__).parent))
 os.environ.setdefault("MPLCONFIGDIR", str(Path(__file__).parent / ".mplconfig"))
-(Path(__file__).parent / ".mplconfig").mkdir(exist_ok=True)
+os.environ.setdefault("MPLBACKEND", "Agg")
+Path(os.environ["MPLCONFIGDIR"]).mkdir(parents=True, exist_ok=True)
 
 from config import (
-    DATASET, TEST_SIZE, VAL_SIZE, DEFAULT_SEEDS,
-    SMOTE_STRATEGIES, FIG_DIR, RES_DIR, MDL_DIR, DATA_DIR, OUTPUTS_DIR, RUNS_DIR,
-    RANDOM_SEARCH_SPACES, RANDOM_SEARCH_N_ITER, RANDOM_SEARCH_CV_FOLDS,
-    RANDOM_SEARCH_SCORING,
-    SHAP_BACKGROUND_SAMPLES, LIME_NUM_FEATURES, LIME_NUM_SAMPLES,
-    N_LOCAL_EXPLANATIONS, CV_FOLDS, FIGURE_EXT,
+    DATASET, TEST_SIZE, DEFAULT_SEEDS,
+    SMOTE_STRATEGIES, FIG_DIR, RES_DIR, MDL_DIR, DATA_DIR, OUTPUTS_DIR, ORIGINAL_OUTPUTS_DIR, RUNS_DIR,
+    RANDOM_SEARCH_SPACES, RANDOM_SEARCH_N_ITER, RANDOM_SEARCH_SCORING,
+    INNER_CV_FOLDS, INNER_TEMPORAL_FOLDS, THRESHOLD_CRITERION,
+    SHAP_BACKGROUND_SAMPLES, LIME_NUM_FEATURES, LIME_NUM_SAMPLES, FIGURE_EXT,
+    PROSPER_DEFAULT_CUTOFFS, PROSPER_HORIZON_MONTHS, PROSPER_TEST_WINDOW_MONTHS,
+    PROSPER_FILE,
 )
-from data.data_loader          import load_dataset
+from data.data_loader import load_dataset, LoadedData
 from preprocessing.imbalance_handler import (
-    apply_resampling, imbalance_statistics,
+    NominalAwareOverSampler, apply_resampling, imbalance_statistics, SAMPLER_REGISTRY,
 )
-from models.gradient_boosting  import build_model, MODEL_REGISTRY
-from evaluation.metrics        import (
+from preprocessing.tabular_preprocessor import TabularPreprocessor
+from models.gradient_boosting import build_model, MODEL_REGISTRY
+from evaluation.metrics import (
     compute_metrics, optimal_threshold, build_results_table,
-    mcnemar_test, delong_test, cross_validate_model,
+    mcnemar_test, delong_test, oof_predict_proba,
 )
 from evaluation.revision_analysis import (
     evaluate_robustness, explanation_metrics, fairness_utility_curve,
@@ -69,8 +81,11 @@ from evaluation.revision_analysis import (
     fit_equal_opportunity_threshold_policy, evaluate_group_threshold_policy,
     bootstrap_fairness_policy_differences,
 )
+from imblearn.pipeline import Pipeline as ImbPipeline
 from sklearn.model_selection import RandomizedSearchCV, StratifiedKFold
-from visualization.plots       import (
+from evaluation.temporal_cv import ObservableTimeSeriesSplit
+from rerun_support import PROTOCOL, training_key, load_checkpoint, save_checkpoint, descriptive_ranks
+from visualization.plots import (
     plot_class_distribution, plot_roc_curves, plot_pr_curves,
     plot_confusion_matrix, plot_feature_importance_comparison,
     plot_threshold_sweep, plot_smote_ablation,
@@ -87,7 +102,6 @@ from explainability.lime_explainer import (
 
 warnings.filterwarnings("ignore")
 
-# ── Logging ──────────────────────────────────────────────────────────────────
 logging.basicConfig(
     level   = logging.INFO,
     format  = "%(asctime)s  %(levelname)-8s  %(name)s  %(message)s",
@@ -95,35 +109,22 @@ logging.basicConfig(
 )
 log = logging.getLogger("pipeline")
 
+ALL_MODELS = ["XGBoost", "LightGBM", "CatBoost", "Random Forest", "Logistic Reg."]
+FAST_MODELS = ["XGBoost", "LightGBM", "Logistic Reg."]
+TREE_MODELS = {"XGBoost", "LightGBM", "CatBoost", "Random Forest"}
+
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
 @contextmanager
 def _time_limit(seconds: int, label: str = ""):
-    """
-    Best-effort wall-clock timeout for a block of code, via SIGALRM.
-
-    Used as a safety net around the SMOTE-ablation loop's per-(model,
-    strategy) fits. Repeated in-process model construction — especially
-    rebuilding a fresh TabNetClassifier on the MPS device many times in a
-    row — has been observed to occasionally stall rather than raise a
-    catchable exception, which a plain try/except can't protect against.
-    A bounded wall-clock ceiling ensures one bad fit can't block the
-    entire pipeline indefinitely.
-
-    Only enforced on Unix-like systems (macOS, Linux), where SIGALRM is
-    available. On platforms without it (Windows), this is a silent no-op
-    — the surrounding try/except still catches ordinary exceptions, it
-    just can't interrupt a genuine hang.
-    """
+    """Best-effort SIGALRM wall-clock ceiling (no-op where SIGALRM is missing)."""
     if not hasattr(signal, "SIGALRM"):
         yield
         return
 
     def _handler(signum, frame):
-        raise TimeoutError(
-            f"Timed out after {seconds}s" + (f" ({label})" if label else "")
-        )
+        raise TimeoutError(f"Timed out after {seconds}s" + (f" ({label})" if label else ""))
 
     old_handler = signal.signal(signal.SIGALRM, _handler)
     signal.alarm(seconds)
@@ -135,7 +136,6 @@ def _time_limit(seconds: int, label: str = ""):
 
 
 def _model_seed_kwargs(name: str, seed: int) -> dict:
-    """Return per-model RNG keyword so each seed affects model training."""
     if name in {"XGBoost", "LightGBM", "Random Forest", "Logistic Reg."}:
         return {"random_state": seed}
     if name == "CatBoost":
@@ -146,7 +146,6 @@ def _model_seed_kwargs(name: str, seed: int) -> dict:
 
 
 def _sha256(path: Path) -> str:
-    """Return a stable checksum for provenance manifests."""
     digest = hashlib.sha256()
     with path.open("rb") as handle:
         for block in iter(lambda: handle.read(1024 * 1024), b""):
@@ -155,10 +154,9 @@ def _sha256(path: Path) -> str:
 
 
 def _source_fingerprint() -> str:
-    """Hash source modules, excluding generated outputs and caches."""
     digest = hashlib.sha256()
     for path in sorted(Path(__file__).parent.rglob("*.py")):
-        if "__pycache__" in path.parts:
+        if "__pycache__" in path.parts or ".venv" in path.parts:
             continue
         digest.update(str(path.relative_to(Path(__file__).parent)).encode())
         digest.update(path.read_bytes())
@@ -166,114 +164,113 @@ def _source_fingerprint() -> str:
 
 
 def _dataset_checksums(dataset_names: list[str]) -> dict[str, str | None]:
-    """Record checksums for every dataset used by a run when cached locally."""
     candidates = {
         "uci": [DATA_DIR / "uci_credit.csv"],
-        "lending_club": [DATA_DIR / "loan.csv"],
-        "south_german": [
-            DATA_DIR / "south_german_credit.csv",
-            DATA_DIR / "german_credit.csv",
-            DATA_DIR / "SouthGermanCredit.asc",
-        ],
-        "german": [
-            DATA_DIR / "south_german_credit.csv",
-            DATA_DIR / "german_credit.csv",
-            DATA_DIR / "SouthGermanCredit.asc",
-        ],
+        "lending_club": [DATA_DIR / "lending_club_subsample_50k_by_issue_date.csv", DATA_DIR / "loan.csv"],
+        "south_german": [DATA_DIR / "south_german_credit.csv", DATA_DIR / "german_credit.csv",
+                         DATA_DIR / "SouthGermanCredit.asc"],
+        "german": [DATA_DIR / "SouthGermanCredit.asc"],
+        "prosper": [DATA_DIR / PROSPER_FILE],
     }
     result = {}
     for name in dict.fromkeys(dataset_names):
-        path = next((candidate for candidate in candidates.get(name, []) if candidate.exists()), None)
+        path = next((c for c in candidates.get(name, []) if c.exists()), None)
         result[name] = _sha256(path) if path else None
     return result
 
 
-def _build_any_model(name: str, seed: int):
-    """
-    Construct a fresh, untrained model instance by name.
+def _package_versions() -> dict:
+    versions = {"python": platform.python_version(), "platform": platform.platform()}
+    for module in ["numpy", "pandas", "sklearn", "imblearn", "xgboost", "lightgbm",
+                   "catboost", "shap", "lime", "torch", "pytorch_tabnet", "scipy"]:
+        try:
+            versions[module] = getattr(importlib.import_module(module), "__version__", "unknown")
+        except Exception:
+            versions[module] = None
+    return versions
 
-    Wraps build_model() (which only knows the MODEL_REGISTRY entries —
-    XGBoost, LightGBM, CatBoost, Random Forest, Logistic Reg.) and adds
-    TabNet as a special case, since TabNet lives in its own module behind
-    a lazy import (it pulls in PyTorch, which the other models don't need).
 
-    Used by stage_evaluation's SMOTE-ablation loop, which needs to
-    reconstruct *any* successfully-trained model — including TabNet — for
-    every resampling strategy.
-    """
+def _build_any_model(name: str, seed: int, data: dict | None = None,
+                     cost_sensitive: bool = False, **params):
+    """Fresh untrained model with dataset-aware nominal handling."""
+    kwargs = {**_model_seed_kwargs(name, seed), "cost_sensitive": cost_sensitive, **params}
+    if data is not None:
+        kwargs["nominal_indices"] = list(data["nominal_idx"])
+        if name == "TabNet":
+            kwargs["cat_idxs"] = list(data["nominal_idx"])
+            kwargs["cat_dims"] = list(data["cat_dims"])
     if name == "TabNet":
         from models.tabnet_model import TabNetWrapper
-        return TabNetWrapper(**_model_seed_kwargs(name, seed))
-    return build_model(name, **_model_seed_kwargs(name, seed))
+        kwargs.pop("nominal_indices", None)
+        return TabNetWrapper(**kwargs)
+    return build_model(name, **kwargs)
 
 
 def _smote_kwargs(name: str, seed: int) -> dict:
-    """Clone sampler kwargs and replace sampler RNG for this run seed."""
     kwargs = dict(SMOTE_STRATEGIES.get(name) or {})
     if "random_state" in kwargs:
         kwargs["random_state"] = seed
     return kwargs
 
 
-def _compare_strategies_seeded(
-    X_train: pd.DataFrame,
-    y_train: pd.Series,
-    seed: int,
-) -> Dict[str, Tuple[pd.DataFrame, pd.Series]]:
-    results = {}
-    for name in SMOTE_STRATEGIES:
-        results[name] = apply_resampling(
-            X_train, y_train, strategy=name, sampler_kwargs=_smote_kwargs(name, seed),
-        )
-    return results
-
-
-def _robust_fit(
-    candidate_names: list[str],
-    X_res: pd.DataFrame, y_res: pd.Series,
-    X_val: pd.DataFrame, y_val: pd.Series,
-    seed: int,
-):
-    """
-    Try each model name in order until one trains successfully.
-
-    Guards against environment issues (e.g. a native library failing to
-    load, such as LightGBM's libomp dependency on macOS) taking down an
-    entire pipeline stage. Returns (model, name_used) or (None, None) if
-    every candidate fails.
-    """
-    last_exc = None
-    for name in candidate_names:
-        try:
-            model = build_model(name, **_model_seed_kwargs(name, seed))
-            model.fit(X_res, y_res, X_val=X_val, y_val=y_val)
-            return model, name
-        except Exception as exc:
-            last_exc = exc
-            log.warning(
-                "%s unavailable (%s: %s) — trying next candidate.",
-                name, type(exc).__name__, exc,
-            )
-    log.error(
-        "All candidate models failed for ablation step: %s. "
-        "Last error: %s", candidate_names, last_exc,
+def _make_pipeline(strategy: str, model_name: str, seed: int, data: dict, **model_params):
+    """imblearn Pipeline(prep -> sampler -> model); every step re-fits inside each CV fold."""
+    prep = TabularPreprocessor(**data["prep_spec"])
+    sampler = NominalAwareOverSampler(
+        strategy=strategy, nominal_indices=list(data["nominal_idx"]),
+        sampler_kwargs=_smote_kwargs(strategy, seed),
     )
-    return None, None
+    model = _build_any_model(
+        model_name, seed, data, cost_sensitive=(strategy == "ClassWeight"), **model_params,
+    )
+    return ImbPipeline([("prep", prep), ("sampler", sampler), ("model", model)])
 
 
-def _select_representative_instances(
-    X_test: pd.DataFrame,
-    y_test: pd.Series,
-    y_pred: np.ndarray,
-    y_proba: np.ndarray,
-    n: int = 1,
-) -> Dict[str, Tuple[int, str]]:
-    """
-    Select one TP, FP, FN, TN instance from the test set for local
-    explanation plots.
+def _data_dict(loaded: LoadedData, split_mode: str) -> dict:
+    """Pipeline-facing view of a LoadedData record (positions refer to preprocessor output)."""
+    n_lead = len(loaded.prep_spec["continuous_columns"]) + len(loaded.prep_spec["indicator_columns"])
+    return dict(
+        X_train=loaded.X_train, X_test=loaded.X_test, y_train=loaded.y_train, y_test=loaded.y_test,
+        feature_names=loaded.feature_names, prep_spec=loaded.prep_spec,
+        nominal_columns=loaded.nominal_columns,
+        nominal_idx=[n_lead + i for i in range(len(loaded.nominal_columns))],
+        cat_dims=[len(loaded.meta["nominal_categories"][c]) + 1 for c in loaded.nominal_columns],
+        nominal_categories=loaded.meta["nominal_categories"], split_mode=split_mode,
+        train_dates=loaded.train_dates,
+    )
 
-    Returns dict: { "TP": (idx, label), ... }
-    """
+
+def _inner_cv(data: dict, args):
+    if data["split_mode"] == "temporal":
+        return ObservableTimeSeriesSplit(data["train_dates"], n_splits=args.inner_temporal_folds)
+    return StratifiedKFold(n_splits=args.inner_folds, shuffle=True, random_state=args.seed)
+
+
+def _oof(pipeline, data: dict, args) -> Tuple[np.ndarray, np.ndarray]:
+    # Probe, family selection and ablations often request the identical fit.
+    # Cache only unfitted-estimator recipes with the complete training key.
+    if "cache_key" not in data:
+        return oof_predict_proba(pipeline, data["X_train"], data["y_train"], _inner_cv(data, args))
+    recipe = hashlib.sha256(pickle.dumps(pipeline, protocol=pickle.HIGHEST_PROTOCOL)).hexdigest()
+    key = data["cache_key"] + recipe
+    path = MDL_DIR / "oof" / f"{recipe}.pkl"
+    cached = load_checkpoint(path, key)
+    if cached is not None:
+        log.info("Reusing identical OOF pipeline fit.")
+        return cached
+    result = oof_predict_proba(pipeline, data["X_train"], data["y_train"], _inner_cv(data, args))
+    save_checkpoint(path, key, result)
+    return result
+
+
+def _threshold_from_oof(y_oof, oof_proba, args) -> Tuple[float, float]:
+    return optimal_threshold(
+        y_oof, oof_proba, criterion=args.threshold_criterion,
+        cost_fp=args.cost_fp, cost_fn=args.cost_fn,
+    )
+
+
+def _select_representative_instances(X_test, y_test, y_pred, y_proba) -> Dict[str, int]:
     y_true = y_test.values
     instances = {}
     for kind, cond in {
@@ -284,56 +281,38 @@ def _select_representative_instances(
     }.items():
         idxs = np.where(cond)[0]
         if len(idxs) > 0:
-            # Pick instance closest to decision boundary for informativeness
-            boundary_idx = idxs[np.argmin(np.abs(y_proba[idxs] - 0.5))]
-            instances[kind] = boundary_idx
+            instances[kind] = int(idxs[np.argmin(np.abs(y_proba[idxs] - 0.5))])
         else:
             log.warning("No %s instances found in test set.", kind)
     return instances
 
 
 def _save_latex_table(df: pd.DataFrame, path: Path, caption: str, label: str):
-    """
-    Export a DataFrame as an IEEE-style LaTeX table.
-
-    Note: df.to_latex() on a DataFrame with a *named* index (e.g. one
-    produced by .set_index("Model")) emits an extra near-empty row under
-    the header — pandas splits the index name into its own row instead of
-    folding it into the column header. reset_index() avoids that, putting
-    "Model" where it belongs: as a real header label.
-
-    Requires \\usepackage{booktabs} in the main document for \\toprule /
-    \\midrule / \\bottomrule.
-    """
     table_df = df.reset_index() if df.index.name else df
-    n_cols   = len(table_df.columns)
-
+    n_cols = len(table_df.columns)
     latex = table_df.to_latex(
-        index        = False,
-        float_format = "%.4f",
-        caption      = caption,
-        label        = label,
-        column_format= "l" + "c" * (n_cols - 1),
+        index=False, float_format="%.4f", caption=caption, label=label,
+        column_format="l" + "c" * (n_cols - 1),
     )
-    # to_latex's caption=/label= path wraps in \begin{table} but never adds
-    # \centering, which pandas omits but IEEE table formatting expects.
-    latex = latex.replace(
-        "\\begin{table}", "\\begin{table}\n\\centering", 1,
-    )
+    latex = latex.replace("\\begin{table}", "\\begin{table}\n\\centering", 1)
     path.write_text(latex)
     log.info("LaTeX table → %s", path)
 
 
 def _to_builtin(obj):
-    """Convert numpy/pandas values to YAML-safe Python primitives."""
     if isinstance(obj, dict):
         return {str(k): _to_builtin(v) for k, v in obj.items()}
     if isinstance(obj, (list, tuple)):
         return [_to_builtin(v) for v in obj]
     if isinstance(obj, np.generic):
         return obj.item()
-    if pd.isna(obj) if not isinstance(obj, (dict, list, tuple, str)) else False:
-        return None
+    if isinstance(obj, (np.ndarray, pd.Series)):
+        return [_to_builtin(v) for v in obj.tolist()]
+    try:
+        if not isinstance(obj, (str, bool, int, float)) and pd.isna(obj):
+            return None
+    except (TypeError, ValueError):
+        pass
     return obj
 
 
@@ -350,16 +329,12 @@ def _yaml_scalar(value) -> str:
 
 
 def _write_yaml(data: dict, path: Path) -> None:
-    """Minimal YAML writer to avoid adding PyYAML as a runtime dependency."""
     def emit(obj, indent=0):
         pad = " " * indent
         lines = []
         if isinstance(obj, dict):
             for key, value in obj.items():
-                if isinstance(value, dict):
-                    lines.append(f"{pad}{key}:")
-                    lines.extend(emit(value, indent + 2))
-                elif isinstance(value, list):
+                if isinstance(value, (dict, list)):
                     lines.append(f"{pad}{key}:")
                     lines.extend(emit(value, indent + 2))
                 else:
@@ -372,1412 +347,1106 @@ def _write_yaml(data: dict, path: Path) -> None:
                 else:
                     lines.append(f"{pad}- {_yaml_scalar(value)}")
         return lines
-
     path.write_text("\n".join(emit(_to_builtin(data))) + "\n")
-    log.info("YAML saved → %s", path)
 
 
-def _fit_with_random_search(
-    name: str,
-    X_train: pd.DataFrame,
-    y_train: pd.Series,
-    X_val: pd.DataFrame,
-    y_val: pd.Series,
-    args,
-) -> tuple[object, dict]:
-    """Tune model with RandomizedSearchCV, then refit best params with val set."""
-    base_kwargs = _model_seed_kwargs(name, args.seed)
-    space = RANDOM_SEARCH_SPACES.get(name)
-    n_iter = min(args.tune_iter, 4) if args.fast else args.tune_iter
-
-    record = {
-        "enabled": bool(args.tune),
-        "model": name,
-        "seed": args.seed,
-        "search": "RandomizedSearchCV",
-        "scoring": RANDOM_SEARCH_SCORING,
-        "cv_folds": RANDOM_SEARCH_CV_FOLDS,
-        "n_iter_requested": n_iter,
-        "best_score": None,
-        "best_params": {},
-        "status": "not_run",
-    }
-
-    if not args.tune or not space:
-        model = build_model(name, **base_kwargs)
-        model.fit(X_train, y_train, X_val=X_val, y_val=y_val)
-        record["status"] = "skipped_no_space" if not space else "disabled"
-        return model, record
-
-    log.info(
-        "RandomizedSearchCV | model=%s seed=%d n_iter=%d cv=%d scoring=%s",
-        name, args.seed, n_iter, RANDOM_SEARCH_CV_FOLDS, RANDOM_SEARCH_SCORING,
-    )
-    estimator = build_model(name, **base_kwargs)
-    cv = StratifiedKFold(
-        n_splits=RANDOM_SEARCH_CV_FOLDS,
-        shuffle=True,
-        random_state=args.seed,
-    )
-    search = RandomizedSearchCV(
-        estimator=estimator,
-        param_distributions=space,
-        n_iter=n_iter,
-        scoring=RANDOM_SEARCH_SCORING,
-        cv=cv,
-        random_state=args.seed,
-        n_jobs=1,
-        refit=True,
-        error_score=np.nan,
-        return_train_score=True,
-    )
-
-    try:
-        search.fit(X_train, y_train)
-        best_params = dict(search.best_params_)
-        pd.DataFrame(search.cv_results_).to_csv(
-            RES_DIR / f"random_search_cv_results_{name.replace(' ', '_').lower()}.csv",
-            index=False,
-        )
-        model = build_model(name, **base_kwargs, **best_params)
-        model.fit(X_train, y_train, X_val=X_val, y_val=y_val)
-        record.update({
-            "status": "success",
-            "best_score": float(search.best_score_),
-            "best_params": best_params,
-            "n_iter_actual": int(len(search.cv_results_["params"])),
-        })
-        return model, record
-    except Exception as exc:
-        log.warning(
-            "RandomizedSearchCV failed for %s (%s: %s). Falling back to fixed params.",
-            name, type(exc).__name__, exc,
-        )
-        model = build_model(name, **base_kwargs)
-        model.fit(X_train, y_train, X_val=X_val, y_val=y_val)
-        record.update({"status": "failed_fallback_fixed", "error": f"{type(exc).__name__}: {exc}"})
-        return model, record
+def _write_json(data, path: Path) -> None:
+    path.write_text(json.dumps(_to_builtin(data), indent=2))
 
 
 # ── Stage 1: Data ─────────────────────────────────────────────────────────────
 
-def _recover_groups(X: pd.DataFrame, scaler) -> pd.DataFrame:
-    """Recover observed group fields from the scaled model matrix."""
-    group_values = {}
-    scaled_columns = list(getattr(scaler, "feature_names_in_", X.columns))
-    for column in ("SEX", "EDUCATION", "MARRIAGE", "personal_status_sex", "age", "foreign_worker"):
-        if column not in X.columns or column not in scaled_columns:
-            continue
-        index = scaled_columns.index(column)
-        values = X[column].to_numpy() * scaler.scale_[index] + scaler.mean_[index]
-        group_values[column] = np.rint(values).astype(int)
-    return pd.DataFrame(group_values, index=X.index)
-
-def stage_data(args) -> dict:
+def stage_data(args, cutoff: str | None) -> dict:
     log.info("=" * 60)
-    log.info("STAGE 1: Data Loading & Feature Engineering")
+    log.info("STAGE 1: Data Loading, Labelling & Partitioning")
     log.info("=" * 60)
 
-    X_train, X_val, X_test, y_train, y_val, y_test, feature_names, scaler = \
-        load_dataset(
-            dataset      = args.dataset,
-            data_dir     = DATA_DIR,
-            test_size    = TEST_SIZE,
-            val_size     = VAL_SIZE,
-            random_state = args.seed,
-            split_mode   = args.split_mode,
-            temporal_column = args.temporal_column,
-        )
+    loaded: LoadedData = load_dataset(
+        dataset=args.dataset, data_dir=DATA_DIR, test_size=TEST_SIZE,
+        random_state=args.seed, split_mode=args.split_mode, cutoff=cutoff,
+        test_window_months=args.test_window_months, horizon_months=args.horizon_months,
+        prosper_include_pricing=args.prosper_include_pricing,
+    )
+    stats = imbalance_statistics(loaded.y_train)
+    log.info("Imbalance stats (train): %s", json.dumps(stats))
 
-    stats = imbalance_statistics(y_train)
-    log.info("Imbalance stats: %s", json.dumps(stats, indent=2))
+    _write_json({
+        "split_mode": args.split_mode, "cutoff": cutoff, "meta": loaded.meta,
+        "train": [int(i) if isinstance(i, (int, np.integer)) else str(i) for i in loaded.X_train.index],
+        "test": [int(i) if isinstance(i, (int, np.integer)) else str(i) for i in loaded.X_test.index],
+    }, RES_DIR / "split_indices.json")
 
-    (RES_DIR / "split_indices.json").write_text(json.dumps({
-        "split_mode": args.split_mode,
-        "temporal_column": args.temporal_column,
-        "train": [int(index) if isinstance(index, (int, np.integer)) else str(index) for index in X_train.index],
-        "validation": [int(index) if isinstance(index, (int, np.integer)) else str(index) for index in X_val.index],
-        "test": [int(index) if isinstance(index, (int, np.integer)) else str(index) for index in X_test.index],
-    }, indent=2))
-
-    # The loader returns scaled data. Recover observed grouping variables
-    # without changing the model matrix or introducing protected attributes.
-    groups_val = _recover_groups(X_val, scaler)
-    groups_test = _recover_groups(X_test, scaler)
-
-    # Fig 1
     plot_class_distribution(
-        y_train, y_test,
-        save_path=FIG_DIR / f"fig01_class_distribution.{FIGURE_EXT}",
+        loaded.y_train, loaded.y_test, save_path=FIG_DIR / f"fig01_class_distribution.{FIGURE_EXT}",
     )
-
     return dict(
-        X_train=X_train, X_val=X_val, X_test=X_test,
-        y_train=y_train, y_val=y_val,   y_test=y_test,
-        feature_names=feature_names, scaler=scaler,
-        groups=groups_test,
-        groups_val=groups_val,
-        split_mode=args.split_mode,
-        temporal_column=args.temporal_column,
-        imbalance_stats=stats,
+        _data_dict(loaded, args.split_mode),
+        groups_train=loaded.groups_train.reset_index(drop=True),
+        groups_test=loaded.groups_test.reset_index(drop=True),
+        cutoff=cutoff, meta=loaded.meta, imbalance_stats=stats,
     )
 
 
-# ── Stage 2: SMOTE Ablation ───────────────────────────────────────────────────
+# ── Stage 2: Imbalance-strategy ablation (OOF-selected) ───────────────────────
 
-def stage_smote_ablation(data: dict, args) -> dict:
-    log.info("=" * 60)
-    log.info("STAGE 2: SMOTE Strategy Ablation")
+def stage_imbalance_ablation(data: dict, args) -> dict:
     log.info("=" * 60)
 
-    resampled_sets = _compare_strategies_seeded(
-        data["X_train"], data["y_train"], seed=args.seed,
-    )
-
-    # Quick train with a single model for ablation. LightGBM is preferred
-    # for speed, but if its native library fails to load (e.g. missing
-    # libomp.dylib on macOS) we fall back to XGBoost, then CatBoost, then
-    # a pure-sklearn Random Forest so the stage never hard-crashes.
-    ablation_candidates = ["LightGBM", "XGBoost", "CatBoost", "Random Forest"]
-
-    ablation_records   = []
-    best_strategy_auroc = {}
-    ablation_model_used = None
-
-    for strategy, (X_res, y_res) in resampled_sets.items():
-        log.info("Ablation | strategy=%s | n=%d", strategy, len(y_res))
-
-        # Once we know which model works in this environment, stick with
-        # it for the remaining strategies (keeps the ablation comparable
-        # and avoids re-probing every candidate on every iteration).
-        order = [ablation_model_used] + ablation_candidates if ablation_model_used \
-                else ablation_candidates
-
-        model, used = _robust_fit(
-            order, X_res, y_res, data["X_val"], data["y_val"], seed=args.seed,
-        )
-        if model is None:
-            log.warning("Skipping strategy '%s' — no model could be trained.", strategy)
-            continue
-
-        ablation_model_used = used
-        val_proba = model.predict_proba(data["X_val"])[:, 1]
-        val_m     = compute_metrics(data["y_val"].values,
-                                    (val_proba >= 0.5).astype(int), val_proba)
-        test_proba = model.predict_proba(data["X_test"])[:, 1]
-        test_m     = compute_metrics(data["y_test"].values,
-                                     (test_proba >= 0.5).astype(int), test_proba)
-        best_strategy_auroc[strategy] = val_m["AUROC"]
-        ablation_records.append({
-            "Model": used,
-            "Strategy": strategy,
-            "Val_AUROC": val_m["AUROC"],
-            "Val_AUPRC": val_m["AUPRC"],
-            **test_m,
-        })
-
-    if not ablation_records:
-        raise RuntimeError(
-            "SMOTE ablation failed for every strategy and every candidate "
-            "model. Check that at least one of XGBoost / LightGBM / "
-            "CatBoost / scikit-learn is correctly installed."
-        )
-
-    ablation_df = pd.DataFrame(ablation_records)
-    ablation_df.to_csv(RES_DIR / "smote_ablation.csv", index=False)
-
-    best_strategy = max(best_strategy_auroc, key=best_strategy_auroc.get)
-    log.info("Best SMOTE strategy (validation AUROC): %s → %.4f  [model used: %s]",
-             best_strategy, best_strategy_auroc[best_strategy], ablation_model_used)
-    none_auroc = best_strategy_auroc.get("None")
-    smote_summary = {
-        "selection_metric": "validation_AUROC",
-        "model_used": ablation_model_used,
-        "best_strategy": best_strategy,
-        "best_validation_AUROC": best_strategy_auroc[best_strategy],
-        "none_validation_AUROC": none_auroc,
-        "resampling_helped": bool(best_strategy != "None"),
-    }
-    if best_strategy == "None":
-        log.info(
-            "Resampling did not improve validation AUROC; treating 'None' "
-            "as the selected strategy for final training."
-        )
-    (RES_DIR / "smote_ablation_summary.json").write_text(
-        json.dumps(smote_summary, indent=2)
-    )
-
-    return dict(
-        resampled_sets   = resampled_sets,
-        ablation_df      = ablation_df,
-        best_strategy    = best_strategy,
-        smote_summary    = smote_summary,
-    )
-
-
-# ── Stage 3: Model Training ───────────────────────────────────────────────────
-
-def stage_training(data: dict, smote: dict, args) -> dict:
-    log.info("=" * 60)
-    log.info("STAGE 3: Model Training")
+    checkpoint = MDL_DIR / "imbalance_selection.pkl"
+    if args.resume or args.evaluate_only:
+        cached = load_checkpoint(checkpoint, data["cache_key"])
+        if cached is not None:
+            log.info("Reusing imbalance-selection checkpoint.")
+            return cached
+    if args.evaluate_only:
+        raise RuntimeError("No matching imbalance checkpoint. Run training with --resume first.")
+    log.info("STAGE 2: Imbalance Strategy Ablation (selected on OOF AUROC)")
     log.info("=" * 60)
 
-    best_strategy = smote["best_strategy"]
-    X_res, y_res  = smote["resampled_sets"][best_strategy]
-
-    model_names = ["XGBoost", "LightGBM", "CatBoost",
-                   "Random Forest", "Logistic Reg."]
+    probe_candidates = ["LightGBM", "XGBoost", "CatBoost", "Random Forest"]
+    strategies = list(SMOTE_STRATEGIES)
     if args.fast:
-        model_names = ["XGBoost", "LightGBM", "Logistic Reg."]
+        strategies = ["None", "ClassWeight", "SMOTE"]
 
-    trained_models = {}
-    tuning_records = {}
+    records, oof_auroc, probe_used = [], {}, None
+    for strategy in strategies:
+        order = ([probe_used] if probe_used else []) + [c for c in probe_candidates if c != probe_used]
+        for probe in order:
+            try:
+                pipe = _make_pipeline(strategy, probe, args.seed, data)
+                oof, mask = _oof(pipe, data, args)
+                y_oof = data["y_train"].to_numpy()[mask]
+                oof_m = compute_metrics(y_oof, oof[mask] >= 0.5, oof[mask], 0.5)
+                pipe.fit(data["X_train"], data["y_train"])
+                test_proba = pipe.predict_proba(data["X_test"])[:, 1]
+                test_m = compute_metrics(data["y_test"].to_numpy(), test_proba >= 0.5, test_proba, 0.5)
+                probe_used = probe
+                break
+            except Exception as exc:
+                log.warning("Probe %s failed for strategy %s (%s: %s)", probe, strategy, type(exc).__name__, exc)
+                oof_m = None
+        if oof_m is None:
+            log.warning("Skipping strategy '%s' — no probe model could be trained.", strategy)
+            continue
+        oof_auroc[strategy] = oof_m["AUROC"]
+        records.append({
+            "Model": probe_used, "Strategy": strategy,
+            "OOF_AUROC": oof_m["AUROC"], "OOF_AUPRC": oof_m["AUPRC"], "OOF_Brier": oof_m["Brier"],
+            "OOF_rows": int(mask.sum()), **test_m,
+        })
+        log.info("Ablation | %-16s | OOF AUROC=%.4f  test AUROC=%.4f", strategy, oof_m["AUROC"], test_m["AUROC"])
+
+    if not records:
+        raise RuntimeError("Imbalance ablation failed for every strategy.")
+
+    ablation_df = pd.DataFrame(records)
+    ablation_df.to_csv(RES_DIR / "smote_ablation.csv", index=False)
+    best_strategy = max(oof_auroc, key=oof_auroc.get)
+    summary = {
+        "selection_metric": "OOF_AUROC_inner_cv",
+        "inner_cv": "ObservableTimeSeriesSplit" if data["split_mode"] == "temporal" else "StratifiedKFold",
+        "model_used": probe_used, "best_strategy": best_strategy,
+        "best_oof_AUROC": oof_auroc[best_strategy], "none_oof_AUROC": oof_auroc.get("None"),
+        "classweight_oof_AUROC": oof_auroc.get("ClassWeight"),
+        "resampling_helped": bool(best_strategy not in {"None", "ClassWeight"}),
+        "strategies_evaluated": list(oof_auroc),
+    }
+    log.info("Best imbalance strategy (OOF AUROC): %s → %.4f [probe: %s]",
+             best_strategy, oof_auroc[best_strategy], probe_used)
+    _write_json(summary, RES_DIR / "smote_ablation_summary.json")
+    result = dict(ablation_df=ablation_df, best_strategy=best_strategy, smote_summary=summary)
+    save_checkpoint(checkpoint, data["cache_key"], result)
+    return result
+
+
+# ── Stage 3: Training-only tuning ──────────────────────────────────────
+
+def _legacy_record(path: Path, name: str) -> dict:
+    """Read only the scalar model record emitted by our old YAML writer."""
+    json_path = path.with_suffix(".json")
+    if json_path.exists():
+        return json.loads(json_path.read_text())["models"].get(name, {})
+    if not path.exists():
+        return {}
+    record, in_model, in_params = {}, False, False
+    for line in path.read_text().splitlines():
+        if line.startswith("  ") and not line.startswith("    "):
+            if in_model:
+                break
+            in_model = line == f"  {name}:"
+        elif in_model and line.startswith("    "):
+            indent = len(line) - len(line.lstrip())
+            key, _, raw = line.strip().partition(":")
+            if indent == 4:
+                in_params = key == "best_params"
+                if in_params:
+                    record["best_params"] = {}
+                elif raw.strip():
+                    record[key] = json.loads(raw.strip())
+            elif indent == 6 and in_params and raw.strip():
+                record["best_params"][key] = json.loads(raw.strip())
+    return record
+
+
+def _reuse_legacy_model(name: str, strategy: str, params: dict, data: dict, args):
+    """Reuse a final classifier only after matching selection and original data.
+
+    New inner selection and OOF fits still run. Reconstructing the full-training
+    preprocessor is cheap; legacy files did not save that outer transformer.
+    """
+    if not args.reuse_models_from:
+        return None
+    run_name = "_".join([args.dataset, *sorted(set(args.external_datasets))])
+    if args.split_mode == "temporal":
+        run_name += "_temporal"
+    run_id = f"seed_{args.seed}" if data["cutoff"] is None else f"cutoff_{data['cutoff']}_seed_{args.seed}"
+    source = Path(args.reuse_models_from) / run_name / "runs" / run_id
+    results = source / "results"
+    if not (results / "run_manifest.json").exists():
+        return None
+    try:
+        manifest = json.loads((results / "run_manifest.json").read_text())
+        record = _legacy_record(results / "best_params.yaml", name)
+        if record.get("imbalance_strategy") != strategy or record.get("best_params", {}) != params:
+            return None
+        if manifest.get("dataset") != args.dataset or manifest.get("seed") != args.seed or manifest.get("cutoff") != data["cutoff"]:
+            return None
+        if manifest.get("dataset_checksums", {}).get(args.dataset) != data["dataset_checksums"].get(args.dataset):
+            return None
+        indices = json.loads((results / "split_indices.json").read_text())
+        if indices["train"] != data["X_train"].index.tolist() or indices["test"] != data["X_test"].index.tolist():
+            return None
+        if manifest["data_meta"]["nominal_categories"] != data["meta"]["nominal_categories"]:
+            return None
+        pipeline = _make_pipeline(strategy, name, args.seed, data, **params)
+        pipeline.named_steps["prep"].fit(data["X_train"])
+        model = pipeline.named_steps["model"]
+        path = source / "models" / f"{name.replace(' ', '_').lower()}.pkl"
+        if name == "CatBoost":
+            from catboost import CatBoostClassifier
+            model._model = CatBoostClassifier()
+            model._model.load_model(str(path))
+        else:
+            model.load(Path(str(path) + ".zip") if name == "TabNet" else path)
+        p = pipeline.predict_proba(data["X_test"])[:, 1]
+        metrics = compute_metrics(data["y_test"].to_numpy(), p >= .5, p, .5)
+        old = pd.read_csv(results / "test_metrics.csv", index_col=0).loc[name]
+        if not all(np.isclose(metrics[m], float(old[m]), atol=5.1e-5, rtol=0) for m in ("AUROC", "AUPRC", "Brier")):
+            log.warning("Legacy metric verification failed for %s; refitting.", name)
+            return None
+        log.info("Reusing verified legacy final model: %s", name)
+        return pipeline
+    except Exception as exc:
+        log.warning("Legacy model %s could not be reused (%s); refitting.", name, exc)
+        return None
+
+
+def _tune_and_fit(name: str, strategy: str, data: dict, args) -> tuple[object, dict, np.ndarray, np.ndarray]:
+    """RandomizedSearchCV over Pipeline(sampler, model), OOF predictions, final refit."""
+    space = RANDOM_SEARCH_SPACES.get(name)
+    n_iter = min(args.tune_iter, 4) if args.fast else args.tune_iter
+    record = {
+        "enabled": bool(args.tune and space), "model": name, "seed": args.seed,
+        "imbalance_strategy": strategy, "search": "RandomizedSearchCV(imblearn Pipeline)",
+        "scoring": RANDOM_SEARCH_SCORING, "n_iter_requested": n_iter,
+        "inner_cv": type(_inner_cv(data, args)).__name__, "best_score": None,
+        "best_params": {}, "status": "not_run",
+    }
+    best_params: dict = {}
+    if args.tune and space:
+        log.info("RandomizedSearchCV | model=%s strategy=%s n_iter=%d", name, strategy, n_iter)
+        search = RandomizedSearchCV(
+            estimator=_make_pipeline(strategy, name, args.seed, data),
+            param_distributions={f"model__{k}": v for k, v in space.items()},
+            n_iter=n_iter, scoring=RANDOM_SEARCH_SCORING, cv=_inner_cv(data, args),
+            random_state=args.seed, n_jobs=1, refit=False, error_score=np.nan,
+            return_train_score=True,
+        )
+        try:
+            search.fit(data["X_train"], data["y_train"])
+            best_params = {k.replace("model__", "", 1): v for k, v in search.best_params_.items()}
+            pd.DataFrame(search.cv_results_).to_csv(
+                RES_DIR / f"random_search_cv_results_{name.replace(' ', '_').lower()}.csv", index=False,
+            )
+            record.update({"status": "success", "best_score": float(search.best_score_),
+                           "best_params": best_params,
+                           "n_iter_actual": int(len(search.cv_results_["params"]))})
+        except Exception as exc:
+            log.warning("RandomizedSearchCV failed for %s (%s: %s). Using fixed params.",
+                        name, type(exc).__name__, exc)
+            record.update({"status": "failed_fallback_fixed", "error": f"{type(exc).__name__}: {exc}"})
+    else:
+        record["status"] = "disabled" if space else "skipped_no_space"
+
+    pipeline = _make_pipeline(strategy, name, args.seed, data, **best_params)
+    oof, mask = _oof(pipeline, data, args)
+    reused = _reuse_legacy_model(name, strategy, best_params, data, args)
+    if reused is None:
+        pipeline.fit(data["X_train"], data["y_train"])
+        record["final_fit"] = "new"
+    else:
+        pipeline = reused
+        record["final_fit"] = "legacy_model_reused_after_split_parameter_and_metric_checks"
+    record["oof_rows"] = int(mask.sum())
+    return pipeline, record, oof, mask
+
+
+def stage_training(data: dict, imb: dict, args) -> dict:
+    log.info("=" * 60)
+    log.info("STAGE 3: Model Training (training CV selection, OOF predictions, refit)")
+    log.info("=" * 60)
+
+    model_names = list(args.models or (FAST_MODELS if args.fast else ALL_MODELS))
+    if not args.models and not args.fast and not args.skip_tabnet:
+        model_names = model_names + ["TabNet"]
+    strategies = imb["ablation_df"]["Strategy"].tolist()
+
+    trained, records, oof_proba, oof_mask, strategy_choice = {}, {}, {}, {}, {}
     for name in model_names:
+        checkpoint = MDL_DIR / f"{name.replace(' ', '_').lower()}_training.pkl"
+        cached = load_checkpoint(checkpoint, data["cache_key"]) if args.resume or args.evaluate_only else None
+        if cached is not None:
+            trained[name], records[name] = cached["pipeline"], cached["record"]
+            oof_proba[name], oof_mask[name] = cached["oof"], cached["mask"]
+            strategy_choice[name] = cached["strategy_choice"]
+            log.info("Reusing complete pipeline and OOF checkpoint: %s", name)
+            continue
+        if args.evaluate_only:
+            raise RuntimeError(f"No matching training checkpoint for {name}; evaluation-only never fits models.")
         log.info("Training %s …", name)
         try:
-            model, tune_record = _fit_with_random_search(
-                name, X_res, y_res, data["X_val"], data["y_val"], args,
-            )
-            trained_models[name] = model
-            tuning_records[name] = tune_record
-            model_path = MDL_DIR / f"{name.replace(' ', '_').lower()}.pkl"
+            strategy = imb["best_strategy"]
+            per_model = {}
+            if args.strategy_selection == "per_model" and name != "TabNet":
+                # TabNet inherits the stage-2 probe choice: K x |strategies| extra
+                # TabNet fits per run would dominate the compute budget.
+                # Strategy chosen for this model family on OOF AUROC with default
+                # hyper-parameters, removing the LightGBM-probe confound.
+                for candidate in strategies:
+                    try:
+                        oof_c, mask_c = _oof(_make_pipeline(candidate, name, args.seed, data), data, args)
+                        y_c = data["y_train"].to_numpy()[mask_c]
+                        per_model[candidate] = float(compute_metrics(y_c, oof_c[mask_c] >= 0.5, oof_c[mask_c], 0.5)["AUROC"])
+                    except Exception as exc:  # noqa: BLE001
+                        log.warning("Per-model strategy %s failed for %s: %s", candidate, name, exc)
+                if per_model:
+                    strategy = max(per_model, key=per_model.get)
+                log.info("%s | per-model strategy=%s | OOF AUROC by strategy=%s", name, strategy,
+                         {k: round(v, 4) for k, v in per_model.items()})
+            strategy_choice[name] = {"strategy": strategy, "selection": args.strategy_selection,
+                                     "oof_auroc_by_strategy": per_model}
+            pipeline, record, oof, mask = _tune_and_fit(name, strategy, data, args)
+            record["strategy_selection"] = strategy_choice[name]
+            trained[name] = pipeline
+            records[name] = record
+            oof_proba[name] = oof
+            oof_mask[name] = mask
+            save_checkpoint(checkpoint, data["cache_key"], {
+                "pipeline": pipeline, "record": record, "oof": oof,
+                "mask": mask, "strategy_choice": strategy_choice[name],
+            })
+            model = pipeline.named_steps["model"]
             if hasattr(model, "save"):
-                model.save(model_path)
+                try:
+                    model.save(MDL_DIR / f"{name.replace(' ', '_').lower()}.pkl")
+                except Exception as exc:  # noqa: BLE001
+                    log.warning("Could not save %s: %s", name, exc)
         except Exception as exc:
-            log.warning("Skipping %s: %s", name, exc)
+            log.warning("Skipping %s: %s: %s", name, type(exc).__name__, exc)
+            records[name] = {"model": name, "status": "failed", "error": f"{type(exc).__name__}: {exc}"}
 
-    # Optionally train TabNet
-    if not args.fast:
-        try:
-            from models.tabnet_model import TabNetWrapper
-            log.info("Training TabNet …")
-            tn = TabNetWrapper(**_model_seed_kwargs("TabNet", args.seed))
-            tn.fit(X_res, y_res, X_val=data["X_val"], y_val=data["y_val"])
-            trained_models["TabNet"] = tn
-            tuning_records["TabNet"] = {
-                "enabled": False,
-                "model": "TabNet",
-                "seed": args.seed,
-                "search": "none",
-                "status": "skipped_expensive_model",
-                "best_params": {},
-            }
-        except Exception as exc:
-            log.warning("TabNet skipped: %s", exc)
-            tuning_records["TabNet"] = {
-                "enabled": False,
-                "model": "TabNet",
-                "seed": args.seed,
-                "search": "none",
-                "status": "failed",
-                "error": f"{type(exc).__name__}: {exc}",
-                "best_params": {},
-            }
-
-    _write_yaml(
-        {
-            "seed": args.seed,
-            "imbalance_strategy": best_strategy,
-            "tuning_enabled": bool(args.tune),
-            "models": tuning_records,
-        },
-        RES_DIR / "best_params.yaml",
-    )
-
-    return dict(
-        trained_models=trained_models,
-        X_res=X_res,
-        y_res=y_res,
-        tuning_records=tuning_records,
-    )
+    if not trained:
+        raise RuntimeError("Every requested model failed; no benchmark can be reported.")
+    _write_json({"seed": args.seed, "models": records}, RES_DIR / "best_params.json")
+    _write_yaml({"seed": args.seed, "cutoff": data["cutoff"], "probe_imbalance_strategy": imb["best_strategy"],
+                 "strategy_selection": args.strategy_selection,
+                 "tuning_enabled": bool(args.tune), "models": records}, RES_DIR / "best_params.yaml")
+    return dict(trained_models=trained, tuning_records=records, oof_proba=oof_proba, oof_mask=oof_mask,
+                strategy_choice=strategy_choice)
 
 
 # ── Stage 4: Evaluation ───────────────────────────────────────────────────────
 
-def stage_evaluation(data: dict, train_out: dict, smote: dict, args) -> dict:
+def stage_evaluation(data: dict, train_out: dict, imb: dict, args) -> dict:
     log.info("=" * 60)
-    log.info("STAGE 4: Evaluation")
+    log.info("STAGE 4: Evaluation (selection on OOF; held-out test reporting)")
     log.info("=" * 60)
 
-    X_val, y_val   = data["X_val"], data["y_val"]
     X_test, y_test = data["X_test"], data["y_test"]
-    results        = {}
-    val_results    = {}
-    roc_data       = {}
-    thresholds     = {}
-    test_probas    = {}
-    test_preds     = {}
+    y_train = data["y_train"].to_numpy()
+    results, oof_results, roc_data, thresholds, test_probas, test_preds = {}, {}, {}, {}, {}, {}
 
-    for name, model in train_out["trained_models"].items():
-        val_proba = model.predict_proba(X_val)[:, 1]
-        opt_t, opt_score = optimal_threshold(y_val.values, val_proba, criterion="f1")
-        val_pred = (val_proba >= opt_t).astype(int)
-        val_m = compute_metrics(y_val.values, val_pred, val_proba, threshold=opt_t)
-        proba = model.predict_proba(X_test)[:, 1]
-        pred  = (proba >= opt_t).astype(int)
-        m     = compute_metrics(y_test.values, pred, proba, threshold=opt_t)
-        val_results[name] = val_m
-        results[name] = m
+    for name, pipeline in train_out["trained_models"].items():
+        oof, mask = train_out["oof_proba"][name], train_out["oof_mask"][name]
+        opt_t, opt_score = _threshold_from_oof(y_train[mask], oof[mask], args)
+        oof_m = compute_metrics(y_train[mask], oof[mask] >= opt_t, oof[mask], opt_t)
+        proba = pipeline.predict_proba(X_test)[:, 1]
+        pred = (proba >= opt_t).astype(int)
+        m = compute_metrics(y_test.values, pred, proba, threshold=opt_t)
+        oof_results[name], results[name] = oof_m, m
         roc_data[name] = {"y_true": y_test.values, "y_proba": proba}
-        thresholds[name] = opt_t
-        test_probas[name] = proba
-        test_preds[name] = pred
-        log.info(
-            "%s | val_F1*=%.4f @ t=%.2f | test AUROC=%.4f  F1=%.4f  G-Mean=%.4f  MCC=%.4f",
-            name, opt_score, opt_t, m["AUROC"], m["F1"], m["G-Mean"], m["MCC"],
+        thresholds[name], test_probas[name], test_preds[name] = opt_t, proba, pred
+        # Save row-aligned predictions so future threshold/CI updates need no fit.
+        np.savez_compressed(
+            RES_DIR / f"predictions_{name.replace(' ', '_').lower()}.npz",
+            train_index=data["X_train"].index.to_numpy().astype(str),
+            test_index=X_test.index.to_numpy().astype(str), y_train=y_train, y_test=y_test.to_numpy(),
+            oof_proba=oof, oof_mask=mask, test_proba=proba, threshold=np.array(opt_t),
         )
+        log.info("%s | OOF AUROC=%.4f  %s*=%.4f @ t=%.2f | test AUROC=%.4f  F1=%.4f  MCC=%.4f",
+                 name, oof_m["AUROC"], args.threshold_criterion, opt_score, opt_t,
+                 m["AUROC"], m["F1"], m["MCC"])
 
     results_df = build_results_table(results)
     results_df.to_csv(RES_DIR / "test_metrics.csv")
-    val_results_df = build_results_table(val_results)
-    val_results_df.to_csv(RES_DIR / "validation_metrics.csv")
-    _save_latex_table(results_df,
-                      RES_DIR / "table2_test_metrics.tex",
-                      caption="Classification Performance on Held-Out Test Set",
+    build_results_table(oof_results).to_csv(RES_DIR / "oof_metrics.csv")
+    _save_latex_table(results_df, RES_DIR / "table2_test_metrics.tex",
+                      caption="Classification Performance on the Held-Out Test Partition",
                       label="tab:results")
     log.info("\n%s", results_df.to_string())
 
-    # Figs 2 & 3
-    plot_roc_curves(roc_data,
-                    save_path=FIG_DIR / f"fig02_roc_curves.{FIGURE_EXT}")
-    plot_pr_curves(roc_data,
-                   save_path=FIG_DIR / f"fig03_pr_curves.{FIGURE_EXT}")
+    plot_roc_curves(roc_data, save_path=FIG_DIR / f"fig02_roc_curves.{FIGURE_EXT}")
+    plot_pr_curves(roc_data, save_path=FIG_DIR / f"fig03_pr_curves.{FIGURE_EXT}")
 
-    # Champion model selected on validation AUROC; test remains final holdout.
-    best_name  = max(val_results, key=lambda n: val_results[n]["AUROC"])
-    best_model = train_out["trained_models"][best_name]
-    best_proba = best_model.predict_proba(X_test)[:, 1]
-    best_opt_t = thresholds[best_name]
-    best_pred  = (best_proba >= best_opt_t).astype(int)
-
+    # Champion chosen on OOF AUROC; the test partition is never consulted.
+    best_name = max(oof_results, key=lambda n: oof_results[n]["AUROC"])
+    best_pipeline = train_out["trained_models"][best_name]
+    best_proba, best_opt_t = test_probas[best_name], thresholds[best_name]
+    best_pred = test_preds[best_name]
     plot_confusion_matrix(
         y_test.values, best_pred, model_name=best_name,
         save_path=FIG_DIR / f"fig04_confusion_{best_name.lower().replace(' ', '_')}.{FIGURE_EXT}",
     )
 
-    # Statistical tests between top-2 models
-    sorted_models = sorted(results, key=lambda n: results[n]["AUROC"], reverse=True)
-    if len(sorted_models) >= 2:
-        pairwise_records = []
-        for i, m1 in enumerate(sorted_models):
-            for m2 in sorted_models[i + 1:]:
+    pairwise_df = pd.DataFrame()
+    names = sorted(results, key=lambda n: results[n]["AUROC"], reverse=True)
+    if len(names) >= 2:
+        rows = []
+        for i, m1 in enumerate(names):
+            for m2 in names[i + 1:]:
                 dl = delong_test(y_test.values, test_probas[m1], test_probas[m2])
                 mn = mcnemar_test(y_test.values, test_preds[m1], test_preds[m2])
-                pairwise_records.append({
-                    "model_a": m1,
-                    "model_b": m2,
-                    "auc_a": dl["auc_a"],
-                    "auc_b": dl["auc_b"],
-                    "auc_diff": round(dl["auc_a"] - dl["auc_b"], 4),
-                    "delong_z": dl["z"],
-                    "delong_p": dl["p_value"],
-                    "mcnemar_chi2": mn["chi2"],
-                    "mcnemar_p": mn["p_value"],
-                    "mcnemar_b": mn["b"],
-                    "mcnemar_c": mn["c"],
-                    "threshold_a": round(thresholds[m1], 4),
-                    "threshold_b": round(thresholds[m2], 4),
-                })
-
-        pairwise_df = pd.DataFrame(pairwise_records)
+                rows.append({"model_a": m1, "model_b": m2, "auc_a": dl["auc_a"], "auc_b": dl["auc_b"],
+                             "auc_diff": dl["auc_a"] - dl["auc_b"], "delong_z": dl["z"],
+                             "delong_p": dl["p_value"], "mcnemar_chi2": mn["chi2"],
+                             "mcnemar_p": mn["p_value"], "mcnemar_b": mn["b"], "mcnemar_c": mn["c"],
+                             "threshold_a": thresholds[m1], "threshold_b": thresholds[m2]})
+        pairwise_df = pd.DataFrame(rows)
         pairwise_df["delong_p_holm"] = holm_adjust(pairwise_df["delong_p"].to_numpy())
         pairwise_df["mcnemar_p_holm"] = holm_adjust(pairwise_df["mcnemar_p"].to_numpy())
         pairwise_df.to_csv(RES_DIR / "pairwise_model_tests.csv", index=False)
 
-        top = pairwise_records[0]
-        log.info(
-            "Top pair %s vs %s | DeLong z=%.4f p=%.4f | McNemar chi2=%.4f p=%.4f",
-            top["model_a"], top["model_b"], top["delong_z"], top["delong_p"],
-            top["mcnemar_chi2"], top["mcnemar_p"],
-        )
-
-    bootstrap_ci = pd.DataFrame()
+    bootstrap_ci, paired_ci = pd.DataFrame(), pd.DataFrame()
     if args.revision_analyses and args.bootstrap_reps > 0:
-        bootstrap_ci = bootstrap_metric_intervals(
-            y_test.values, test_probas, thresholds,
-            n_boot=args.bootstrap_reps, seed=args.seed,
-        )
-        bootstrap_ci.to_csv(
-            RES_DIR / "bootstrap_metric_confidence_intervals.csv", index=False,
-        )
-        paired_ci = paired_bootstrap_differences(
-            y_test.values, test_probas, thresholds,
-            n_boot=args.bootstrap_reps, seed=args.seed,
-        )
+        bootstrap_ci = bootstrap_metric_intervals(y_test.values, test_probas, thresholds,
+                                                  n_boot=args.bootstrap_reps, seed=args.seed)
+        bootstrap_ci.to_csv(RES_DIR / "bootstrap_metric_confidence_intervals.csv", index=False)
+        paired_ci = paired_bootstrap_differences(y_test.values, test_probas, thresholds,
+                                                 n_boot=args.bootstrap_reps, seed=args.seed)
         paired_ci.to_csv(RES_DIR / "paired_bootstrap_model_differences.csv", index=False)
-    else:
-        paired_ci = pd.DataFrame()
 
-    # SMOTE ablation figure (Fig 10)
-    # Note: TabNet is excluded by default — pass --full-ablation to include
-    # it. When included, each TabNet fit runs in its own subprocess (see
-    # models.tabnet_model.fit_tabnet_isolated) rather than in-process like
-    # the other models. This eliminates the cross-fit MPS memory
-    # fragmentation that caused a real stall in testing, and makes the
-    # timeout an OS-level SIGKILL rather than a Python signal — which
-    # matters because a true native-code hang would never yield control
-    # back to a signal.alarm() handler. Tree/linear models don't need
-    # this; they stay on the fast in-process path with the lighter
-    # signal-based timeout.
-    ABLATION_TIMEOUT_S        = 360   # 6 min ceiling — tree/linear models
-    TABNET_ABLATION_TIMEOUT_S = 480   # 8 min ceiling — subprocess-isolated
-
+    # Fig 10: descriptive model x strategy grid (fixed params, fixed 0.5 threshold).
+    ABLATION_TIMEOUT_S, TABNET_ABLATION_TIMEOUT_S = 360, 480
     ablation_all = []
-    for name, model in train_out["trained_models"].items():
+    strategies = imb["ablation_df"]["Strategy"].tolist()
+    for name in ([] if args.skip_ablation_grid else train_out["trained_models"]):
         if name == "TabNet" and not args.full_ablation:
-            log.info(
-                "Skipping TabNet in SMOTE ablation (Fig 10) — its single "
-                "official result is already in Table II. Pass "
-                "--full-ablation to include it (runs in isolated "
-                "subprocesses to avoid the MPS stall seen previously)."
-            )
+            log.info("Skipping TabNet in Fig 10 ablation (pass --full-ablation to include).")
             continue
-
-        if name == "TabNet":
-            from models.tabnet_model import fit_tabnet_isolated
-            for strat, (X_res_s, y_res_s) in smote["resampled_sets"].items():
-                log.info("TabNet ablation (isolated subprocess) | strategy=%s", strat)
-                p = fit_tabnet_isolated(
-                    X_res_s, y_res_s, data["X_val"], data["y_val"], X_test,
-                    timeout_s=TABNET_ABLATION_TIMEOUT_S,
-                    seed=args.seed,
-                )
-                if p is None:
-                    log.warning(
-                        "TabNet ablation skipped for strategy='%s' "
-                        "(subprocess failed, crashed, or timed out).", strat,
-                    )
-                    continue
+        for strat in strategies:
+            try:
+                if name == "TabNet":
+                    from models.tabnet_model import fit_tabnet_isolated
+                    X_res, y_res = apply_resampling(data["X_train"], data["y_train"], strat,
+                                                    _smote_kwargs(strat, args.seed), data["nominal_columns"])
+                    p = fit_tabnet_isolated(X_res, y_res, None, None, X_test,
+                                            timeout_s=TABNET_ABLATION_TIMEOUT_S, seed=args.seed)
+                    if p is None:
+                        continue
+                else:
+                    with _time_limit(ABLATION_TIMEOUT_S, label=f"{name}/{strat}"):
+                        pipe = _make_pipeline(strat, name, args.seed, data)
+                        pipe.fit(data["X_train"], data["y_train"])
+                        p = pipe.predict_proba(X_test)[:, 1]
                 ev = compute_metrics(y_test.values, (p >= 0.5).astype(int), p)
                 ablation_all.append({"Model": name, "Strategy": strat, **ev})
-            continue
-
-        for strat, (X_res_s, y_res_s) in smote["resampled_sets"].items():
-            try:
-                with _time_limit(ABLATION_TIMEOUT_S, label=f"{name}/{strat}"):
-                    m2 = _build_any_model(name, args.seed)
-                    m2.fit(X_res_s, y_res_s, X_val=data["X_val"], y_val=data["y_val"])
-                    p = m2.predict_proba(X_test)[:, 1]
-                    ev = compute_metrics(y_test.values, (p >= 0.5).astype(int), p)
-                    ablation_all.append({"Model": name, "Strategy": strat, **ev})
             except Exception as exc:
-                log.warning(
-                    "Ablation skipped for model='%s' strategy='%s' (%s: %s)",
-                    name, strat, type(exc).__name__, exc,
-                )
-
+                log.warning("Fig 10 ablation skipped for %s/%s (%s: %s)", name, strat, type(exc).__name__, exc)
     if ablation_all:
         abl_df = pd.DataFrame(ablation_all)
         abl_df.to_csv(RES_DIR / "smote_model_ablation.csv", index=False)
-        plot_smote_ablation(
-            abl_df, metric="AUROC",
-            save_path=FIG_DIR / f"fig10_smote_ablation.{FIGURE_EXT}",
-        )
+        plot_smote_ablation(abl_df, metric="AUROC", save_path=FIG_DIR / f"fig10_smote_ablation.{FIGURE_EXT}")
 
-    return dict(
-        results     = results,
-        val_results = val_results,
-        roc_data    = roc_data,
-        best_name   = best_name,
-        best_model  = best_model,
-        best_proba  = best_proba,
-        best_pred   = best_pred,
-        best_opt_t  = best_opt_t,
-        thresholds   = thresholds,
-        pairwise_df  = pairwise_df if len(sorted_models) >= 2 else pd.DataFrame(),
-        bootstrap_ci = bootstrap_ci,
-        paired_ci = paired_ci,
-    )
+    prep = best_pipeline.named_steps["prep"]
+    Xt_train = prep.transform(data["X_train"])
+    Xt_test = prep.transform(X_test)
+    return dict(results=results, oof_results=oof_results, roc_data=roc_data, best_name=best_name,
+                best_pipeline=best_pipeline, best_model=best_pipeline.named_steps["model"],
+                Xt_train=Xt_train, Xt_test=Xt_test,
+                best_proba=best_proba, best_pred=best_pred, best_opt_t=best_opt_t,
+                thresholds=thresholds, test_probas=test_probas, pairwise_df=pairwise_df,
+                bootstrap_ci=bootstrap_ci, paired_ci=paired_ci)
 
 
-# ── Stage 5: SHAP Explanations ────────────────────────────────────────────────
+# ── Stage 5: SHAP ─────────────────────────────────────────────────────────────
 
 def stage_shap(data: dict, eval_out: dict, args) -> dict:
     log.info("=" * 60)
     log.info("STAGE 5: SHAP Explanations")
     log.info("=" * 60)
 
-    best_model     = eval_out["best_model"]
-    best_name      = eval_out["best_name"]
-    X_train        = data["X_train"]
-    X_test         = data["X_test"]
-    y_test         = data["y_test"]
-    feature_names  = data["feature_names"]
+    best_model, best_name = eval_out["best_model"], eval_out["best_name"]
+    X_train, X_test, y_test = eval_out["Xt_train"], eval_out["Xt_test"], data["y_test"]
+    feature_names = data["feature_names"]
+    rng = np.random.default_rng(args.seed)
 
-    # Sample background
-    bg_idx   = np.random.default_rng(args.seed).choice(
-        len(X_train), size=min(SHAP_BACKGROUND_SAMPLES, len(X_train)), replace=False
-    )
-    X_bg     = X_train.iloc[bg_idx]
+    bg_idx = rng.choice(len(X_train), size=min(SHAP_BACKGROUND_SAMPLES, len(X_train)), replace=False)
+    X_bg = X_train.iloc[bg_idx]
+    model_type = "tree" if best_name in TREE_MODELS else "kernel"
+    explainer = get_shap_explainer(best_model, X_bg, model_type=model_type)
 
-    # Choose explainer type
-    model_type = "tree" if best_name in {"XGBoost", "LightGBM",
-                                          "CatBoost", "Random Forest"} else "kernel"
-    explainer  = get_shap_explainer(best_model, X_bg, model_type=model_type)
+    # Random test subsample (chronological order would otherwise bias temporal runs).
+    n_shap = min(2000 if model_type == "tree" else 300, len(X_test))
+    xai_idx = np.sort(rng.choice(len(X_test), size=n_shap, replace=False))
+    X_exp = X_test.iloc[xai_idx]
+    sv = compute_shap_values(explainer, X_exp, model_type=model_type)
 
-    n_shap  = min(2000, len(X_test))
-    X_exp   = X_test.iloc[:n_shap]
-    sv      = compute_shap_values(explainer, X_exp, model_type=model_type)
-
-    # Additivity check
     ev = explainer.expected_value
-    # TreeExplainer returns a list (XGBoost/LightGBM/CatBoost) or a numpy
-    # array of shape (n_classes,) (sklearn Random Forest); unwrap both.
     ev_c1 = ev[1] if isinstance(ev, (list, np.ndarray)) and np.ndim(ev) > 0 and len(ev) > 1 else ev
-    proba  = best_model.predict_proba(X_exp)[:, 1]
-    shap_consistency_check(sv, proba, ev_c1)
+    proba = best_model.predict_proba(X_exp)[:, 1]
+    additivity = shap_consistency_check(sv, proba, ev_c1)
+    _write_json({"model": best_name, "output_space": getattr(explainer, "output_space", "unknown"),
+                 "n_explained": int(n_shap), **additivity}, RES_DIR / "shap_manifest.json")
 
-    # Figs 5a & 5b
-    plot_shap_summary(
-        sv, X_exp, title=f"SHAP Summary — {best_name}",
-        save_path=FIG_DIR / f"fig05a_shap_summary_{best_name.replace(' ', '_')}.{FIGURE_EXT}",
-    )
-    plot_shap_bar(
-        sv, X_exp, title=f"Mean |SHAP| — {best_name}",
-        save_path=FIG_DIR / f"fig05b_shap_bar_{best_name.replace(' ', '_')}.{FIGURE_EXT}",
-    )
-
-    # Fig 6: Dependence plot for top feature
+    plot_shap_summary(sv, X_exp, title=f"SHAP Summary — {best_name}",
+                      save_path=FIG_DIR / f"fig05a_shap_summary_{best_name.replace(' ', '_')}.{FIGURE_EXT}")
+    plot_shap_bar(sv, X_exp, title=f"Mean |SHAP| — {best_name}",
+                  save_path=FIG_DIR / f"fig05b_shap_bar_{best_name.replace(' ', '_')}.{FIGURE_EXT}")
     top_feat = top_k_features(sv, feature_names, k=1)["feature"].iloc[0]
-    plot_shap_dependence(
-        sv, X_exp, feature=top_feat,
-        save_path=FIG_DIR / f"fig06_shap_dep_{top_feat}.{FIGURE_EXT}",
-    )
-
-    # Feature ranking table (Table III)
+    plot_shap_dependence(sv, X_exp, feature=top_feat,
+                         save_path=FIG_DIR / f"fig06_shap_dep_{top_feat}.{FIGURE_EXT}")
     top_df = top_k_features(sv, feature_names, k=20)
     top_df.to_csv(RES_DIR / "shap_feature_ranking.csv", index=False)
     _save_latex_table(top_df, RES_DIR / "table3_shap_ranking.tex",
-                      caption="SHAP Feature Importance Ranking (Top 20)",
-                      label="tab:shap_ranking")
+                      caption="SHAP Feature Importance Ranking (Top 20)", label="tab:shap_ranking")
 
-    # Built-in vs SHAP importance (Fig 8)
-    if hasattr(best_model, "feature_importances_"):
-        fi     = pd.Series(best_model.feature_importances_, index=feature_names)
-        shap_s = pd.Series(np.abs(sv).mean(axis=0), index=feature_names)
+    fi = getattr(best_model, "feature_importances_", None)
+    if fi is not None and len(fi) == len(feature_names):
         plot_feature_importance_comparison(
-            shap_s, fi, top_k=15,
-            save_path=FIG_DIR / f"fig08_importance_comparison.{FIGURE_EXT}",
+            pd.Series(np.abs(sv).mean(axis=0), index=feature_names), pd.Series(fi, index=feature_names),
+            top_k=15, save_path=FIG_DIR / f"fig08_importance_comparison.{FIGURE_EXT}",
         )
-
-    # Threshold sweep (Fig 9)
-    plot_threshold_sweep(
-        y_test.values, eval_out["best_proba"], model_name=best_name,
-        save_path=FIG_DIR / f"fig09_threshold_sweep.{FIGURE_EXT}",
-    )
-
-    return dict(
-        explainer     = explainer,
-        shap_vals     = sv,
-        X_exp         = X_exp,
-        top_feature   = top_feat,
-        ev_c1         = ev_c1,
-    )
+    plot_threshold_sweep(y_test.values, eval_out["best_proba"], model_name=best_name,
+                         save_path=FIG_DIR / f"fig09_threshold_sweep.{FIGURE_EXT}")
+    return dict(explainer=explainer, shap_vals=sv, X_exp=X_exp, xai_idx=xai_idx, top_feature=top_feat, ev_c1=ev_c1)
 
 
-# ── Stage 6: LIME Explanations ────────────────────────────────────────────────
+# ── Stage 6: LIME ─────────────────────────────────────────────────────────────
 
 def stage_lime(data: dict, eval_out: dict, shap_out: dict, args) -> dict:
     log.info("=" * 60)
     log.info("STAGE 6: LIME Explanations")
     log.info("=" * 60)
 
-    best_model    = eval_out["best_model"]
-    best_pred     = eval_out["best_pred"]
-    best_proba    = eval_out["best_proba"]
-    X_test        = data["X_test"]
-    y_test        = data["y_test"]
-    feature_names = data["feature_names"]
+    best_model, best_pred, best_proba = eval_out["best_model"], eval_out["best_pred"], eval_out["best_proba"]
+    X_test, y_test, feature_names = eval_out["Xt_test"], data["y_test"], data["feature_names"]
+    cat_names = {idx: [str(c) for c in data["nominal_categories"][col]] + ["unknown"]
+                 for idx, col in zip(data["nominal_idx"], data["nominal_columns"])}
 
-    lime_exp = CreditLimeExplainer(
-        X_train      = data["X_train"],
-        feature_names= feature_names,
-        predict_fn   = best_model.predict_proba,
-        num_features = LIME_NUM_FEATURES,
-        num_samples  = LIME_NUM_SAMPLES,
-        random_state = args.seed,
-    )
+    def _explainer(seed):
+        return CreditLimeExplainer(
+            X_train=eval_out["Xt_train"], feature_names=feature_names, predict_fn=best_model.predict_proba,
+            num_features=LIME_NUM_FEATURES, num_samples=LIME_NUM_SAMPLES, random_state=seed,
+            categorical_features=list(data["nominal_idx"]), categorical_names=cat_names,
+        )
+    lime_exp = _explainer(args.seed)
 
-    # Select TP/FP/FN/TN instances
-    instances = _select_representative_instances(
-        X_test, y_test, best_pred, best_proba,
-    )
-    log.info("Local instances selected: %s", {k: int(v) for k, v in instances.items()})
-
-    exps       = []
-    exp_labels = []
+    instances = _select_representative_instances(X_test, y_test, best_pred, best_proba)
+    log.info("Local instances selected: %s", instances)
+    exps, exp_labels = [], []
     for kind, idx in instances.items():
-        x   = X_test.iloc[idx]
-        exp = lime_exp.explain_instance(x.values, label=1)
+        exp = lime_exp.explain_instance(X_test.iloc[idx].values, label=1)
         exps.append(exp)
-        exp_labels.append(
-            f"{kind} — idx {idx} | P(def)={best_proba[idx]:.3f}"
-        )
-        plot_lime_explanation(
-            exp, label=1,
-            title=f"LIME ({kind}) — {eval_out['best_name']}",
-            save_path=FIG_DIR / f"fig07_{kind.lower()}_lime.{FIGURE_EXT}",
-        )
+        exp_labels.append(f"{kind} — idx {idx} | P(def)={best_proba[idx]:.3f}")
+        plot_lime_explanation(exp, label=1, title=f"LIME ({kind}) — {eval_out['best_name']}",
+                              save_path=FIG_DIR / f"fig07_{kind.lower()}_lime.{FIGURE_EXT}")
+    plot_lime_multi_instance(exps, exp_labels, label=1,
+                             save_path=FIG_DIR / f"fig07_lime_multi_instance.{FIGURE_EXT}")
 
-    # Fig 7 (combined)
-    plot_lime_multi_instance(
-        exps, exp_labels, label=1,
-        save_path=FIG_DIR / f"fig07_lime_multi_instance.{FIGURE_EXT}",
-    )
+    sv, X_exp = shap_out["shap_vals"], shap_out["X_exp"]
+    n_agree = min(200, len(X_exp))
+    lime_batch, lime_scores = lime_exp.batch_explain(X_exp.iloc[:n_agree], n=n_agree, return_scores=True)
+    agree_df = compute_shap_lime_agreement(sv[:n_agree], lime_batch, feature_names)
 
-    # SHAP–LIME agreement
-    sv      = shap_out["shap_vals"]
-    n_agree = min(200, len(X_test))
-    lime_batch, lime_scores = lime_exp.batch_explain(
-        X_test.iloc[:n_agree], n=n_agree, return_scores=True,
-    )
-    agree_df   = compute_shap_lime_agreement(sv[:n_agree], lime_batch, feature_names)
-    repeated_lime = None
+    xai_df = pd.DataFrame()
     if args.revision_analyses:
         repeat_n = min(args.revision_analysis_n, n_agree)
         repeated_lime = []
         for i in range(repeat_n):
             row = []
             for repeat in range(3):
-                repeated = CreditLimeExplainer(
-                    X_train=data["X_train"], feature_names=feature_names,
-                    predict_fn=best_model.predict_proba,
-                    num_features=LIME_NUM_FEATURES, num_samples=LIME_NUM_SAMPLES,
-                    random_state=args.seed + repeat + 1,
-                )
-                row.append(repeated.explanation_to_series(
-                    repeated.explain_instance(X_test.iloc[i].values, label=1), label=1,
-                ))
+                rep = _explainer(args.seed + repeat + 1)
+                row.append(rep.explanation_to_series(rep.explain_instance(X_exp.iloc[i].values, label=1), label=1))
             repeated_lime.append(row)
-        xai_df = explanation_metrics(
-            sv[:repeat_n], lime_batch[:repeat_n], feature_names, repeated_lime,
-            lime_scores=lime_scores[:repeat_n],
-        )
+        xai_df = explanation_metrics(sv[:repeat_n], lime_batch[:repeat_n], feature_names, repeated_lime,
+                                     lime_scores=lime_scores[:repeat_n])
         xai_df.to_csv(RES_DIR / "explanation_quality_metrics.csv", index=False)
-        _save_latex_table(
-            xai_df.describe().round(4), RES_DIR / "table5_explanation_quality.tex",
-            caption="Explanation parsimony, stability, and SHAP--LIME agreement",
-            label="tab:explanation_quality",
-        )
-    else:
-        xai_df = pd.DataFrame()
+        _save_latex_table(xai_df.describe().round(4), RES_DIR / "table5_explanation_quality.tex",
+                          caption="Explanation parsimony, stability, and SHAP--LIME agreement",
+                          label="tab:explanation_quality")
     agree_df.to_csv(RES_DIR / "shap_lime_agreement.csv", index=False)
     if not agree_df.empty:
-        log.info(
-            "SHAP–LIME agreement | mean ρ=%.3f ± %.3f",
-            agree_df["spearman_rho"].mean(),
-            agree_df["spearman_rho"].std(),
-        )
-        _save_latex_table(
-            agree_df.describe().round(4),
-            RES_DIR / "table4_shap_lime_agreement.tex",
-            caption="SHAP–LIME Spearman Rank Correlation Statistics",
-            label="tab:agreement",
-        )
+        _save_latex_table(agree_df.describe().round(4), RES_DIR / "table4_shap_lime_agreement.tex",
+                          caption="SHAP–LIME Spearman Rank Correlation Statistics", label="tab:agreement")
+    return dict(lime_exp=lime_exp, exps=exps, agree_df=agree_df, xai_df=xai_df, shap_vals=sv, X_exp=X_exp)
 
-    return dict(
-        lime_exp=lime_exp,
-        exps=exps,
-        agree_df=agree_df,
-        xai_df=xai_df,
-        shap_vals=sv,
-        X_exp=shap_out["X_exp"],
+
+# ── Stage 7: Revision analyses ────────────────────────────────────────────────
+
+def stage_revision_analyses(data, imb, train_out, eval_out, lime_out, args) -> dict | None:
+    if not args.revision_analyses:
+        return None
+    log.info("=" * 60)
+    log.info("STAGE 7: Revision Analyses")
+    log.info("=" * 60)
+
+    y_train = data["y_train"].to_numpy()
+    y_test = data["y_test"]
+    nominal = data["nominal_columns"]
+    groups_train, groups_test = data["groups_train"], data["groups_test"]
+    have_groups = not groups_train.empty and not groups_test.empty
+    best_name = eval_out["best_name"]
+
+    # 1. Calibration, robustness (test), and OOF-based selection diagnostics.
+    robustness_rows, selection_rows, calib_rows, calib_bins = [], [], [], []
+    rng = np.random.default_rng(args.seed + 500)
+    robust_idx = rng.choice(len(y_train), size=min(2000, len(y_train)), replace=False)
+    for name, pipeline in train_out["trained_models"].items():
+        t = eval_out["thresholds"][name]
+        test_p = eval_out["test_probas"][name]
+        summary, bins = calibration_diagnostics(y_test, test_p)
+        calib_rows.append({"model": name, **summary})
+        if not bins.empty:
+            bins.insert(0, "model", name)
+            bins.insert(1, "seed", args.seed)
+            calib_bins.append(bins)
+        frame = evaluate_robustness(pipeline, data["X_train"], data["X_test"], y_test, t, args.seed,
+                                    nominal_columns=nominal)
+        frame.insert(0, "model", name)
+        robustness_rows.append(frame)
+
+        # Selection-side robustness: final model on a training subsample (in-sample,
+        # descriptive). Retention is a ratio so the in-sample bias largely cancels.
+        train_frame = evaluate_robustness(
+            pipeline, data["X_train"], data["X_train"].iloc[robust_idx], data["y_train"].iloc[robust_idx],
+            t, args.seed + 1000, nominal_columns=nominal,
+        )
+        retention = float(train_frame.loc[train_frame["perturbation"] != "none", "AUROC_retention"].mean())
+        oof, mask = train_out["oof_proba"][name], train_out["oof_mask"][name]
+        oof_m = compute_metrics(y_train[mask], oof[mask] >= t, oof[mask], t)
+        max_gap = float("nan")
+        if have_groups:
+            curve = fairness_utility_curve(y_train[mask], oof[mask], groups_train.iloc[mask].reset_index(drop=True),
+                                           cost_fp=args.cost_fp, cost_fn=args.cost_fn)
+            if not curve.empty:
+                nearest = curve.iloc[(curve["threshold"] - t).abs().argsort()[:1]]
+                max_gap = float(nearest["max_group_gap"].iloc[0])
+        selection_rows.append({
+            "model": name, "AUROC": oof_m["AUROC"], "Brier": oof_m["Brier"],
+            "base_rate_brier": float(y_train[mask].mean() * (1 - y_train[mask].mean())),
+            "robustness_retention": retention, "max_fairness_gap": max_gap,
+            "selection_source": "oof_predictions; robustness on train subsample",
+        })
+    robustness = pd.concat(robustness_rows, ignore_index=True)
+    robustness.to_csv(RES_DIR / "robustness_perturbations.csv", index=False)
+    pd.DataFrame(calib_rows).to_csv(RES_DIR / "heldout_calibration_diagnostics.csv", index=False)
+    if calib_bins:
+        pd.concat(calib_bins, ignore_index=True).to_csv(RES_DIR / "heldout_calibration_bins.csv", index=False)
+
+    reliability_selection = reliability_constrained_selection(
+        pd.DataFrame(selection_rows), min_robustness=args.min_robustness, max_fairness_gap=args.max_fairness_gap,
     )
+    reliability_selection.to_csv(RES_DIR / "reliability_selection.csv", index=False)
+    feasible = reliability_selection[reliability_selection["selected"] & reliability_selection["feasible"]]
+    reliable_name = str(feasible["model"].iloc[0]) if not feasible.empty else None
 
+    # 2. Controlled ablation: strategy x threshold rule x calibration, champion family,
+    #    tuned params, every choice on OOF predictions.
+    best_params = train_out["tuning_records"].get(best_name, {}).get("best_params", {}) or {}
+    champion_strategy = train_out["strategy_choice"].get(best_name, {}).get("strategy", imb["best_strategy"])
+    strategy_runs = {}
+    for strategy in ([] if args.skip_controlled_ablation else imb["ablation_df"]["Strategy"]):
+        try:
+            pipe = _make_pipeline(strategy, best_name, args.seed, data, **best_params)
+            oof, mask = _oof(pipe, data, args)
+            pipe.fit(data["X_train"], data["y_train"])
+            strategy_runs[strategy] = {"oof_proba": oof[mask], "y_oof": y_train[mask],
+                                       "test_proba": pipe.predict_proba(data["X_test"])[:, 1]}
+        except Exception as exc:
+            log.warning("Controlled ablation skipped for %s (%s: %s)", strategy, type(exc).__name__, exc)
+    ablation = run_controlled_ablation(strategy_runs, y_test, threshold_criterion=args.threshold_criterion,
+                                       cost_fp=args.cost_fp, cost_fn=args.cost_fn)
+    ablation["ablation"] = "resampling_threshold_calibration"
+
+    if not args.skip_controlled_ablation and args.dataset == "uci" and best_name != "TabNet":
+        raw = load_dataset(dataset="uci", data_dir=DATA_DIR, test_size=TEST_SIZE, random_state=args.seed,
+                           engineer=False, split_mode=args.split_mode)
+        raw_data = _data_dict(raw, args.split_mode)
+        pipe = _make_pipeline(champion_strategy, best_name, args.seed, raw_data, **best_params)
+        oof, mask = _oof(pipe, raw_data, args)
+        pipe.fit(raw.X_train, raw.y_train)
+        raw_t, _ = _threshold_from_oof(raw.y_train.to_numpy()[mask], oof[mask], args)
+        raw_test = pipe.predict_proba(raw.X_test)[:, 1]
+        rows = [
+            {"ablation": "feature_engineering", "strategy": "raw_features",
+             "threshold_rule": f"oof_{args.threshold_criterion}",
+             **compute_metrics(raw.y_test.to_numpy(), raw_test >= raw_t, raw_test, raw_t)},
+            {"ablation": "feature_engineering", "strategy": "engineered_features",
+             "threshold_rule": f"oof_{args.threshold_criterion}",
+             **compute_metrics(y_test.to_numpy(), eval_out["best_proba"] >= eval_out["best_opt_t"],
+                               eval_out["best_proba"], eval_out["best_opt_t"])},
+        ]
+        ablation = pd.concat([ablation, pd.DataFrame(rows)], ignore_index=True, sort=False)
+    if not args.skip_controlled_ablation:
+        ablation.insert(0, "model", best_name)
+        ablation.to_csv(RES_DIR / "controlled_ablations.csv", index=False)
+
+    # 3. Fairness--utility curves on test for every model.
+    fairness = pd.DataFrame()
+    if have_groups:
+        curves = []
+        for name in train_out["trained_models"]:
+            curve = fairness_utility_curve(y_test, eval_out["test_probas"][name], groups_test,
+                                           cost_fp=args.cost_fp, cost_fn=args.cost_fn)
+            curve.insert(0, "model", name)
+            curves.append(curve)
+        fairness = pd.concat(curves, ignore_index=True)
+        fairness.to_csv(RES_DIR / "fairness_utility_curve.csv", index=False)
+
+    # 4. Equal-opportunity group thresholds fitted on OOF predictions, frozen, then
+    #    evaluated once on the test partition.
+    post_rows, post_ci = [], []
+    if have_groups:
+        for name in train_out["trained_models"]:
+            oof, mask = train_out["oof_proba"][name], train_out["oof_mask"][name]
+            g_oof = groups_train.iloc[mask].reset_index(drop=True)
+            test_p = eval_out["test_probas"][name]
+            for col in groups_train.columns:
+                policy = fit_equal_opportunity_threshold_policy(
+                    y_train[mask], oof[mask], g_oof, col, max_tpr_gap=args.max_fairness_gap,
+                    cost_fp=args.cost_fp, cost_fn=args.cost_fn,
+                )
+                if policy["status"] != "fit":
+                    post_rows.append({"model": name, "group_column": col, "status": policy["status"]})
+                    continue
+                heldout = evaluate_group_threshold_policy(y_test, test_p, groups_test, policy,
+                                                         cost_fp=args.cost_fp, cost_fn=args.cost_fn)
+                cand_pred = heldout.pop("test_predictions")
+                ref_t = float(eval_out["thresholds"][name])
+                ref_pred = test_p >= ref_t
+                ref_row = fairness_utility_curve(y_test, test_p, groups_test[[col]], thresholds=[ref_t],
+                                                 cost_fp=args.cost_fp, cost_fn=args.cost_fn).iloc[0]
+                ref_acc = float((ref_pred == y_test.to_numpy()).mean())
+                post_rows.append({
+                    "model": name, "group_column": col, "status": "evaluated",
+                    "selection_source": "oof_predictions",
+                    "oof_target_tpr": policy["target_tpr"], "oof_tpr_gap": policy["validation_tpr_gap"],
+                    "oof_utility": policy["validation_utility"], "oof_feasible": policy["feasible"],
+                    "max_tpr_gap_constraint": policy["max_tpr_gap"],
+                    "reference_threshold_rule": f"oof_{args.threshold_criterion}_global_threshold",
+                    "reference_threshold": ref_t, "reference_test_accuracy": ref_acc,
+                    "reference_test_utility": float(ref_row["expected_utility"]),
+                    "reference_test_tpr_gap": float(ref_row[f"{col}_tpr_gap"]),
+                    "reference_test_fpr_gap": float(ref_row[f"{col}_fpr_gap"]),
+                    "reference_test_selection_gap": float(ref_row[f"{col}_selection_gap"]),
+                    "test_accuracy_change": heldout["test_accuracy"] - ref_acc,
+                    "test_utility_change": heldout["test_utility"] - float(ref_row["expected_utility"]),
+                    "test_tpr_gap_change": heldout["test_tpr_gap"] - float(ref_row[f"{col}_tpr_gap"]),
+                    "thresholds_by_group_json": json.dumps(policy["thresholds_by_group"], sort_keys=True),
+                    **{k: v for k, v in heldout.items() if k not in {"per_group", "thresholds_by_group"}},
+                })
+                if args.bootstrap_reps > 0:
+                    ci = bootstrap_fairness_policy_differences(
+                        y_test, ref_pred, cand_pred, groups_test[[col]], n_boot=args.bootstrap_reps,
+                        seed=args.seed + 2000 + len(post_rows), cost_fp=args.cost_fp, cost_fn=args.cost_fn,
+                    )
+                    ci.insert(0, "group_column", col)
+                    ci.insert(0, "model", name)
+                    ci.insert(0, "comparison", "oof_equal_opportunity_minus_global_oof_threshold")
+                    post_ci.append(ci)
+        pd.DataFrame(post_rows).to_csv(RES_DIR / "oof_fitted_fairness_postprocessing.csv", index=False)
+    if post_ci:
+        pd.concat(post_ci, ignore_index=True).to_csv(RES_DIR / "fairness_postprocessing_bootstrap_intervals.csv", index=False)
+
+    # 5. Descriptive component-wise audit score for the champion.
+    xai_df = lime_out.get("xai_df", pd.DataFrame()) if lime_out else pd.DataFrame()
+    fidelity = pd.DataFrame()
+    if lime_out and not xai_df.empty:
+        n_fid = min(len(xai_df), len(lime_out["X_exp"]))
+        fidelity = explanation_fidelity(eval_out["best_model"], lime_out["X_exp"].iloc[:n_fid], eval_out["Xt_train"],
+                                        lime_out["shap_vals"][:n_fid], nominal_columns=nominal)
+        fidelity.to_csv(RES_DIR / "explanation_fidelity_metrics.csv", index=False)
+        xai_df = xai_df.merge(fidelity, on="instance", how="left")
+        xai_df.to_csv(RES_DIR / "explanation_quality_metrics.csv", index=False)
+    score_rows = []
+    if not xai_df.empty:
+        stability = (xai_df["lime_stability_rho"].mean() + 1.0) / 2.0
+        parsimony = xai_df["shap_parsimony"].mean()
+        comp = float(np.clip(xai_df.get("comprehensiveness", pd.Series([0.0])).mean(), 0, 1))
+        lime_fid = float(np.clip(xai_df.get("lime_local_r2", pd.Series([0.0])).mean(), 0, 1))
+        xai_component = float(np.clip((stability + parsimony + comp + lime_fid) / 4.0, 0, 1))
+        metrics = eval_out["results"][best_name]
+        rob = robustness[(robustness["model"] == best_name) & (robustness["perturbation"] != "none")]
+        rob_component = float(np.clip(rob["AUROC_retention"].mean(), 0, 1)) if not rob.empty else 0.0
+        brier_naive = float(y_test.mean() * (1 - y_test.mean()))
+        brier_skill = 1.0 - float(metrics["Brier"]) / max(brier_naive, 1e-12)
+        pq = float(np.clip(np.sqrt(max(metrics["AUROC"], 0) * max(brier_skill, 0)), 0, 1))
+        inv_gap = None
+        if not fairness.empty:
+            row = fairness[fairness["model"] == best_name]
+            row = row.iloc[(row["threshold"] - eval_out["thresholds"][best_name]).abs().argsort()[:1]]
+            if not row.empty and np.isfinite(row["max_group_gap"].iloc[0]):
+                inv_gap = float(np.clip(1.0 - row["max_group_gap"].iloc[0], 0, 1))
+        score_rows.append({"model": best_name, **reliability_score(pq, rob_component, xai_component, inv_gap)})
+    else:
+        score_rows.append({"model": best_name, "status": "unavailable_without_xai"})
+    pd.DataFrame(score_rows).to_csv(RES_DIR / "reliability_scores.csv", index=False)
+
+    _write_json({
+        "seed": args.seed, "cutoff": data["cutoff"], "protocol": PROTOCOL,
+        "selection_data": "out-of-fold predictions inside the training partition",
+        "inner_cv": type(_inner_cv(data, args)).__name__,
+        "threshold_criterion": args.threshold_criterion,
+        "robustness_levels": [0.05, 0.10, 0.20],
+        "realistic_shift_families": ["missingness", "correlated_missingness", "numeric_noise", "covariate_shift"],
+        "nominal_columns_protected_from_perturbation": nominal,
+        "reliability_selected_model": reliable_name,
+        "reliability_constraints": {"min_robustness": args.min_robustness, "max_fairness_gap": args.max_fairness_gap},
+        "utility_costs": {"false_positive": args.cost_fp, "false_negative": args.cost_fn},
+        "bootstrap_reps": args.bootstrap_reps,
+        "multiple_testing_correction": "Holm step-down within each run; descriptive ranks across dependent runs",
+        "fairness_postprocessing": "equal-opportunity group thresholds fitted on OOF predictions; test evaluated once",
+        "reliability_aggregation": "descriptive_geometric_mean; unscored when group fairness data are absent",
+    }, RES_DIR / "revision_analysis_manifest.json")
+    return {"robustness": robustness, "ablations": ablation, "fairness": fairness,
+            "reliability_selection": reliability_selection, "reliable_model": reliable_name, "fidelity": fidelity}
+
+
+# ── External validation ───────────────────────────────────────────────────────
 
 def stage_external_validation(args) -> pd.DataFrame:
-    """Run the locked protocol on explicitly requested external datasets."""
+    """Fixed-parameter, OOF-thresholded evaluation on additional datasets (random split)."""
     rows = []
-    model_names = ["XGBoost", "LightGBM", "CatBoost", "Random Forest", "Logistic Reg."]
-    if args.fast:
-        model_names = ["XGBoost", "LightGBM", "Logistic Reg."]
+    model_names = FAST_MODELS if args.fast else ALL_MODELS
     for dataset_name in args.external_datasets:
         if dataset_name == args.dataset:
             continue
         try:
-            split_mode = "temporal" if args.external_temporal_column else "random"
-            loaded = load_dataset(
-                dataset=dataset_name, data_dir=DATA_DIR, test_size=TEST_SIZE,
-                val_size=VAL_SIZE, random_state=args.seed, split_mode=split_mode,
-                temporal_column=args.external_temporal_column,
-            )
-            X_train, X_val, X_test, y_train, y_val, y_test = loaded[:6]
+            loaded = load_dataset(dataset=dataset_name, data_dir=DATA_DIR, test_size=TEST_SIZE,
+                                  random_state=args.seed, split_mode="random")
+            data = _data_dict(loaded, "random")
             for name in model_names:
                 try:
-                    model = _build_any_model(name, args.seed)
-                    model.fit(X_train, y_train, X_val=X_val, y_val=y_val)
-                    val_proba = model.predict_proba(X_val)[:, 1]
-                    threshold, _ = optimal_threshold(y_val.to_numpy(), val_proba, criterion="f1")
-                    test_proba = model.predict_proba(X_test)[:, 1]
-                    metrics = compute_metrics(
-                        y_test.to_numpy(), test_proba >= threshold, test_proba, threshold,
-                    )
-                    rows.append({
-                        "dataset": dataset_name,
-                        "split_mode": split_mode,
-                        "model": name,
-                        "seed": args.seed,
-                        "status": "ok",
-                        **metrics,
-                    })
+                    pipe = _make_pipeline("None", name, args.seed, data)
+                    oof, mask = _oof(pipe, data, args)
+                    t, _ = _threshold_from_oof(loaded.y_train.to_numpy()[mask], oof[mask], args)
+                    pipe.fit(loaded.X_train, loaded.y_train)
+                    p = pipe.predict_proba(loaded.X_test)[:, 1]
+                    rows.append({"dataset": dataset_name, "model": name, "seed": args.seed, "status": "ok",
+                                 **compute_metrics(loaded.y_test.to_numpy(), p >= t, p, t)})
                 except Exception as exc:
-                    rows.append({
-                        "dataset": dataset_name,
-                        "split_mode": split_mode,
-                        "model": name,
-                        "seed": args.seed,
-                        "status": "failed",
-                        "error": f"{type(exc).__name__}: {exc}",
-                    })
+                    rows.append({"dataset": dataset_name, "model": name, "seed": args.seed,
+                                 "status": "failed", "error": f"{type(exc).__name__}: {exc}"})
         except Exception as exc:
-            rows.append({
-                "dataset": dataset_name,
-                "split_mode": "temporal" if args.external_temporal_column else "random",
-                "model": "__dataset__",
-                "seed": args.seed,
-                "status": "failed",
-                "error": f"{type(exc).__name__}: {exc}",
-            })
+            rows.append({"dataset": dataset_name, "model": "__dataset__", "seed": args.seed,
+                         "status": "failed", "error": f"{type(exc).__name__}: {exc}"})
     result = pd.DataFrame(rows)
     if not result.empty:
         result.to_csv(RES_DIR / "multi_dataset_validation.csv", index=False)
-        (RES_DIR / "external_validation_manifest.json").write_text(json.dumps({
-            "datasets": list(args.external_datasets),
-            "dataset_checksums": _dataset_checksums(list(args.external_datasets)),
-            "seed": args.seed,
-            "split_mode": "temporal" if args.external_temporal_column else "random",
-            "temporal_column": args.external_temporal_column,
-            "models": model_names,
-            "preprocessing": "train-fold-only scaling and winsorisation",
-        }, indent=2))
     return result
 
 
-def stage_revision_analyses(
-    data: dict,
-    smote: dict,
-    train_out: dict,
-    eval_out: dict,
-    lime_out: dict | None,
-    args,
-) -> dict | None:
-    """Run the analyses required for the revised manuscript."""
-    if not args.revision_analyses:
-        return None
+# ── Run orchestration ─────────────────────────────────────────────────────────
 
-    # 1. Input-perturbation and realistic shift robustness for every model.
-    robustness_rows = []
-    validation_rows = []
-    calibration_rows = []
-    calibration_bin_rows = []
-    for name, model in train_out["trained_models"].items():
-        test_probability = model.predict_proba(data["X_test"])[:, 1]
-        calibration_summary, calibration_bins = calibration_diagnostics(
-            data["y_test"], test_probability,
-        )
-        calibration_rows.append({"model": name, **calibration_summary})
-        if not calibration_bins.empty:
-            calibration_bins.insert(0, "model", name)
-            calibration_bins.insert(1, "seed", args.seed)
-            calibration_bin_rows.append(calibration_bins)
-        frame = evaluate_robustness(
-            model, data["X_train"], data["X_test"], data["y_test"],
-            eval_out["thresholds"][name], args.seed,
-        )
-        frame.insert(0, "model", name)
-        robustness_rows.append(frame)
-
-        val_frame = evaluate_robustness(
-            model, data["X_train"], data["X_val"], data["y_val"],
-            eval_out["thresholds"][name], args.seed + 1000,
-        )
-        val_robustness = float(
-            val_frame.loc[val_frame["perturbation"] != "none", "AUROC_retention"].mean()
-        )
-        val_proba = model.predict_proba(data["X_val"])[:, 1]
-        val_curve = fairness_utility_curve(
-            data["y_val"], val_proba, data["groups_val"],
-            cost_fp=args.cost_fp, cost_fn=args.cost_fn,
-        ) if not data["groups_val"].empty else pd.DataFrame()
-        if not val_curve.empty:
-            nearest = val_curve.iloc[(val_curve["threshold"] - eval_out["thresholds"][name]).abs().argsort()[:1]]
-            max_gap = float(nearest["max_group_gap"].iloc[0])
-        else:
-            max_gap = float("nan")
-        validation_rows.append({
-            "model": name,
-            "AUROC": float(compute_metrics(
-                data["y_val"].to_numpy(), val_proba >= eval_out["thresholds"][name],
-                val_proba, eval_out["thresholds"][name],
-            )["AUROC"]),
-            "Brier": float(compute_metrics(
-                data["y_val"].to_numpy(), val_proba >= eval_out["thresholds"][name],
-                val_proba, eval_out["thresholds"][name],
-            )["Brier"]),
-            "base_rate_brier": float(data["y_val"].mean() * (1.0 - data["y_val"].mean())),
-            "robustness_retention": val_robustness,
-            "max_fairness_gap": max_gap,
-        })
-    robustness = pd.concat(robustness_rows, ignore_index=True)
-    robustness.to_csv(RES_DIR / "robustness_perturbations.csv", index=False)
-    pd.DataFrame(calibration_rows).to_csv(
-        RES_DIR / "heldout_calibration_diagnostics.csv", index=False,
-    )
-    if calibration_bin_rows:
-        pd.concat(calibration_bin_rows, ignore_index=True).to_csv(
-            RES_DIR / "heldout_calibration_bins.csv", index=False,
-        )
-
-    reliability_selection = reliability_constrained_selection(
-        pd.DataFrame(validation_rows),
-        min_robustness=args.min_robustness,
-        max_fairness_gap=args.max_fairness_gap,
-    )
-    reliability_selection.to_csv(RES_DIR / "reliability_selection.csv", index=False)
-    feasible_selected = reliability_selection[
-        reliability_selection["selected"] & reliability_selection["feasible"]
-    ] if not reliability_selection.empty else pd.DataFrame()
-    reliable_name = (
-        str(feasible_selected["model"].iloc[0]) if not feasible_selected.empty else None
-    )
-
-    # 2. Threshold, resampling, and validation-only calibration ablations.
-    best_name = eval_out["best_name"]
-    ablation = run_controlled_ablation(
-        lambda: _build_any_model(best_name, args.seed),
-        smote["resampled_sets"], data["X_val"], data["y_val"],
-        data["X_test"], data["y_test"],
-    )
-    ablation["ablation"] = "resampling_threshold_calibration"
-
-    # Feature-engineering ablation uses the identical split and the same fixed
-    # model family, but reloads the raw UCI matrix without engineered columns.
-    # It is intentionally not hyperparameter-tuned: the purpose is isolation
-    # of the feature block, not a second model-selection sweep.
-    if args.dataset == "uci" and best_name != "TabNet":
-        raw = load_dataset(
-            dataset=args.dataset, data_dir=DATA_DIR, test_size=TEST_SIZE,
-            val_size=VAL_SIZE, random_state=args.seed, engineer=False,
-            split_mode=args.split_mode, temporal_column=args.temporal_column,
-        )
-        raw_model = _build_any_model(best_name, args.seed)
-        raw_model.fit(raw[0], raw[3], X_val=raw[1], y_val=raw[4])
-        raw_val = raw_model.predict_proba(raw[1])[:, 1]
-        raw_test = raw_model.predict_proba(raw[2])[:, 1]
-        raw_threshold, _ = optimal_threshold(raw[4].to_numpy(), raw_val, criterion="f1")
-        raw_metrics = compute_metrics(raw[5].to_numpy(), raw_test >= raw_threshold, raw_test, raw_threshold)
-        raw_row = pd.DataFrame([{
-            "ablation": "feature_engineering",
-            "strategy": "raw_features",
-            "threshold_rule": "validation_f1",
-            **raw_metrics,
-        }])
-        engineered_row = pd.DataFrame([{
-            "ablation": "feature_engineering",
-            "strategy": "engineered_features",
-            "threshold_rule": "validation_f1",
-            **compute_metrics(
-                data["y_test"].to_numpy(), eval_out["best_proba"] >= eval_out["best_opt_t"],
-                eval_out["best_proba"], eval_out["best_opt_t"],
-            ),
-        }])
-        ablation = pd.concat([ablation, raw_row, engineered_row], ignore_index=True, sort=False)
-    ablation.insert(0, "model", best_name)
-    ablation.to_csv(RES_DIR / "controlled_ablations.csv", index=False)
-
-    # 3. Fairness--utility Pareto curves for all available models.
-    fairness_rows = []
-    if not data["groups"].empty:
-        for name, model in train_out["trained_models"].items():
-            proba = model.predict_proba(data["X_test"])[:, 1]
-            curve = fairness_utility_curve(
-                data["y_test"], proba, data["groups"],
-                cost_fp=args.cost_fp, cost_fn=args.cost_fn,
-            )
-            curve.insert(0, "model", name)
-            fairness_rows.append(curve)
-    fairness = pd.concat(fairness_rows, ignore_index=True) if fairness_rows else pd.DataFrame()
-    if not fairness.empty:
-        fairness.to_csv(RES_DIR / "fairness_utility_curve.csv", index=False)
-
-    # 4. Validation-fitted equal-opportunity threshold baseline. Group thresholds
-    # are frozen before test evaluation; the test set never chooses the policy.
-    postprocess_rows = []
-    postprocess_ci_rows = []
-    if not data["groups_val"].empty and not data["groups"].empty:
-        for name, model in train_out["trained_models"].items():
-            val_probability = model.predict_proba(data["X_val"])[:, 1]
-            test_probability = model.predict_proba(data["X_test"])[:, 1]
-            for group_column in data["groups_val"].columns:
-                policy = fit_equal_opportunity_threshold_policy(
-                    data["y_val"], val_probability, data["groups_val"], group_column,
-                    max_tpr_gap=args.max_fairness_gap,
-                    cost_fp=args.cost_fp, cost_fn=args.cost_fn,
-                )
-                if policy["status"] != "fit":
-                    postprocess_rows.append({
-                        "model": name, "group_column": group_column,
-                        "status": policy["status"],
-                    })
-                    continue
-                heldout = evaluate_group_threshold_policy(
-                    data["y_test"], test_probability, data["groups"], policy,
-                    cost_fp=args.cost_fp, cost_fn=args.cost_fn,
-                )
-                test_predictions = heldout.pop("test_predictions")
-                reference_threshold = float(eval_out["thresholds"][name])
-                reference_predictions = test_probability >= reference_threshold
-                reference_curve = fairness_utility_curve(
-                    data["y_test"], test_probability, data["groups"][[group_column]],
-                    thresholds=[reference_threshold], cost_fp=args.cost_fp,
-                    cost_fn=args.cost_fn,
-                )
-                reference_row = reference_curve.iloc[0]
-                reference_accuracy = float((reference_predictions == data["y_test"].to_numpy()).mean())
-                reference_tpr_gap = float(reference_row[f"{group_column}_tpr_gap"])
-                reference_fpr_gap = float(reference_row[f"{group_column}_fpr_gap"])
-                reference_selection_gap = float(reference_row[f"{group_column}_selection_gap"])
-                reference_max_gap = float(reference_row["max_group_gap"])
-                reference_utility = float(reference_row["expected_utility"])
-                thresholds_json = json.dumps(policy["thresholds_by_group"], sort_keys=True)
-                postprocess_rows.append({
-                    "model": name, "group_column": group_column,
-                    "status": "evaluated", "validation_target_tpr": policy["target_tpr"],
-                    "validation_tpr_gap": policy["validation_tpr_gap"],
-                    "validation_utility": policy["validation_utility"],
-                    "validation_feasible": policy["feasible"],
-                    "max_tpr_gap_constraint": policy["max_tpr_gap"],
-                    "reference_threshold_rule": "validation_f1_global_threshold",
-                    "reference_threshold": reference_threshold,
-                    "reference_test_accuracy": reference_accuracy,
-                    "reference_test_utility": reference_utility,
-                    "reference_test_tpr_gap": reference_tpr_gap,
-                    "reference_test_fpr_gap": reference_fpr_gap,
-                    "reference_test_selection_gap": reference_selection_gap,
-                    "reference_test_max_group_gap": reference_max_gap,
-                    "test_accuracy_change": heldout["test_accuracy"] - reference_accuracy,
-                    "test_utility_change": heldout["test_utility"] - reference_utility,
-                    "test_tpr_gap_change": heldout["test_tpr_gap"] - reference_tpr_gap,
-                    "test_fpr_gap_change": heldout["test_fpr_gap"] - reference_fpr_gap,
-                    "test_selection_gap_change": heldout["test_selection_gap"] - reference_selection_gap,
-                    "test_max_group_gap_change": heldout["test_max_group_gap"] - reference_max_gap,
-                    "thresholds_by_group_json": thresholds_json,
-                    **heldout,
-                })
-                if args.bootstrap_reps > 0:
-                    intervals = bootstrap_fairness_policy_differences(
-                        data["y_test"], reference_predictions, test_predictions,
-                        data["groups"][[group_column]], n_boot=args.bootstrap_reps,
-                        seed=args.seed + 2000 + len(postprocess_rows),
-                        cost_fp=args.cost_fp, cost_fn=args.cost_fn,
-                    )
-                    intervals.insert(0, "group_column", group_column)
-                    intervals.insert(0, "model", name)
-                    intervals.insert(0, "comparison", "validation_equal_opportunity_minus_global_validation_f1")
-                    postprocess_ci_rows.append(intervals)
-        pd.DataFrame(postprocess_rows).to_csv(
-            RES_DIR / "validation_fitted_fairness_postprocessing.csv", index=False,
-        )
-    if postprocess_ci_rows:
-        pd.concat(postprocess_ci_rows, ignore_index=True).to_csv(
-            RES_DIR / "fairness_postprocessing_bootstrap_intervals.csv", index=False,
-        )
-
-    # 5. Component-wise descriptive audit score. The score is deliberately emitted
-    # with its components so it cannot conceal a weak dimension.
-    score_rows = []
-    xai_df = lime_out.get("xai_df", pd.DataFrame()) if lime_out else pd.DataFrame()
-    fidelity = pd.DataFrame()
-    if lime_out and not xai_df.empty and "shap_vals" in lime_out:
-        n_fidelity = min(len(xai_df), len(lime_out["X_exp"]))
-        fidelity = explanation_fidelity(
-            eval_out["best_model"],
-            lime_out["X_exp"].iloc[:n_fidelity],
-            data["X_train"],
-            lime_out["shap_vals"][:n_fidelity],
-        )
-        fidelity.to_csv(RES_DIR / "explanation_fidelity_metrics.csv", index=False)
-        xai_df = xai_df.merge(fidelity, on="instance", how="left")
-        xai_df.to_csv(RES_DIR / "explanation_quality_metrics.csv", index=False)
-    xai_component = None
-    if not xai_df.empty:
-        stability = ((xai_df["lime_stability_rho"].mean() + 1.0) / 2.0)
-        parsimony = xai_df["shap_parsimony"].mean()
-        fidelity_component = float(np.clip(
-            xai_df.get("comprehensiveness", pd.Series([0.0])).mean(), 0.0, 1.0
-        ))
-        lime_fidelity = float(np.clip(
-            xai_df.get("lime_local_r2", pd.Series([0.0])).mean(), 0.0, 1.0
-        ))
-        xai_component = float(np.clip(
-            (stability + parsimony + fidelity_component + lime_fidelity) / 4.0,
-            0.0, 1.0,
-        ))
-    if xai_component is not None:
-        for name, metrics in eval_out["results"].items():
-            if name != best_name:
-                # XAI scoring is computed for the validation-selected champion;
-                # other models still receive robustness and fairness tables.
-                continue
-            rob = robustness[(robustness["model"] == name) & (robustness["perturbation"] != "none")]
-            robustness_component = float(np.clip(rob["AUROC_retention"].mean(), 0.0, 1.0)) if not rob.empty else 0.0
-            brier_naive = float(data["y_test"].mean() * (1 - data["y_test"].mean()))
-            brier_skill = 1.0 - float(metrics["Brier"]) / max(brier_naive, 1e-12)
-            predictive_quality_component = float(np.clip(np.sqrt(max(metrics["AUROC"], 0.0) * max(brier_skill, 0.0)), 0.0, 1.0))
-            inverse_group_gap_component = None
-            if not fairness.empty:
-                row = fairness[fairness["model"] == name]
-                if not row.empty:
-                    row = row.iloc[(row["threshold"] - eval_out["thresholds"][name]).abs().argsort()[:1]]
-                gap_cols = [c for c in row.columns if c.endswith("_tpr_gap") or c.endswith("_fpr_gap")]
-                if not row.empty and gap_cols:
-                    inverse_group_gap_component = float(np.clip(1.0 - row[gap_cols].to_numpy(dtype=float).max(), 0.0, 1.0))
-            score = reliability_score(
-                predictive_quality_component, robustness_component, xai_component,
-                inverse_group_gap_component,
-            )
-            score_rows.append({"model": name, **score})
-    else:
-        score_rows.append({"model": best_name, "status": "unavailable_without_xai"})
-    scores = pd.DataFrame(score_rows)
-    scores.to_csv(RES_DIR / "reliability_scores.csv", index=False)
-
-    summary = {
-        "seed": args.seed,
-        "robustness_levels": [0.05, 0.10, 0.20],
-        "explanation_instances": int(len(xai_df)),
-        "realistic_shift_families": ["missingness", "correlated_missingness", "numeric_noise", "covariate_shift"],
-        "robustness_diagnostics": ["AUROC_retention", "Brier_retention", "mean_abs_probability_shift", "decision_flip_rate"],
-        "reliability_selected_model": reliable_name,
-        "reliability_constraints": {
-            "min_robustness": args.min_robustness,
-            "max_fairness_gap": args.max_fairness_gap,
-        },
-        "utility_costs": {"false_positive": args.cost_fp, "false_negative": args.cost_fn},
-        "bootstrap_reps": args.bootstrap_reps,
-        "multiple_testing_correction": "Holm step-down for pairwise DeLong and McNemar tests",
-        "reliability_aggregation": "descriptive_geometric_mean; unscored when group fairness data are absent",
-        "components": ["predictive_quality (AUROC and Brier skill)", "robustness", "explanation_diagnostics", "inverse_group_gap"],
-        "calibration_outputs": ["heldout_calibration_diagnostics.csv", "heldout_calibration_bins.csv"],
-        "fairness_postprocessing": "equal-opportunity group thresholds fitted on validation only; test set used for final descriptive evaluation",
-        "fairness_uncertainty": "row-bootstrap intervals conditional on fitted model and frozen threshold policy",
-    }
-    (RES_DIR / "revision_analysis_manifest.json").write_text(json.dumps(summary, indent=2))
-    return {
-        "robustness": robustness, "ablations": ablation, "fairness": fairness,
-        "scores": scores, "reliability_selection": reliability_selection,
-        "reliable_model": reliable_name, "fidelity": fidelity,
-    }
-
-
-# ── Main ──────────────────────────────────────────────────────────────────────
-
-def _set_run_dirs(seed: int) -> dict:
-    """Point pipeline outputs at this seed's run directory."""
+def _set_run_dirs(run_id: str) -> dict:
     global FIG_DIR, RES_DIR, MDL_DIR
-
-    run_dir = RUNS_DIR / f"seed_{seed}"
-    FIG_DIR = run_dir / "figures"
-    RES_DIR = run_dir / "results"
-    MDL_DIR = run_dir / "models"
-    for d in [FIG_DIR, RES_DIR, MDL_DIR]:
+    run_dir = RUNS_DIR / run_id
+    FIG_DIR, RES_DIR, MDL_DIR = run_dir / "figures", run_dir / "results", run_dir / "models"
+    for d in (FIG_DIR, RES_DIR, MDL_DIR):
         d.mkdir(parents=True, exist_ok=True)
     return {"run_dir": run_dir, "fig_dir": FIG_DIR, "res_dir": RES_DIR, "mdl_dir": MDL_DIR}
 
 
-def _run_one_seed(args, seed: int) -> dict:
+def _run_one(args, seed: int, cutoff: str | None) -> dict:
     args.seed = seed
-    dirs = _set_run_dirs(seed)
-
+    run_id = f"seed_{seed}" if cutoff is None else f"cutoff_{cutoff}_seed_{seed}"
+    dirs = _set_run_dirs(run_id)
+    # A failed rerun must not leave an old completion eligible for aggregation.
+    (RES_DIR / "run_manifest.json").unlink(missing_ok=True)
     log.info("╔══════════════════════════════════════════════╗")
-    log.info("║  Credit Default Prediction with XAI         ║")
+    log.info("║  Credit Default Prediction with XAI (v3)     ║")
     log.info("║  Dataset: %-35s║", args.dataset)
-    log.info("║  Seed: %-38d║", seed)
+    log.info("║  Run: %-39s║", run_id)
     log.info("╚══════════════════════════════════════════════╝")
 
-    data_out  = stage_data(args)
-    smote_out = stage_smote_ablation(data_out, args)
-    train_out = stage_training(data_out, smote_out, args)
-    eval_out  = stage_evaluation(data_out, train_out, smote_out, args)
-
-    shap_out = None
-    lime_out = None
+    data_out = stage_data(args, cutoff)
+    data_out["dataset_checksums"] = _dataset_checksums([args.dataset])
+    data_out["cache_key"] = training_key(args, data_out)
+    imb_out = stage_imbalance_ablation(data_out, args)
+    train_out = stage_training(data_out, imb_out, args)
+    eval_out = stage_evaluation(data_out, train_out, imb_out, args)
+    shap_out = lime_out = None
     if not args.skip_xai:
         shap_out = stage_shap(data_out, eval_out, args)
         lime_out = stage_lime(data_out, eval_out, shap_out, args)
-    else:
-        log.info("Skipping SHAP/LIME because --skip-xai was passed.")
-
-    revision_out = stage_revision_analyses(
-        data_out, smote_out, train_out, eval_out, lime_out, args,
-    )
+    revision_out = stage_revision_analyses(data_out, imb_out, train_out, eval_out, lime_out, args)
     external_out = stage_external_validation(args) if args.external_datasets else pd.DataFrame()
 
     manifest = {
-        "seed": seed,
-        "dataset": args.dataset,
-        "split_mode": args.split_mode,
-        "temporal_column": args.temporal_column,
-        "external_datasets": list(args.external_datasets),
-        "fast": bool(args.fast),
-        "tune": bool(args.tune),
-        "tune_iter": int(args.tune_iter),
-        "skip_xai": bool(args.skip_xai),
-        "full_ablation": bool(args.full_ablation),
+        "run_id": run_id, "seed": seed, "cutoff": cutoff, "dataset": args.dataset,
+        "split_mode": args.split_mode, "protocol": PROTOCOL,
+        "data_meta": data_out["meta"], "fast": bool(args.fast), "tune": bool(args.tune),
+        "tune_iter": int(args.tune_iter), "inner_folds": int(args.inner_folds),
+        "inner_temporal_folds": int(args.inner_temporal_folds),
+        "threshold_criterion": args.threshold_criterion, "skip_xai": bool(args.skip_xai),
+        "cost_fp": args.cost_fp, "cost_fn": args.cost_fn,
+        "horizon_months": args.horizon_months, "test_window_months": args.test_window_months,
+        "prosper_include_pricing": args.prosper_include_pricing,
+        "skip_tabnet": args.skip_tabnet,
         "best_model": eval_out["best_name"],
-        "best_validation_AUROC": eval_out["val_results"][eval_out["best_name"]]["AUROC"],
+        "best_oof_AUROC": eval_out["oof_results"][eval_out["best_name"]]["AUROC"],
         "best_test_AUROC": eval_out["results"][eval_out["best_name"]]["AUROC"],
         "best_threshold": eval_out["best_opt_t"],
-        "best_smote_strategy": smote_out["best_strategy"],
-        "resampling_helped": smote_out["smote_summary"]["resampling_helped"],
-        "seed_list": list(getattr(args, "seed_list", [seed])),
-        "dataset_file_sha256": _sha256(DATA_DIR / "uci_credit.csv") if args.dataset == "uci" and (DATA_DIR / "uci_credit.csv").exists() else None,
+        "probe_imbalance_strategy": imb_out["best_strategy"],
+        "champion_imbalance_strategy": train_out["strategy_choice"].get(eval_out["best_name"], {}).get("strategy"),
+        "strategy_selection": args.strategy_selection,
+        "resampling_helped": imb_out["smote_summary"]["resampling_helped"],
         "dataset_checksums": _dataset_checksums([args.dataset, *args.external_datasets]),
-        "split_indices": str(RES_DIR / "split_indices.json"),
-        "source_fingerprint": _source_fingerprint(),
+        "source_fingerprint": _source_fingerprint(), "package_versions": _package_versions(),
         "revision_analyses": bool(args.revision_analyses),
-        "reliability_selected_model": (
-            revision_out.get("reliable_model") if revision_out else None
-        ),
-        "figures_dir": str(FIG_DIR),
-        "results_dir": str(RES_DIR),
-        "models_dir": str(MDL_DIR),
+        "bootstrap_reps": args.bootstrap_reps,
+        "cache_key": data_out["cache_key"],
+        "requested_models": args.models,
+        "core_only": args.core_only,
+        "skip_ablation_grid": args.skip_ablation_grid,
+        "skip_controlled_ablation": args.skip_controlled_ablation,
+        "bootstrap_scope": "conditional_on_fitted_models_and_selected_thresholds",
+        "oof_scope": "selection_diagnostics; hyperparameters selected on these training folds",
+        "reliability_selected_model": revision_out.get("reliable_model") if revision_out else None,
+        "results_dir": str(RES_DIR), "figures_dir": str(FIG_DIR),
     }
-    (RES_DIR / "run_manifest.json").write_text(json.dumps(manifest, indent=2))
-
-    log.info("=" * 60)
-    log.info("SEED %d COMPLETE", seed)
-    log.info("Figures    -> %s", FIG_DIR)
-    log.info("Results    -> %s", RES_DIR)
-    log.info("Best model -> %s (AUROC=%.4f)",
-             eval_out["best_name"],
-             eval_out["results"][eval_out["best_name"]]["AUROC"])
-    log.info("=" * 60)
-
-    return {
-        "seed": seed,
-        "dirs": dirs,
-        "manifest": manifest,
-        "data": data_out,
-        "smote": smote_out,
-        "train": train_out,
-        "eval": eval_out,
-        "shap": shap_out,
-        "lime": lime_out,
-        "revision": revision_out,
-        "external_validation": external_out,
-    }
+    _write_json({"results": eval_out["results"], "oof_results": eval_out["oof_results"],
+                 "imbalance": imb_out["smote_summary"], "tuning_records": train_out["tuning_records"]},
+                RES_DIR / "run_summary.json")
+    # The completion manifest is written last; partial runs are not aggregated.
+    _write_json(manifest, RES_DIR / "run_manifest.json")
+    log.info("RUN %s COMPLETE | champion %s | OOF AUROC %.4f | test AUROC %.4f", run_id,
+             eval_out["best_name"], manifest["best_oof_AUROC"], manifest["best_test_AUROC"])
+    # Full fitted models are checkpointed on disk, not retained for all seeds.
+    summary_eval = {key: eval_out[key] for key in ("results", "oof_results", "pairwise_df", "bootstrap_ci", "paired_ci")}
+    return {"run_id": run_id, "seed": seed, "cutoff": cutoff, "dirs": dirs, "manifest": manifest,
+            "imbalance": imb_out, "train": {"tuning_records": train_out["tuning_records"]}, "eval": summary_eval, "revision": revision_out,
+            "external_validation": external_out}
 
 
-def _write_multi_seed_summary(seed_runs: list[dict]) -> None:
+def _write_multi_run_summary(runs: list[dict]) -> None:
+    # A selective rerun must retain other completed runs from the same protocol.
+    current = {run["run_id"]: run for run in runs}
+    settings = ("dataset", "split_mode", "protocol", "fast", "tune", "tune_iter", "inner_folds",
+                "inner_temporal_folds", "threshold_criterion", "strategy_selection", "requested_models",
+                "cost_fp", "cost_fn", "horizon_months", "test_window_months", "prosper_include_pricing", "skip_tabnet",
+                "source_fingerprint", "dataset_checksums", "package_versions")
+    reference = runs[0]["manifest"]
+    for path in RUNS_DIR.glob("*/results/run_manifest.json"):
+        manifest = json.loads(path.read_text())
+        if manifest["run_id"] in current or not (path.parent / "run_summary.json").exists():
+            continue
+        if any(manifest.get(key) != reference.get(key) for key in settings):
+            log.warning("Excluding incompatible completed run from summary: %s", manifest["run_id"])
+            continue
+        saved = json.loads((path.parent / "run_summary.json").read_text())
+        evaluation = {"results": saved["results"], "oof_results": saved["oof_results"]}
+        for key, filename in (("pairwise_df", "pairwise_model_tests.csv"),
+                              ("bootstrap_ci", "bootstrap_metric_confidence_intervals.csv"),
+                              ("paired_ci", "paired_bootstrap_model_differences.csv")):
+            eligible = key == "pairwise_df" or (manifest.get("revision_analyses") and manifest.get("bootstrap_reps", 0) > 0)
+            if eligible and (path.parent / filename).exists():
+                evaluation[key] = pd.read_csv(path.parent / filename)
+        current[manifest["run_id"]] = {
+            "run_id": manifest["run_id"], "seed": manifest["seed"], "cutoff": manifest["cutoff"],
+            "manifest": manifest, "eval": evaluation, "dirs": {"res_dir": path.parent},
+            "imbalance": {"smote_summary": saved["imbalance"]},
+            "train": {"tuning_records": saved["tuning_records"]},
+        }
+    runs = [current[key] for key in sorted(current)]
     summary_dir = RUNS_DIR / "summary"
     summary_dir.mkdir(parents=True, exist_ok=True)
-
-    metric_rows = []
-    val_metric_rows = []
-    best_rows = []
-    smote_rows = []
-    pairwise_rows = []
-    smote_model_rows = []
-    bootstrap_rows = []
-    paired_bootstrap_rows = []
-    external_rows = []
-    tuning_summary = {}
-
-    for run in seed_runs:
-        seed = run["seed"]
-        eval_out = run["eval"]
-        smote_out = run["smote"]
-
-        for model_name, metrics in eval_out["results"].items():
-            metric_rows.append({"seed": seed, "model": model_name, **metrics})
-        for model_name, metrics in eval_out.get("val_results", {}).items():
-            val_metric_rows.append({"seed": seed, "model": model_name, **metrics})
-
+    metric_rows, oof_rows, best_rows, imb_rows = [], [], [], []
+    pairwise, smote_model, boot, paired, external = [], [], [], [], []
+    tuning = {}
+    for run in runs:
+        key = {"run_id": run["run_id"], "seed": run["seed"], "cutoff": run["cutoff"]}
+        for name, m in run["eval"]["results"].items():
+            metric_rows.append({**key, "model": name, **m})
+        for name, m in run["eval"]["oof_results"].items():
+            oof_rows.append({**key, "model": name, **m})
         best_rows.append(run["manifest"])
-        smote_rows.append({"seed": seed, **smote_out["smote_summary"]})
-        tuning_summary[f"seed_{seed}"] = run["train"].get("tuning_records", {})
-
-        pairwise_df = eval_out.get("pairwise_df")
-        if pairwise_df is not None and not pairwise_df.empty:
-            tmp = pairwise_df.copy()
-            tmp.insert(0, "seed", seed)
-            pairwise_rows.append(tmp)
-
-        smote_model_path = Path(run["dirs"]["res_dir"]) / "smote_model_ablation.csv"
-        if smote_model_path.exists():
-            tmp = pd.read_csv(smote_model_path)
-            tmp.insert(0, "seed", seed)
-            smote_model_rows.append(tmp)
-        bootstrap_df = eval_out.get("bootstrap_ci", pd.DataFrame())
-        if bootstrap_df is not None and not bootstrap_df.empty:
-            tmp = bootstrap_df.copy()
-            tmp.insert(0, "seed", seed)
-            bootstrap_rows.append(tmp)
-        paired_df = eval_out.get("paired_ci", pd.DataFrame())
-        if paired_df is not None and not paired_df.empty:
-            tmp = paired_df.copy()
-            tmp.insert(0, "seed", seed)
-            paired_bootstrap_rows.append(tmp)
-        external_df = run.get("external_validation", pd.DataFrame())
-        if external_df is not None and not external_df.empty:
-            external_rows.append(external_df)
+        imb_rows.append({**key, **run["imbalance"]["smote_summary"]})
+        tuning[run["run_id"]] = run["train"].get("tuning_records", {})
+        for frame, bucket in ((run["eval"].get("pairwise_df"), pairwise),
+                              (run["eval"].get("bootstrap_ci"), boot),
+                              (run["eval"].get("paired_ci"), paired),
+                              (run.get("external_validation"), external)):
+            if frame is not None and not frame.empty:
+                tmp = frame.copy()
+                for k, v in reversed(list(key.items())):
+                    tmp.insert(0, k, v)
+                bucket.append(tmp)
+        path = Path(run["dirs"]["res_dir"]) / "smote_model_ablation.csv"
+        if path.exists() and not run["manifest"].get("skip_ablation_grid", False):
+            tmp = pd.read_csv(path)
+            for k, v in reversed(list(key.items())):
+                tmp.insert(0, k, v)
+            smote_model.append(tmp)
 
     metrics_df = pd.DataFrame(metric_rows)
-    metrics_df.to_csv(summary_dir / "all_seed_test_metrics.csv", index=False)
-    if val_metric_rows:
-        pd.DataFrame(val_metric_rows).to_csv(
-            summary_dir / "all_seed_validation_metrics.csv", index=False,
-        )
+    metrics_df.to_csv(summary_dir / "all_run_test_metrics.csv", index=False)
+    pd.DataFrame(oof_rows).to_csv(summary_dir / "all_run_oof_metrics.csv", index=False)
+    pd.DataFrame(best_rows).drop(columns=["data_meta", "package_versions"], errors="ignore") \
+        .to_csv(summary_dir / "all_run_best_models.csv", index=False)
+    pd.DataFrame(imb_rows).to_csv(summary_dir / "all_run_imbalance_summary.csv", index=False)
+    _write_yaml(tuning, summary_dir / "all_run_best_params.yaml")
 
-    best_df = pd.DataFrame(best_rows)
-    best_df.to_csv(summary_dir / "all_seed_best_models.csv", index=False)
-    if best_rows:
-        provenance = {
-            "dataset": best_rows[0].get("dataset"),
-            "split_mode": best_rows[0].get("split_mode"),
-            "temporal_column": best_rows[0].get("temporal_column"),
-            "external_datasets": best_rows[0].get("external_datasets", []),
-            "seed_list": [int(row["seed"]) for row in best_rows],
-            "dataset_file_sha256": best_rows[0].get("dataset_file_sha256"),
-            "dataset_checksums": best_rows[0].get("dataset_checksums", {}),
-            "source_fingerprint": best_rows[0].get("source_fingerprint"),
-            "revision_analyses": any(row.get("revision_analyses", False) for row in best_rows),
-            "run_manifests": [str(Path(row["results_dir"]) / "run_manifest.json") for row in best_rows],
-        }
-        (summary_dir / "reproducibility_manifest.json").write_text(
-            json.dumps(provenance, indent=2)
-        )
+    metric_cols = ["AUROC", "AUPRC", "F1", "Precision", "Recall", "Specificity", "G-Mean", "MCC", "Brier"]
+    agg = metrics_df.groupby("model")[metric_cols].agg(["mean", "std", "count"]).round(4)
+    agg.columns = [f"{m}_{s}" for m, s in agg.columns]
+    agg["n_runs"] = agg["AUROC_count"].astype(int)
+    agg = agg.drop(columns=[c for c in agg.columns if c.endswith("_count")])
+    agg.reset_index().to_csv(summary_dir / "all_run_metric_summary.csv", index=False)
 
-    smote_df = pd.DataFrame(smote_rows)
-    smote_df.to_csv(summary_dir / "all_seed_smote_summary.csv", index=False)
-    _write_yaml(tuning_summary, summary_dir / "all_seed_best_params.yaml")
+    _write_json(descriptive_ranks(metrics_df), summary_dir / "descriptive_model_ranks.json")
 
-    metric_cols = [
-        "AUROC", "AUPRC", "F1", "Precision", "Recall",
-        "Specificity", "G-Mean", "MCC", "Brier",
-    ]
-    summary = (
-        metrics_df
-        .groupby("model")[metric_cols]
-        .agg(["mean", "std", "count"])
-        .round(4)
-    )
-    summary.columns = [f"{metric}_{stat}" for metric, stat in summary.columns]
-    summary["n_seeds"] = summary["AUROC_count"].astype(int)
-    summary = summary.drop(columns=[c for c in summary.columns if c.endswith("_count")])
-    summary.reset_index().to_csv(summary_dir / "all_seed_metric_summary.csv", index=False)
+    for bucket, name in ((pairwise, "all_run_pairwise_model_tests.csv"),
+                         (boot, "all_run_bootstrap_metric_confidence_intervals.csv"),
+                         (paired, "all_run_paired_bootstrap_model_differences.csv"),
+                         (external, "all_run_multi_dataset_validation.csv")):
+        if bucket:
+            pd.concat(bucket, ignore_index=True).to_csv(summary_dir / name, index=False)
+        else:
+            (summary_dir / name).unlink(missing_ok=True)
+    if smote_model:
+        sm = pd.concat(smote_model, ignore_index=True)
+        sm.to_csv(summary_dir / "all_run_model_smote_ablation.csv", index=False)
+        sm_agg = sm.groupby(["Model", "Strategy"])[metric_cols].agg(["mean", "std", "count"]).round(4)
+        sm_agg.columns = [f"{m}_{s}" for m, s in sm_agg.columns]
+        sm_agg["n_runs"] = sm_agg["AUROC_count"].astype(int)
+        sm_agg = sm_agg.drop(columns=[c for c in sm_agg.columns if c.endswith("_count")])
+        sm_agg.reset_index().to_csv(summary_dir / "all_run_model_smote_ablation_summary.csv", index=False)
+    else:
+        for name in ("all_run_model_smote_ablation.csv", "all_run_model_smote_ablation_summary.csv"):
+            (summary_dir / name).unlink(missing_ok=True)
 
-    if pairwise_rows:
-        pd.concat(pairwise_rows, ignore_index=True).to_csv(
-            summary_dir / "all_seed_pairwise_model_tests.csv", index=False,
-        )
-    if bootstrap_rows:
-        pd.concat(bootstrap_rows, ignore_index=True).to_csv(
-            summary_dir / "all_seed_bootstrap_metric_confidence_intervals.csv",
-            index=False,
-        )
-    if paired_bootstrap_rows:
-        pd.concat(paired_bootstrap_rows, ignore_index=True).to_csv(
-            summary_dir / "all_seed_paired_bootstrap_model_differences.csv",
-            index=False,
-        )
-    if external_rows:
-        pd.concat(external_rows, ignore_index=True).to_csv(
-            summary_dir / "all_seed_multi_dataset_validation.csv", index=False,
-        )
-
-    if smote_model_rows:
-        smote_model_df = pd.concat(smote_model_rows, ignore_index=True)
-        smote_model_df.to_csv(
-            summary_dir / "all_seed_model_smote_ablation.csv", index=False,
-        )
-        smote_model_summary = (
-            smote_model_df
-            .groupby(["Model", "Strategy"])[metric_cols]
-            .agg(["mean", "std", "count"])
-            .round(4)
-        )
-        smote_model_summary.columns = [
-            f"{metric}_{stat}" for metric, stat in smote_model_summary.columns
-        ]
-        smote_model_summary["n_seeds"] = smote_model_summary["AUROC_count"].astype(int)
-        smote_model_summary = smote_model_summary.drop(
-            columns=[c for c in smote_model_summary.columns if c.endswith("_count")]
-        )
-        smote_model_summary.reset_index().to_csv(
-            summary_dir / "all_seed_model_smote_ablation_summary.csv",
-            index=False,
-        )
-
-    log.info("Multi-seed summary -> %s", summary_dir)
+    _write_json({
+        "dataset": best_rows[0]["dataset"], "split_mode": best_rows[0]["split_mode"],
+        "protocol": PROTOCOL, "runs": [r["run_id"] for r in runs],
+        "dataset_checksums": best_rows[0]["dataset_checksums"],
+        "source_fingerprint": best_rows[0]["source_fingerprint"],
+        "package_versions": best_rows[0]["package_versions"],
+        "run_manifests": [str(Path(r["results_dir"]) / "run_manifest.json") for r in best_rows],
+    }, summary_dir / "reproducibility_manifest.json")
+    log.info("Multi-run summary -> %s", summary_dir)
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Credit Default XAI Experiment Pipeline"
-    )
-    parser.add_argument("--dataset", default=DATASET,
-                        choices=["uci", "lending_club", "south_german", "german"])
+    parser = argparse.ArgumentParser(description="Credit Default XAI Experiment Pipeline (protocol v3)")
+    parser.add_argument("--dataset", default=DATASET, choices=["uci", "lending_club", "south_german", "german", "prosper"])
     parser.add_argument("--external-datasets", nargs="*", default=[],
-                        choices=["uci", "lending_club", "south_german", "german"],
-                        help="Additional datasets for locked external validation.")
-    parser.add_argument("--split-mode", choices=["random", "temporal"], default="random",
-                        help="Primary split strategy. Temporal requires --temporal-column.")
-    parser.add_argument("--temporal-column", default=None,
-                        help="Column used for chronological primary splitting.")
-    parser.add_argument("--external-temporal-column", default=None,
-                        help="Column used for chronological external validation.")
-    parser.add_argument("--seeds", nargs="+", type=int, default=DEFAULT_SEEDS,
-                        help="Random seeds to run. Default: 42 99 123 326 456 515 689 777 872 999")
-    parser.add_argument("--fast", action="store_true",
-                        help="Reduced run (fewer models, no TabNet) for development")
-    parser.add_argument("--no-tune", dest="tune", action="store_false",
-                        help="Disable RandomizedSearchCV and use fixed params")
+                        choices=["uci", "lending_club", "south_german", "german", "prosper"])
+    parser.add_argument("--split-mode", choices=["random", "temporal"], default="random")
+    parser.add_argument("--cutoffs", nargs="*", default=None,
+                        help="Rolling-origin cutoffs (YYYY-MM) for temporal mode. Default: Prosper list in config.")
+    parser.add_argument("--horizon-months", type=int, default=PROSPER_HORIZON_MONTHS,
+                        help="Default-within-H-months label horizon (prosper).")
+    parser.add_argument("--test-window-months", type=int, default=PROSPER_TEST_WINDOW_MONTHS)
+    parser.add_argument("--prosper-include-pricing", action="store_true",
+                        help="Keep BorrowerRate/BorrowerAPR as features (excluded by default).")
+    parser.add_argument("--seeds", nargs="+", type=int, default=DEFAULT_SEEDS)
+    parser.add_argument("--inner-folds", type=int, default=INNER_CV_FOLDS)
+    parser.add_argument("--inner-temporal-folds", type=int, default=INNER_TEMPORAL_FOLDS)
+    parser.add_argument("--threshold-criterion", default=THRESHOLD_CRITERION,
+                        choices=["f1", "g_mean", "youden", "cost"])
+    parser.add_argument("--strategy-selection", default="per_model", choices=["per_model", "probe"],
+                        help="Imbalance strategy chosen per model family on OOF AUROC (default) or once "
+                             "with the LightGBM probe from stage 2.")
+    parser.add_argument("--fast", action="store_true", help="Reduced run (3 models, 3 strategies, no TabNet)")
+    parser.add_argument("--models", nargs="+", choices=ALL_MODELS + ["TabNet"],
+                        help="Optional model subset for targeted checks; use a separate output root.")
+    parser.add_argument("--out-dir", type=Path, default=OUTPUTS_DIR,
+                        help="Active output root. Defaults to results/outputs; original runs are archived separately.")
+    parser.add_argument("--resume", action="store_true", help="Reuse matching imbalance and per-model checkpoints.")
+    parser.add_argument("--evaluate-only", action="store_true",
+                        help="Require matching checkpoints; never train models or run fitting ablations.")
+    parser.add_argument("--core-only", action="store_true",
+                        help="Selection, training, test metrics only; skip XAI and fitting ablation grids.")
+    parser.add_argument("--skip-ablation-grid", action="store_true", help="Skip the extra descriptive model x strategy fits.")
+    parser.add_argument("--skip-controlled-ablation", action="store_true", help="Skip revision ablations requiring extra fits.")
+    parser.add_argument("--reuse-models-from", type=Path,
+                        default=ORIGINAL_OUTPUTS_DIR if ORIGINAL_OUTPUTS_DIR.exists() else OUTPUTS_DIR,
+                        help="Legacy output root. Reuse final models only after new selection agrees and metrics reproduce.")
+    parser.add_argument("--no-tune", dest="tune", action="store_false")
     parser.set_defaults(tune=True)
-    parser.add_argument("--tune-iter", type=int, default=RANDOM_SEARCH_N_ITER,
-                        help=f"RandomizedSearchCV iterations per model. Default: {RANDOM_SEARCH_N_ITER}")
-    parser.add_argument("--skip-xai", action="store_true",
-                        help="Skip SHAP/LIME stages for faster multi-seed runs")
-    parser.add_argument("--full-ablation", action="store_true",
-                        help="Include TabNet in the Fig.10 SMOTE-ablation "
-                             "chart (5 extra TabNet fits, each protected by "
-                             "a 6-min timeout). Off by default — this has "
-                             "been observed to stall on Apple MPS after "
-                             "several back-to-back in-process TabNet fits.")
-    parser.add_argument("--revision-analyses", action="store_true",
-                        help="Run perturbation robustness, formal XAI metrics, "
-                             "controlled ablations, fairness curves, and "
-                             "component-wise reliability scores.")
-    parser.add_argument("--revision-analysis-n", type=int, default=100,
-                        help="Number of test instances used for repeated LIME "
-                             "stability analysis. Default: 100")
-    parser.add_argument("--bootstrap-reps", type=int, default=500,
-                        help="Paired bootstrap repetitions for confidence intervals.")
-    parser.add_argument("--cost-fp", type=float, default=1.0,
-                        help="Utility analysis cost for a false positive.")
-    parser.add_argument("--cost-fn", type=float, default=5.0,
-                        help="Utility analysis cost for a false negative.")
-    parser.add_argument("--min-robustness", type=float, default=0.90,
-                        help="Validation AUROC-retention constraint for reliable selection.")
-    parser.add_argument("--max-fairness-gap", type=float, default=0.10,
-                        help="Maximum validation selection/TPR/FPR disparity constraint.")
+    parser.add_argument("--tune-iter", type=int, default=RANDOM_SEARCH_N_ITER)
+    parser.add_argument("--skip-xai", action="store_true")
+    parser.add_argument("--skip-tabnet", action="store_true", help="Exclude TabNet (saves K+1 fits per run)")
+    parser.add_argument("--full-ablation", action="store_true", help="Include TabNet in the Fig 10 grid")
+    parser.add_argument("--revision-analyses", action="store_true")
+    parser.add_argument("--revision-analysis-n", type=int, default=100)
+    parser.add_argument("--bootstrap-reps", type=int, default=500)
+    parser.add_argument("--cost-fp", type=float, default=1.0)
+    parser.add_argument("--cost-fn", type=float, default=5.0)
+    parser.add_argument("--min-robustness", type=float, default=0.90)
+    parser.add_argument("--max-fairness-gap", type=float, default=0.10)
     args = parser.parse_args()
-    args.seed_list = list(args.seeds)
+    if args.core_only:
+        if args.external_datasets:
+            parser.error("--core-only excludes external validation fits.")
+        args.skip_xai = True
+        args.revision_analyses = False
+        args.skip_ablation_grid = True
+        args.skip_controlled_ablation = True
+    if args.evaluate_only:
+        args.skip_ablation_grid = True
+        args.skip_controlled_ablation = True
+        if args.external_datasets:
+            parser.error("--evaluate-only cannot run external validation, which fits new models.")
+    if args.tune_iter < 1 or args.inner_folds < 2 or args.inner_temporal_folds < 2:
+        parser.error("Search iterations must be positive and CV folds must be at least two.")
+    for archive in (ORIGINAL_OUTPUTS_DIR, OUTPUTS_DIR.parent / "outputs_v2_archive"):
+        if args.out_dir.resolve() == archive.resolve() or archive.resolve() in args.out_dir.resolve().parents:
+            parser.error("Choose an active --out-dir; original and v2 result archives are protected.")
+    if args.dataset == "german":
+        args.dataset = "south_german"
 
-    # Keep each dataset/protocol run in its own results subtree.
+    if args.split_mode == "temporal":
+        cutoffs = args.cutoffs or PROSPER_DEFAULT_CUTOFFS
+    else:
+        cutoffs = [None]
+        if args.cutoffs:
+            log.warning("--cutoffs ignored for random split mode.")
+
     run_name = "_".join([args.dataset, *sorted(set(args.external_datasets))])
+    if args.split_mode == "temporal":
+        run_name += "_temporal"
     global RUNS_DIR
-    RUNS_DIR = OUTPUTS_DIR / run_name / "runs"
+    RUNS_DIR = args.out_dir / run_name / "runs"
     RUNS_DIR.mkdir(parents=True, exist_ok=True)
 
-    seed_runs = []
-    for seed in args.seeds:
-        seed_runs.append(_run_one_seed(args, seed))
-
-    _write_multi_seed_summary(seed_runs)
-
-    log.info("ALL RUNS COMPLETE | seeds=%s", args.seeds)
+    runs = []
+    for cutoff in cutoffs:
+        for seed in args.seeds:
+            runs.append(_run_one(args, seed, cutoff))
+    _write_multi_run_summary(runs)
+    log.info("ALL RUNS COMPLETE | runs=%s", [r["run_id"] for r in runs])
 
 
 if __name__ == "__main__":

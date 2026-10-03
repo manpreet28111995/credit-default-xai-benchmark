@@ -1,0 +1,8 @@
+{
+  "model": "CatBoost",
+  "output_space": "log_odds",
+  "n_explained": 2000,
+  "mae": 8.375244942016025e-17,
+  "pass": true,
+  "tol": 0.05
+}

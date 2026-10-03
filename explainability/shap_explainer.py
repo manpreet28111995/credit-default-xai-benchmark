@@ -51,60 +51,25 @@ def get_shap_explainer(model, X_background: pd.DataFrame, model_type: str = "tre
 
     if model_type == "tree":
         inner = getattr(model, "_model", model)   # unwrap our wrapper
-        try:
-            explainer = shap.TreeExplainer(
-                inner,
-                data                    = shap.sample(X_background, 200),
-                feature_perturbation    = "interventional",
-                model_output            = "probability",
-            )
-            
-            # SHAP defers the unsupported categorical check until shap_values() is called.
-            # We execute a single dummy row calculation to proactively catch the error now.
-            _ = explainer.shap_values(X_background.iloc[:1])
-            
-        except NotImplementedError as exc:
-            # Fallback for models trained with native categorical features (LightGBM/XGBoost/CatBoost)
-            if "Categorical split" in str(exc):
-                log.warning(
-                    "Categorical splits detected. Falling back to tree_path_dependent "
-                    "perturbation. Note: SHAP values will be in margin (log-odds) space."
-                )
-                explainer = shap.TreeExplainer(
-                    inner,
-                    feature_perturbation="tree_path_dependent"
-                )
-            else:
-                raise
-        except ValueError as exc:
-            # Known SHAP / XGBoost incompatibility: XGBoost >= 3.0/3.1
-            # serialises base_score as a bracketed array string (e.g.
-            # "[2.21E-1]") instead of a plain float. Older SHAP releases
-            # call float() on it directly and crash. There's no reliable
-            # way to patch this from the outside — XGBoost re-derives the
-            # bracketed form internally regardless of what's written back
-            # via load_config(), so the actual fix is upgrading SHAP to a
-            # release that already handles it (confirmed fixed as of SHAP
-            # 0.52.0). Surface a clear, actionable message instead of the
-            # raw stack trace.
-            if "could not convert string to float" in str(exc) and hasattr(inner, "get_booster"):
-                raise RuntimeError(
-                    "SHAP can't read this XGBoost model due to a known "
-                    "version incompatibility: XGBoost >= 3.0 changed how "
-                    "it serialises 'base_score', and your installed SHAP "
-                    "version predates the upstream fix. Run:\n\n"
-                    "    pip install --upgrade shap\n\n"
-                    "then re-run the pipeline. "
-                    f"(Original error: {exc})"
-                ) from exc
-            raise
-        log.info("SHAP TreeExplainer initialised")
+        # One attribution space per model family, identical across seeds:
+        # gradient-boosting models are explained in margin (log-odds) space via
+        # tree_path_dependent perturbation (the only path SHAP supports for all
+        # three libraries); scikit-learn forests have no margin and are
+        # explained in probability space. Mixing interventional/probability on
+        # some seeds with path-dependent/log-odds on others (the previous
+        # behaviour whenever CatBoost won a seed) is avoided.
+        explainer = shap.TreeExplainer(inner, feature_perturbation="tree_path_dependent")
+        family = type(inner).__module__.split(".")[0]
+        explainer.output_space = "probability" if family == "sklearn" else "log_odds"
+        _ = explainer.shap_values(X_background.iloc[:1])
+        log.info("SHAP TreeExplainer initialised | output_space=%s", explainer.output_space)
 
     elif model_type == "kernel":
         background = shap.kmeans(X_background.values, 50)
         explainer  = shap.KernelExplainer(
             model.predict_proba, background
         )
+        explainer.output_space = "probability"
         log.info("SHAP KernelExplainer initialised (slow — use tree when possible)")
 
     elif model_type == "deep":

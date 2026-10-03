@@ -1,0 +1,197 @@
+{
+  "seed": 99,
+  "models": {
+    "XGBoost": {
+      "enabled": true,
+      "model": "XGBoost",
+      "seed": 99,
+      "imbalance_strategy": "ClassWeight",
+      "search": "RandomizedSearchCV(imblearn Pipeline)",
+      "scoring": "roc_auc",
+      "n_iter_requested": 12,
+      "inner_cv": "ObservableTimeSeriesSplit",
+      "best_score": 0.6326519316931041,
+      "best_params": {
+        "subsample": 0.8,
+        "reg_lambda": 2.0,
+        "reg_alpha": 0.5,
+        "n_estimators": 800,
+        "max_depth": 3,
+        "learning_rate": 0.08,
+        "gamma": 0.05,
+        "colsample_bytree": 0.9
+      },
+      "status": "success",
+      "n_iter_actual": 12,
+      "final_fit": "new",
+      "oof_rows": 28791,
+      "strategy_selection": {
+        "strategy": "ClassWeight",
+        "selection": "per_model",
+        "oof_auroc_by_strategy": {
+          "SMOTE": 0.6162655801210472,
+          "BorderlineSMOTE": 0.6133628612766593,
+          "SVMSMOTE": 0.6260936895789451,
+          "ADASYN": 0.6126444940056233,
+          "None": 0.5821785441848347,
+          "ClassWeight": 0.635195476439071
+        }
+      }
+    },
+    "LightGBM": {
+      "enabled": true,
+      "model": "LightGBM",
+      "seed": 99,
+      "imbalance_strategy": "SVMSMOTE",
+      "search": "RandomizedSearchCV(imblearn Pipeline)",
+      "scoring": "roc_auc",
+      "n_iter_requested": 12,
+      "inner_cv": "ObservableTimeSeriesSplit",
+      "best_score": 0.6213234437541612,
+      "best_params": {
+        "subsample": 0.7,
+        "reg_lambda": 2.0,
+        "reg_alpha": 0.1,
+        "num_leaves": 63,
+        "n_estimators": 500,
+        "min_child_samples": 20,
+        "max_depth": 3,
+        "learning_rate": 0.1,
+        "colsample_bytree": 0.8
+      },
+      "status": "success",
+      "n_iter_actual": 12,
+      "final_fit": "new",
+      "oof_rows": 28791,
+      "strategy_selection": {
+        "strategy": "SVMSMOTE",
+        "selection": "per_model",
+        "oof_auroc_by_strategy": {
+          "SMOTE": 0.6084356827921393,
+          "BorderlineSMOTE": 0.6023851501006742,
+          "SVMSMOTE": 0.612736778329305,
+          "ADASYN": 0.596780255051322,
+          "None": 0.6005105242258828,
+          "ClassWeight": 0.4952668466141306
+        }
+      }
+    },
+    "CatBoost": {
+      "enabled": true,
+      "model": "CatBoost",
+      "seed": 99,
+      "imbalance_strategy": "ClassWeight",
+      "search": "RandomizedSearchCV(imblearn Pipeline)",
+      "scoring": "roc_auc",
+      "n_iter_requested": 12,
+      "inner_cv": "ObservableTimeSeriesSplit",
+      "best_score": 0.6315754193656828,
+      "best_params": {
+        "learning_rate": 0.05,
+        "l2_leaf_reg": 5,
+        "iterations": 800,
+        "depth": 5
+      },
+      "status": "success",
+      "n_iter_actual": 12,
+      "final_fit": "new",
+      "oof_rows": 28791,
+      "strategy_selection": {
+        "strategy": "ClassWeight",
+        "selection": "per_model",
+        "oof_auroc_by_strategy": {
+          "SMOTE": 0.6133464249129013,
+          "BorderlineSMOTE": 0.6124740688651086,
+          "SVMSMOTE": 0.6149818336060312,
+          "ADASYN": 0.6138349047763858,
+          "None": 0.6163628365239388,
+          "ClassWeight": 0.6304070094637226
+        }
+      }
+    },
+    "Random Forest": {
+      "enabled": true,
+      "model": "Random Forest",
+      "seed": 99,
+      "imbalance_strategy": "ClassWeight",
+      "search": "RandomizedSearchCV(imblearn Pipeline)",
+      "scoring": "roc_auc",
+      "n_iter_requested": 12,
+      "inner_cv": "ObservableTimeSeriesSplit",
+      "best_score": 0.6289732294119293,
+      "best_params": {
+        "n_estimators": 200,
+        "min_samples_split": 10,
+        "min_samples_leaf": 1,
+        "max_features": "log2",
+        "max_depth": 14
+      },
+      "status": "success",
+      "n_iter_actual": 12,
+      "final_fit": "legacy_model_reused_after_split_parameter_and_metric_checks",
+      "oof_rows": 28791,
+      "strategy_selection": {
+        "strategy": "ClassWeight",
+        "selection": "per_model",
+        "oof_auroc_by_strategy": {
+          "SMOTE": 0.5494427990345881,
+          "BorderlineSMOTE": 0.5450070709933612,
+          "SVMSMOTE": 0.5492355108354717,
+          "ADASYN": 0.5487625552600686,
+          "None": 0.551532674769091,
+          "ClassWeight": 0.5602094787008669
+        }
+      }
+    },
+    "Logistic Reg.": {
+      "enabled": true,
+      "model": "Logistic Reg.",
+      "seed": 99,
+      "imbalance_strategy": "ClassWeight",
+      "search": "RandomizedSearchCV(imblearn Pipeline)",
+      "scoring": "roc_auc",
+      "n_iter_requested": 12,
+      "inner_cv": "ObservableTimeSeriesSplit",
+      "best_score": 0.624832453239457,
+      "best_params": {
+        "C": 0.01
+      },
+      "status": "success",
+      "n_iter_actual": 7,
+      "final_fit": "legacy_model_reused_after_split_parameter_and_metric_checks",
+      "oof_rows": 28791,
+      "strategy_selection": {
+        "strategy": "ClassWeight",
+        "selection": "per_model",
+        "oof_auroc_by_strategy": {
+          "SMOTE": 0.5760858089917437,
+          "BorderlineSMOTE": 0.5534584592219451,
+          "SVMSMOTE": 0.5572956819373217,
+          "ADASYN": 0.566195165345259,
+          "None": 0.5541929778330901,
+          "ClassWeight": 0.6082287936261315
+        }
+      }
+    },
+    "TabNet": {
+      "enabled": false,
+      "model": "TabNet",
+      "seed": 99,
+      "imbalance_strategy": "SVMSMOTE",
+      "search": "RandomizedSearchCV(imblearn Pipeline)",
+      "scoring": "roc_auc",
+      "n_iter_requested": 12,
+      "inner_cv": "ObservableTimeSeriesSplit",
+      "best_score": null,
+      "best_params": {},
+      "status": "skipped_no_space",
+      "final_fit": "new",
+      "oof_rows": 28791,
+      "strategy_selection": {
+        "strategy": "SVMSMOTE",
+        "selection": "per_model",
+        "oof_auroc_by_strategy": {}
+      }
+    }
+  }
+}

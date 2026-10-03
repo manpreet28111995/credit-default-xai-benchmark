@@ -1,0 +1,8 @@
+{
+  "model": "XGBoost",
+  "output_space": "log_odds",
+  "n_explained": 2000,
+  "mae": 4.100613182345114e-08,
+  "pass": true,
+  "tol": 0.05
+}

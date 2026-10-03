@@ -1,0 +1,53 @@
+{
+  "dataset": "prosper",
+  "split_mode": "temporal",
+  "protocol": "v3_training_cv_oof_selection",
+  "runs": [
+    "cutoff_2010-01_seed_42",
+    "cutoff_2010-01_seed_99",
+    "cutoff_2010-07_seed_42",
+    "cutoff_2010-07_seed_99",
+    "cutoff_2011-01_seed_42",
+    "cutoff_2011-01_seed_99",
+    "cutoff_2011-07_seed_42",
+    "cutoff_2011-07_seed_99",
+    "cutoff_2012-01_seed_42",
+    "cutoff_2012-01_seed_99",
+    "cutoff_2012-07_seed_42",
+    "cutoff_2012-07_seed_99"
+  ],
+  "dataset_checksums": {
+    "prosper": "71c1c1931f65bc4d2e3a8f3603d865e074e327b2271590f3a06829197b9cce0f"
+  },
+  "source_fingerprint": "654060b9b649da1eb08dc333648458d6a3541bfcca7ebbff1ed7e2159ceb8978",
+  "package_versions": {
+    "python": "3.12.14",
+    "platform": "macOS-26.5.1-arm64-arm-64bit",
+    "numpy": "2.5.3",
+    "pandas": "3.0.6",
+    "sklearn": "1.9.1",
+    "imblearn": "0.14.2",
+    "xgboost": "3.4.1",
+    "lightgbm": "4.7.0",
+    "catboost": "1.2.10",
+    "shap": "0.52.0",
+    "lime": "unknown",
+    "torch": "2.14.0",
+    "pytorch_tabnet": "unknown",
+    "scipy": "1.18.1"
+  },
+  "run_manifests": [
+    "/Users/harekrishna/Downloads/credit-default-xai-benchmark/code v1/results/outputs/prosper_temporal/runs/cutoff_2010-01_seed_42/results/run_manifest.json",
+    "/Users/harekrishna/Downloads/credit-default-xai-benchmark/code v1/results/outputs/prosper_temporal/runs/cutoff_2010-01_seed_99/results/run_manifest.json",
+    "/Users/harekrishna/Downloads/credit-default-xai-benchmark/code v1/results/outputs/prosper_temporal/runs/cutoff_2010-07_seed_42/results/run_manifest.json",
+    "/Users/harekrishna/Downloads/credit-default-xai-benchmark/code v1/results/outputs/prosper_temporal/runs/cutoff_2010-07_seed_99/results/run_manifest.json",
+    "/Users/harekrishna/Downloads/credit-default-xai-benchmark/code v1/results/outputs/prosper_temporal/runs/cutoff_2011-01_seed_42/results/run_manifest.json",
+    "/Users/harekrishna/Downloads/credit-default-xai-benchmark/code v1/results/outputs/prosper_temporal/runs/cutoff_2011-01_seed_99/results/run_manifest.json",
+    "/Users/harekrishna/Downloads/credit-default-xai-benchmark/code v1/results/outputs/prosper_temporal/runs/cutoff_2011-07_seed_42/results/run_manifest.json",
+    "/Users/harekrishna/Downloads/credit-default-xai-benchmark/code v1/results/outputs/prosper_temporal/runs/cutoff_2011-07_seed_99/results/run_manifest.json",
+    "/Users/harekrishna/Downloads/credit-default-xai-benchmark/code v1/results/outputs/prosper_temporal/runs/cutoff_2012-01_seed_42/results/run_manifest.json",
+    "/Users/harekrishna/Downloads/credit-default-xai-benchmark/code v1/results/outputs/prosper_temporal/runs/cutoff_2012-01_seed_99/results/run_manifest.json",
+    "/Users/harekrishna/Downloads/credit-default-xai-benchmark/code v1/results/outputs/prosper_temporal/runs/cutoff_2012-07_seed_42/results/run_manifest.json",
+    "/Users/harekrishna/Downloads/credit-default-xai-benchmark/code v1/results/outputs/prosper_temporal/runs/cutoff_2012-07_seed_99/results/run_manifest.json"
+  ]
+}

@@ -33,21 +33,24 @@ def perturb_test_set(
     level: float,
     seed: int,
     protected_columns: Iterable[str] = ("SEX", "EDUCATION", "MARRIAGE"),
+    nominal_columns: Iterable[str] = (),
 ) -> pd.DataFrame:
     """Create a deterministic, bounded test perturbation.
 
     Missing values use train-fold medians. Noise is expressed in train-fold
-    standard deviations. Group columns are never perturbed.
+    standard deviations. Group columns and nominal (integer-coded) columns are
+    never perturbed: Gaussian noise or an additive shift on a category code
+    has no meaning.
     """
     out = X_test.copy()
     rng = np.random.default_rng(seed)
-    protected = set(protected_columns)
+    protected = set(protected_columns) | set(nominal_columns)
     numeric = [c for c in out.columns if pd.api.types.is_numeric_dtype(out[c])]
     numeric = [c for c in numeric if c not in protected]
 
     if kind == "missingness":
         mask = rng.random((len(out), len(numeric))) < level
-        medians = X_train[numeric].median()
+        medians = X_train[numeric].median().fillna(0.0)
         values = out[numeric].to_numpy(copy=True)
         values[mask] = np.broadcast_to(medians.to_numpy(), values.shape)[mask]
         out.loc[:, numeric] = values
@@ -58,7 +61,7 @@ def perturb_test_set(
         for column in numeric:
             key = "repayment" if any(token in column.upper() for token in ("PAY", "BILL", "UTIL")) else "other"
             groups.setdefault(key, []).append(column)
-        medians = X_train[numeric].median()
+        medians = X_train[numeric].median().fillna(0.0)
         values = out[numeric].to_numpy(copy=True)
         for columns in groups.values():
             mask = rng.random(len(out)) < level
@@ -80,8 +83,9 @@ def perturb_test_set(
             if any(token in column.upper() for token in
                    ("BILL", "PAY", "LIMIT", "UTIL", "AMOUNT", "INCOME", "DTI", "FICO"))
         ] or numeric
+        scale = X_train[shifted].std(ddof=0).replace(0, 1.0).fillna(1.0)
         for column in shifted:
-            out[column] = out[column].astype(float) + float(level)
+            out[column] = out[column].astype(float) + float(level) * float(scale[column])
     else:
         raise ValueError(f"Unknown perturbation kind: {kind}")
     return out
@@ -95,6 +99,7 @@ def evaluate_robustness(
     threshold: float,
     seed: int,
     levels: Iterable[float] = (0.05, 0.10, 0.20),
+    nominal_columns: Iterable[str] = (),
 ) -> pd.DataFrame:
     """Evaluate performance retention under missingness and numeric noise."""
     base_proba = model.predict_proba(X_test)[:, 1]
@@ -111,7 +116,7 @@ def evaluate_robustness(
     }]
     for kind in ("missingness", "correlated_missingness", "numeric_noise", "covariate_shift"):
         for level in levels:
-            X_shift = perturb_test_set(X_train, X_test, kind, level, seed)
+            X_shift = perturb_test_set(X_train, X_test, kind, level, seed, nominal_columns=nominal_columns)
             proba = model.predict_proba(X_shift)[:, 1]
             metrics = compute_metrics(y_test.to_numpy(), proba >= threshold, proba, threshold)
             rows.append({
@@ -207,7 +212,7 @@ def explanation_metrics(
             "shap_features_for_80pct": shap_p["features_for_mass_mean"],
             "lime_parsimony": lime_p["parsimony_score"],
             "lime_features_for_80pct": lime_p["features_for_mass_mean"],
-            "shap_lime_abs_rank_rho": abs(float(rho)) if np.isfinite(rho) else np.nan,
+            "shap_lime_abs_rank_rho": float(rho) if np.isfinite(rho) else np.nan,
             "shap_lime_signed_abs_attribution_rho": float(rho) if np.isfinite(rho) else np.nan,
             "lime_local_r2": (
                 float(lime_scores[i]) if lime_scores is not None and i < len(lime_scores) else np.nan
@@ -659,7 +664,7 @@ def bootstrap_metric_intervals(
     n_boot: int = 500,
     seed: int = 42,
 ) -> pd.DataFrame:
-    """Paired bootstrap CIs for every model and primary metric."""
+    """Test-sample CIs conditional on fitted models and selected thresholds."""
     y = np.asarray(y_true).astype(int)
     rng = np.random.default_rng(seed)
     bootstrap_indices = [rng.integers(0, len(y), len(y)) for _ in range(int(n_boot))]
@@ -683,6 +688,7 @@ def bootstrap_metric_intervals(
                 "ci_low": float(np.quantile(samples, 0.025)),
                 "ci_high": float(np.quantile(samples, 0.975)),
                 "bootstrap_reps": len(samples),
+                "inference_scope": "conditional_on_fitted_models_and_selected_thresholds",
             })
     return pd.DataFrame(rows)
 
@@ -694,7 +700,7 @@ def paired_bootstrap_differences(
     n_boot: int = 500,
     seed: int = 42,
 ) -> pd.DataFrame:
-    """Paired bootstrap CIs for model-to-model metric differences."""
+    """Conditional test-sample CIs; model and threshold selection are not repeated."""
     y = np.asarray(y_true).astype(int)
     rng = np.random.default_rng(seed)
     indices = [rng.integers(0, len(y), len(y)) for _ in range(int(n_boot))]
@@ -726,6 +732,7 @@ def paired_bootstrap_differences(
                         "ci_low": float(np.quantile(samples, 0.025)),
                         "ci_high": float(np.quantile(samples, 0.975)),
                         "bootstrap_reps": len(samples),
+                        "inference_scope": "conditional_on_fitted_models_and_selected_thresholds",
                     })
     return pd.DataFrame(rows)
 
@@ -748,11 +755,20 @@ def explanation_fidelity(
     X_reference: pd.DataFrame,
     attributions: np.ndarray,
     top_fraction: float = 0.20,
+    nominal_columns: Iterable[str] = (),
 ) -> pd.DataFrame:
-    """Measure deletion/insertion faithfulness of local attributions."""
+    """Measure deletion/insertion faithfulness of local attributions.
+
+    The neutral baseline is the train median for continuous columns and the
+    train mode for nominal columns (a median category code is meaningless).
+    """
     if len(X) == 0:
         return pd.DataFrame()
-    median = X_reference.median(numeric_only=True).reindex(X.columns).fillna(0.0).to_numpy()
+    baseline = X_reference.median(numeric_only=True).reindex(X.columns).fillna(0.0)
+    for column in nominal_columns:
+        if column in X.columns:
+            baseline[column] = float(X_reference[column].mode().iloc[0])
+    median = baseline.to_numpy(dtype=float)
     rows = []
     for i, (row, attribution) in enumerate(zip(X.to_numpy(dtype=float), np.asarray(attributions))):
         k = max(1, int(round(len(row) * top_fraction)))
@@ -804,38 +820,45 @@ def reliability_score(
 
 
 def run_controlled_ablation(
-    model_factory: Callable[[], object],
-    resampled_sets: Mapping[str, tuple[pd.DataFrame, pd.Series]],
-    X_val: pd.DataFrame,
-    y_val: pd.Series,
-    X_test: pd.DataFrame,
-    y_test: pd.Series,
+    strategy_runs: Mapping[str, Mapping[str, np.ndarray]],
+    y_test: pd.Series | np.ndarray,
+    threshold_criterion: str = "f1",
+    cost_fp: float = 1.0,
+    cost_fn: float = 5.0,
 ) -> pd.DataFrame:
-    """Compare resampling and fixed versus validation-tuned thresholds."""
+    """Compare imbalance strategies under fixed, OOF-tuned, and calibrated thresholds.
+
+    ``strategy_runs[strategy]`` holds ``oof_proba`` and ``y_oof`` (out-of-fold
+    predictions inside the training partition, used for every selection) and
+    ``test_proba`` (the refit model's held-out scores). The test set never
+    chooses a threshold or a calibration map.
+    """
+    y_test_arr = np.asarray(y_test).astype(int)
     rows = []
-    for strategy, (X_res, y_res) in resampled_sets.items():
-        model = model_factory()
-        model.fit(X_res, y_res, X_val=X_val, y_val=y_val)
-        val_proba = model.predict_proba(X_val)[:, 1]
-        test_proba = model.predict_proba(X_test)[:, 1]
-        tuned, _ = optimal_threshold(y_val.to_numpy(), val_proba, criterion="f1")
-        raw_calibration, _ = calibration_diagnostics(y_test, test_proba)
-        for label, threshold in (("fixed_0.50", 0.50), ("validation_f1", tuned)):
-            metrics = compute_metrics(y_test.to_numpy(), test_proba >= threshold, test_proba, threshold)
+    for strategy, run in strategy_runs.items():
+        oof = np.asarray(run["oof_proba"], dtype=float)
+        y_oof = np.asarray(run["y_oof"]).astype(int)
+        test_proba = np.asarray(run["test_proba"], dtype=float)
+        tuned, _ = optimal_threshold(y_oof, oof, criterion=threshold_criterion, cost_fp=cost_fp, cost_fn=cost_fn)
+        raw_calibration, _ = calibration_diagnostics(y_test_arr, test_proba)
+        for label, threshold in (("fixed_0.50", 0.50), (f"oof_{threshold_criterion}", tuned)):
+            metrics = compute_metrics(y_test_arr, test_proba >= threshold, test_proba, threshold)
             rows.append({
                 "strategy": strategy, "threshold_rule": label, **metrics,
                 **{f"probability_{key}": value for key, value in raw_calibration.items()
                    if key not in {"n", "prevalence", "brier", "base_rate_brier"}},
             })
         calibrator = IsotonicRegression(out_of_bounds="clip")
-        calibrator.fit(np.asarray(val_proba), np.asarray(y_val))
-        calibrated_val = calibrator.predict(np.asarray(val_proba))
-        calibrated = calibrator.predict(np.asarray(test_proba))
-        cal_threshold, _ = optimal_threshold(y_val.to_numpy(), calibrated_val, criterion="f1")
-        cal_metrics = compute_metrics(y_test.to_numpy(), calibrated >= cal_threshold, calibrated, cal_threshold)
-        calibrated_summary, _ = calibration_diagnostics(y_test, calibrated)
+        calibrator.fit(oof, y_oof)
+        calibrated_oof = calibrator.predict(oof)
+        calibrated = calibrator.predict(test_proba)
+        cal_threshold, _ = optimal_threshold(
+            y_oof, calibrated_oof, criterion=threshold_criterion, cost_fp=cost_fp, cost_fn=cost_fn,
+        )
+        cal_metrics = compute_metrics(y_test_arr, calibrated >= cal_threshold, calibrated, cal_threshold)
+        calibrated_summary, _ = calibration_diagnostics(y_test_arr, calibrated)
         rows.append({
-            "strategy": strategy, "threshold_rule": "isotonic_validation", **cal_metrics,
+            "strategy": strategy, "threshold_rule": "isotonic_oof", **cal_metrics,
             **{f"probability_{key}": value for key, value in calibrated_summary.items()
                if key not in {"n", "prevalence", "brier", "base_rate_brier"}},
         })

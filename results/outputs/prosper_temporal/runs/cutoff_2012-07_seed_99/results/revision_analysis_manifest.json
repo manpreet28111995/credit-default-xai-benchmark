@@ -1,0 +1,42 @@
+{
+  "seed": 99,
+  "cutoff": "2012-07",
+  "protocol": "v3_training_cv_oof_selection",
+  "selection_data": "out-of-fold predictions inside the training partition",
+  "inner_cv": "ObservableTimeSeriesSplit",
+  "threshold_criterion": "f1",
+  "robustness_levels": [
+    0.05,
+    0.1,
+    0.2
+  ],
+  "realistic_shift_families": [
+    "missingness",
+    "correlated_missingness",
+    "numeric_noise",
+    "covariate_shift"
+  ],
+  "nominal_columns_protected_from_perturbation": [
+    "ListingCategory",
+    "BorrowerState",
+    "Occupation",
+    "EmploymentStatus",
+    "IsBorrowerHomeowner",
+    "CurrentlyInGroup",
+    "IncomeVerifiable",
+    "Term"
+  ],
+  "reliability_selected_model": null,
+  "reliability_constraints": {
+    "min_robustness": 0.9,
+    "max_fairness_gap": 0.1
+  },
+  "utility_costs": {
+    "false_positive": 1.0,
+    "false_negative": 5.0
+  },
+  "bootstrap_reps": 2000,
+  "multiple_testing_correction": "Holm step-down within each run; descriptive ranks across dependent runs",
+  "fairness_postprocessing": "equal-opportunity group thresholds fitted on OOF predictions; test evaluated once",
+  "reliability_aggregation": "descriptive_geometric_mean; unscored when group fairness data are absent"
+}

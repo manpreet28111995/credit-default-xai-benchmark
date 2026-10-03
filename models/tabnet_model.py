@@ -20,6 +20,23 @@ import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator, ClassifierMixin
 
+import torch
+torch.set_num_threads(1)  # Also needed when restoring models without fit().
+
+class _ReduceLROnPlateau(torch.optim.lr_scheduler.ReduceLROnPlateau):
+    """Compatibility shim for pytorch-tabnet + recent torch.
+
+    pytorch-tabnet (<= 4.1) decides whether a scheduler needs the
+    validation metric by checking ``hasattr(scheduler_fn, "is_better")``.
+    Recent torch releases renamed that method to ``_is_better``, so
+    TabNet called ``scheduler.step()`` without ``metrics`` and raised
+    ``TypeError``. Re-exposing ``is_better`` restores the metric path.
+    """
+
+    def is_better(self, a, best):
+        return self._is_better(a, best)
+
+
 log = logging.getLogger(__name__)
 
 
@@ -78,11 +95,22 @@ class TabNetWrapper(BaseEstimator, ClassifierMixin):
         fallback compatibility.
     """
 
+    # Keys consumed by the wrapper rather than forwarded to TabNetClassifier.
+    WRAPPER_KEYS = ("cost_sensitive", "cat_idxs", "cat_dims", "nominal_indices",
+                    "early_stopping_fraction")
+
     def __init__(self, **params):
         from config import TABNET_PARAMS
         self.params = {**TABNET_PARAMS, **params}
         self._model  = None
         self.classes_ = np.array([0, 1])
+
+    def get_params(self, deep: bool = True):
+        return dict(self.params)
+
+    def set_params(self, **params):
+        self.params.update(params)
+        return self
 
     def _to_array(self, X) -> np.ndarray:
         if isinstance(X, pd.DataFrame):
@@ -97,8 +125,17 @@ class TabNetWrapper(BaseEstimator, ClassifierMixin):
         y_val: Optional = None,
     ) -> "TabNetWrapper":
         TabNetClassifier = _import_tabnet()
+        from config import EARLY_STOPPING_FRACTION
 
         kw = dict(self.params)
+        cost_sensitive   = bool(kw.pop("cost_sensitive", False))
+        cat_idxs         = list(kw.pop("cat_idxs", None) or kw.pop("nominal_indices", None) or [])
+        kw.pop("nominal_indices", None)
+        cat_dims         = list(kw.pop("cat_dims", None) or [])
+        es_fraction      = float(kw.pop("early_stopping_fraction", EARLY_STOPPING_FRACTION))
+        if cat_idxs and not cat_dims:
+            arr_tmp = self._to_array(X_train)
+            cat_dims = [int(arr_tmp[:, i].max()) + 2 for i in cat_idxs]
         max_epochs       = kw.pop("max_epochs", 200)
         patience         = kw.pop("patience", 15)
         batch_size       = kw.pop("batch_size", 1024)
@@ -141,6 +178,17 @@ class TabNetWrapper(BaseEstimator, ClassifierMixin):
         X_tr = self._to_array(X_train)
         y_tr = self._to_array(y_train).astype(int).ravel()
 
+        # Fold-local early stopping: carve a stratified slice from this fit's
+        # own data when no eval set is supplied (see models.gradient_boosting).
+        if X_val is None and es_fraction > 0 and len(y_tr) >= 50 and np.bincount(y_tr).min() >= 5:
+            from sklearn.model_selection import train_test_split
+            idx_fit, idx_es = train_test_split(
+                np.arange(len(y_tr)), test_size=es_fraction, stratify=y_tr,
+                random_state=int(kw.get("seed", 0)),
+            )
+            X_val, y_val = X_tr[idx_es], y_tr[idx_es]
+            X_tr, y_tr = X_tr[idx_fit], y_tr[idx_fit]
+
         eval_set = []
         eval_name = []
         if X_val is not None:
@@ -151,21 +199,11 @@ class TabNetWrapper(BaseEstimator, ClassifierMixin):
         import time
         t0 = time.time()
 
-        class _ReduceLROnPlateau(torch.optim.lr_scheduler.ReduceLROnPlateau):
-            """Compatibility shim for pytorch-tabnet + recent torch.
-
-            pytorch-tabnet (<= 4.1) decides whether a scheduler needs the
-            validation metric by checking ``hasattr(scheduler_fn, "is_better")``.
-            Recent torch releases renamed that method to ``_is_better``, so
-            TabNet called ``scheduler.step()`` without ``metrics`` and raised
-            ``TypeError``. Re-exposing ``is_better`` restores the metric path.
-            """
-
-            def is_better(self, a, best):
-                return self._is_better(a, best)
-
         def _build_and_fit(dev: str):
             model = TabNetClassifier(
+                cat_idxs         = cat_idxs,
+                cat_dims         = cat_dims,
+                cat_emb_dim      = [min(8, max(1, int(round(d ** 0.5)))) for d in cat_dims] if cat_dims else 1,
                 optimizer_fn     = optimizer_fn,
                 optimizer_params = opt_params,
                 scheduler_params = sched_params,
@@ -180,6 +218,7 @@ class TabNetWrapper(BaseEstimator, ClassifierMixin):
                 eval_set      = eval_set,
                 eval_name     = eval_name,
                 eval_metric   = ["auc"],
+                weights       = 1 if cost_sensitive else 0,
                 max_epochs    = max_epochs,
                 patience      = patience,
                 batch_size    = batch_size,

@@ -1,2 +1,2 @@
 model,predictive_quality,robustness_retention,explanation_diagnostics,inverse_group_gap,reliability_score,score_status
-Logistic Reg.,0.26841900436586424,0.9869739893969517,0.6224737409716563,0.0,0.0,descriptive_only
+Random Forest,0.44256578251404305,0.992707874516713,0.5125812061410701,0.5454545454545454,0.592011490206742,descriptive_only

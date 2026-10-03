@@ -1,0 +1,65 @@
+{
+  "scope": "descriptive_only; runs share observations and training data",
+  "metrics": {
+    "AUROC": {
+      "n_blocks": 10,
+      "block": "run_id",
+      "average_rank": {
+        "Random Forest": 1.9,
+        "CatBoost": 2.7,
+        "Logistic Reg.": 3.2,
+        "XGBoost": 3.3,
+        "LightGBM": 3.9,
+        "TabNet": 6.0
+      }
+    },
+    "AUPRC": {
+      "n_blocks": 10,
+      "block": "run_id",
+      "average_rank": {
+        "CatBoost": 2.5,
+        "Random Forest": 2.6,
+        "XGBoost": 3.0,
+        "LightGBM": 3.2,
+        "Logistic Reg.": 3.7,
+        "TabNet": 6.0
+      }
+    },
+    "F1": {
+      "n_blocks": 10,
+      "block": "run_id",
+      "average_rank": {
+        "Random Forest": 2.5,
+        "CatBoost": 2.8,
+        "LightGBM": 2.8,
+        "Logistic Reg.": 3.0,
+        "XGBoost": 3.9,
+        "TabNet": 6.0
+      }
+    },
+    "MCC": {
+      "n_blocks": 10,
+      "block": "run_id",
+      "average_rank": {
+        "CatBoost": 2.5,
+        "Random Forest": 2.7,
+        "LightGBM": 3.0,
+        "Logistic Reg.": 3.1,
+        "XGBoost": 3.7,
+        "TabNet": 6.0
+      }
+    },
+    "Brier": {
+      "n_blocks": 10,
+      "block": "run_id",
+      "average_rank": {
+        "Random Forest": 2.0,
+        "Logistic Reg.": 2.6,
+        "CatBoost": 3.2,
+        "LightGBM": 3.3,
+        "XGBoost": 3.9,
+        "TabNet": 6.0
+      }
+    }
+  }
+}

@@ -1,0 +1,394 @@
+RESPONSE TO REVIEWERS
+Credit default prediction beyond AUROC
+
+AUTHOR NOTE: This draft answers comments on the previous version using the
+current repository. No manuscript was supplied for checking revisions or
+page/line locations. Available evidence and proposed manuscript changes are
+identified separately. No new training or explainer execution was performed
+when preparing this response. Before submission, reconcile the text with the
+actual manuscript, add exact revision locations, and remove this author note.
+Requests requiring unavailable experiments are explicitly partially addressed.
+
+Dear Editor and Reviewers,
+
+Thank you for identifying the need for a clearer contribution, broader evidence,
+and explicit robustness, explainability, and fairness assessment. We agree that
+the individual techniques are established. The contribution we can support is
+an empirical comparison of their trade-offs under documented protocols, rather
+than a new algorithm or a validated trustworthiness measure.
+
+The current result package contains six classifier families evaluated in 32 runs:
+ten random splits of UCI Default of Credit Card Clients, ten random splits of
+South German Credit, and six Prosper temporal cutoffs with two seeds per cutoff.
+This extends the UCI-only evidence described in the review. It does not establish
+universal generalization. Below, we distinguish available evidence from limits
+that remain when further training and explanation runs are unavailable.
+
+
+REVIEWER 1
+
+General comment: The contribution is incremental and requires substantial
+rewriting to improve originality, clarity, interpretation, and comparison with
+existing approaches.
+
+Response:
+We accept the criticism of the contribution's presentation. The defensible
+contribution is a comparison of how model assessments differ across
+discrimination, probability quality, thresholds, synthetic perturbation
+sensitivity, explanation diagnostics, and group disparities. We do not claim
+novelty for the individual methods or for multi-dimensional evaluation itself.
+
+For example, CatBoost and LightGBM both have mean UCI AUROC 0.7879, but their mean
+Brier scores are 0.1461 and 0.1324. On Prosper, CatBoost leads mean AUROC at 0.6822,
+whereas LightGBM has the lowest mean Brier score, 0.0618. A discrimination-based
+choice therefore need not be the best choice for probability quality. These
+comparisons give readers an interpretation beyond the model-ranking table.
+
+Proposed manuscript wording:
+"This study provides an empirical comparison of six classifier families across
+three credit datasets. It examines how discrimination-based comparisons differ
+from assessments based on threshold-dependent decisions, probability quality,
+synthetic perturbations, explanation diagnostics, and group disparities. The
+findings concern the evaluated portfolios and protocols; they do not establish
+a new benchmarking standard or a validated measure of trustworthiness."
+
+Evidence: Dataset-level runs/summary/all_run_metric_summary.csv files and
+per-run run_manifest.json files under results/outputs/.
+
+
+Comment 1: Compare robustness and integrate accuracy, explainability, and
+robustness into a single reliability score, considering
+https://doi.org/10.1016/j.mlwa.2025.100821 and related work.
+
+Response:
+Available held-out perturbation analyses cover all six classifier families.
+They evaluate numeric missingness replacement, correlated block replacement,
+noise, and additive covariate shifts at levels 0.05, 0.10, and 0.20. Outputs
+include classification metrics, Brier error, probability changes, and decision
+flips. These assess specified synthetic sensitivities, not actual economic
+shocks, adversarial security, or every form of distribution shift.
+
+The existing champion-level composite has the form
+
+    R = (P * S * E * F)^(1/4).
+
+P summarizes discrimination and nonnegative Brier skill; S summarizes AUROC
+retention under the specified perturbations; E combines explanation diagnostics;
+and F is the inverse of the maximum reported group gap at the nearest evaluated
+threshold. P is the square root of AUROC times nonnegative Brier skill. E averages
+rescaled LIME repeatability, SHAP attribution concentration, absolute deletion
+probability change, and nonnegative LIME local R-squared. Scaling and clipping
+rules are defined in pipeline.py and evaluation/revision_analysis.py.
+
+Equal weighting and these transformations are modelling choices, not validated
+measures of trust or operational risk. A zero score means that a component is
+zero under this construction, not that the model is useless. Missing fairness,
+as on Prosper, leaves the composite unavailable rather than imputing fairness.
+Components should accompany this supplementary descriptive score.
+
+SAFE AI metrics [1] motivate integrated evaluation, but our construction does
+not reproduce their perturbation-based metrics or validate that method. It is
+not evidence of compliance or deployment readiness.
+
+This request is partially addressed. XAI diagnostics exist only for champions;
+therefore the composite does not compare all six families on a common explanation
+basis. No run identifies a feasible reliability-selected model. For Prosper,
+feasibility cannot be established because group attributes are missing, which
+is not a measured fairness violation. Selection-side robustness also uses an
+in-sample training subset, not independent validation observations.
+
+Proposed manuscript treatment: Retain classifier-level perturbation results in
+the main analysis. Keep the composite and components supplementary, with its
+coverage, construction choices, and lack of validation explicit.
+
+Evidence: Per-run robustness_perturbations.csv, reliability_scores.csv,
+reliability_selection.csv, and revision_analysis_manifest.json;
+pipeline.py, stage_revision_analyses; evaluation/revision_analysis.py,
+reliability_score.
+
+
+Comment 2: Compare explainability tools formally using parsimony and robustness,
+considering https://doi.org/10.1007/s10462-025-11141-w.
+
+Response:
+Current outputs quantify attribution concentration and the number of features
+accounting for 80% of absolute attribution mass. They also report SHAP-LIME
+magnitude-rank agreement on shared selected features, local LIME R-squared, and
+rank/top-ten overlap across three repeated LIME seeds per evaluated case.
+
+Mean local LIME R-squared is 0.2848 on UCI, 0.4088 on South German, and 0.2425 on
+Prosper. Mean magnitude-rank correlations are 0.6044, 0.5965, and 0.3092. These are
+descriptive averages over evaluated cases and runs, not independent-sample
+comparisons of explainer populations. They support caution about local surrogate
+fidelity, not a generally superior explanation tool.
+
+Calzarossa, Giudici, and Zieni [2] motivate concentration as a parsimony criterion
+and examine explanation variability across bootstrap-trained models. Our LIME
+seed repetitions instead measure stochastic repeatability for a fixed model and
+input. They do not reproduce that refitting-based robustness analysis.
+
+Two limits remain. SHAP indices are randomly drawn and sorted, then the first
+200 cases are used for agreement and the first 100 for repeated-seed diagnostics.
+These subsets concentrate near the start of test-row order rather than being
+uniform draws from the whole partition. This does not imply chronological
+concentration in the unsorted Prosper export. LIME also retains 15 features,
+so concentration comparisons depend partly on truncation. XAI covers champions,
+not all classifier families.
+
+Saved deletion/insertion metrics are absolute probability changes relative to
+a training median/mode baseline. In particular, "comprehensiveness" is
+abs(p_full - p_deleted), which loses direction. Without directional analysis
+and random-feature controls, a large absolute change is not proof of faithfulness.
+SHAP additivity checks numerical reconstruction, not causal validity or human
+usefulness. Correlation of attribution magnitudes does not measure agreement
+about effect direction.
+
+This request is partially addressed through formal descriptive criteria.
+Additional sampling, input-stability, and refitting checks were not performed.
+The proposed conclusion concerns limitations of the measured explanations,
+not their regulatory adequacy or inadequacy.
+
+Evidence: Per-run explanation_quality_metrics.csv,
+explanation_fidelity_metrics.csv, shap_lime_agreement.csv, and shap_manifest.json;
+pipeline.py, stage_shap and stage_lime; evaluation/revision_analysis.py,
+explanation_metrics and explanation_fidelity.
+
+
+Comment 3: Compare with standard approaches through appropriate ablations.
+
+Response:
+The benchmark includes an unweighted, unresampled None arm; inverse-frequency
+ClassWeight; and SMOTE, BorderlineSMOTE, SVMSMOTE, and ADASYN variants using the
+project's nominal-aware sampler. It interpolates continuous features and assigns
+categories by neighbour voting; it is not the library SMOTENC implementation.
+
+Current controlled ablations compare strategies within each run's selected
+champion family under fixed 0.5 thresholds, OOF-selected F1 thresholds, and
+isotonic calibration fitted to training OOF predictions. UCI also compares raw
+and engineered features. Champion-family tuned parameters are reused across
+strategy arms rather than separately optimized for each arm. TabNet inherits
+the probe strategy. These choices bound the comparisons.
+
+Across paired strategy/run comparisons, OOF threshold selection increases mean
+held-out F1 over threshold 0.5 by 0.0267 on UCI, 0.0376 on South German, and 0.1434
+on Prosper, across 60, 60, and 72 comparisons. AUROC and Brier stay unchanged
+because threshold selection does not change probabilities. This improves a
+decision operating point rather than discrimination or probability quality.
+
+UCI's OOF-selected champions use None in eight runs and ClassWeight in two.
+This supports "synthetic oversampling provided no consistent advantage under
+the evaluated UCI protocol," rather than "synthetic resampling is unnecessary"
+for all credit data, objectives, or search budgets.
+
+Corrected Prosper manifests specify skip_ablation_grid=true. Legacy
+model-by-strategy grid files may remain, but their presence does not establish
+regeneration under corrected selection. The evidence cited here uses current
+controlled ablations, not those legacy grids.
+
+Proposed manuscript treatment: State each changed factor, fixed parameters,
+selection rule, and interpretation. Scope conclusions to the evaluated datasets,
+families, and tuning budget.
+
+Evidence: Per-run controlled_ablations.csv, best_params.yaml,
+smote_ablation_summary.json, and run_manifest.json;
+dataset-level runs/summary/all_run_best_models.csv.
+
+
+Comment 4: Consider fairness and compare with accuracy-fairness trade-off
+literature.
+
+Response:
+Available analyses measure TPR, FPR, and selection-rate gaps for recorded UCI and
+South German groups. Group thresholds are fitted on training OOF predictions
+and frozen before held-out evaluation. This relates to equality-of-opportunity
+postprocessing [3], but meeting an OOF constraint does not guarantee a test-set
+constraint.
+
+For UCI education groups, mean held-out TPR gap decreases from 0.4302 to 0.1560
+across 60 classifier/run comparisons. Only 19 meet a held-out gap of at most 0.10;
+mean accuracy falls 19.32 percentage points. For sex groups, the smaller reference
+gap changes from 0.0323 to 0.0233, alongside an 18.23-percentage-point mean accuracy
+loss. The consequences depend on the group and operating point, rather than
+establishing a universally beneficial intervention.
+
+Utility assumes FP:FN costs of 1:5. The reference threshold maximizes F1, whereas
+the group policy optimizes cost. Utility changes therefore combine objective
+changes with group-specific thresholds. A matched unconstrained cost-selected
+comparator has not been evaluated; gains cannot be attributed solely to fairness.
+
+Hardt, Price, and Srebro [3] supply the postprocessing context and discuss limits
+of group-statistical fairness criteria. Pleiss et al. [4] examine tensions between
+calibration and error-rate constraints under their stated assumptions. Our results
+illustrate the need to inspect several objectives; they do not test a universal
+impossibility theorem. Group thresholds change decisions, not the calibration
+of the underlying probabilities.
+
+Some South German group gaps are undefined when a group has no positive cases.
+They are missing estimates, not zero disparities. Prosper lacks group attributes
+for this analysis. We cannot claim fairness coverage across all three datasets,
+individual fairness, or regulatory compliance.
+
+This request is addressed descriptively through group disparities and accuracy,
+with incomplete group coverage and the unmatched utility comparator disclosed.
+
+Evidence: Per-run oof_fitted_fairness_postprocessing.csv,
+fairness_postprocessing_bootstrap_intervals.csv, fairness_utility_curve.csv,
+and revision_analysis_manifest.json.
+
+
+Comment 5: Rewrite the paper in a human-friendly way, explaining results and
+providing intuition and mathematical explanations.
+
+Response:
+We agree that readers need interpretations alongside metric tables. The proposed
+presentation organizes results around which models rank defaults well, whether
+their probabilities are useful, whether thresholds account for apparent imbalance
+gains, and what explanation and fairness diagnostics support.
+
+The mathematical distinctions can be stated directly. AUROC measures ranking.
+Brier error measures mean squared probability error:
+
+    Brier = (1/n) * sum_i (p_i - y_i)^2.
+
+The diagnostic Brier skill is
+
+    Brier skill = 1 - Brier / [pi * (1 - pi)],
+
+where pi is held-out prevalence for the descriptive constant-predictor reference.
+This is a test-set reporting reference, not a deployable baseline with knowledge
+of future prevalence. F1 depends on threshold through precision and recall,
+so it can change while AUROC and Brier stay fixed. Result paragraphs should
+connect numerical comparisons to these distinctions and explain their limits.
+
+The proposed rewrite names the measured form of repeatability, labels absolute
+deletion/insertion changes accurately, and separates component diagnostics from
+the heuristic composite. Repetitive tables and exploratory composite details
+belong in supplementary material.
+
+Completion status: The updated README documents this interpretation and its
+limits. No manuscript was supplied, so this response cannot claim a completed
+substantial manuscript rewrite or provide verified page/line locations.
+
+
+REVIEWER 2
+
+Summary of the previous version: Six classifiers were benchmarked on UCI across
+prediction, imbalance handling, calibration, and explainability, with conclusions
+about boosting, thresholds versus SMOTE, and regulatory justification.
+
+Response:
+Thank you for identifying the scope of the earlier experiment. Current results
+include the broader three-dataset evaluation described above. We distinguish
+UCI-specific findings from outcomes that vary across datasets and measured
+explanation limitations from regulatory suitability, which these experiments
+do not establish.
+
+
+Comment: The main concern is lack of novelty. Techniques are established and
+empirical findings are intuitive or unsurprising.
+
+Response:
+We agree that established components should not be presented as new algorithms.
+The proposed contribution is an empirical benchmark of documented trade-offs.
+It is not simply that boosting can outperform logistic regression. Assessments
+change with the objective and dataset, while explanation and fairness diagnostics
+reveal limits that discrimination alone does not capture.
+
+On UCI, CatBoost and LightGBM share mean AUROC 0.7879 while differing in Brier
+error. On South German, Random Forest leads descriptively at mean AUROC 0.7902,
+but its difference from logistic regression is not significant after within-run
+Holm adjustment in any of ten runs. On Prosper, CatBoost leads mean AUROC, while
+only LightGBM has positive held-out Brier skill in all twelve runs. These support
+objective-dependent assessment, not a universally superior classifier.
+
+Existing credit-scoring work compares models with SHAP [5], and loan-approval
+work combines SHAP, LIME, and fairness diagnostics [6]. Recent multi-metric
+credit-model work also considers calibration and stress sensitivity [7]. We do
+not claim an unprecedented combination. The defensible contribution lies in
+the specific comparisons, threshold/strategy ablations, temporal evaluation,
+and documented limitations.
+
+Proposed manuscript treatment: State this empirical contribution in the
+introduction and conclusion. Remove unsupported "first," "novel framework,"
+and universal-superiority claims rather than answer novelty criticism with
+stronger promotional language.
+
+
+Comment: Findings come from one dataset; generalization is a major concern.
+
+Response:
+Current evidence includes UCI, South German, and Prosper. The first two use ten
+repeated stratified random splits each. Prosper uses six temporal cutoffs and
+two seeds per cutoff, with a twelve-month default horizon and six-month test
+windows. All twelve active Prosper revision-analysis manifests identify
+ObservableTimeSeriesSplit, with month-disjoint validation and training-label
+availability checks.
+
+This broadens the evidence without establishing generalization to all borrowers
+or institutions. Models are fitted separately to each dataset, not transferred
+as fixed fitted models across platforms. Seeds reuse observations, the two
+Prosper seeds share each test window, and expanding training sets overlap across
+windows. Across-run dispersion and ranks are descriptive. Bootstrap intervals
+condition on fitted models and selected thresholds.
+
+Selection is training-only CV/OOF, not fully nested CV. Hyperparameters are
+selected on folds subsequently used for OOF prediction, so OOF metrics are
+selection diagnostics. Historical UCI/South German manifest labels do not alter
+this interpretation. The first Prosper inner training fold has 108 loans,
+including seven defaults; sensitivity to a later start remains untested.
+Lending Club results are absent and are not a fourth evaluated dataset.
+
+Proposed manuscript wording:
+"The three datasets broaden the evidence beyond one portfolio, but their
+populations, features, and outcome definitions differ. Repeated splits and
+temporal windows provide descriptive sensitivity analyses. They do not establish
+independent replication or universal generalization."
+
+
+Comment: "This paper establishes a new standard for credit-scoring benchmarking"
+is clearly overstated.
+
+Response:
+We agree. The results do not justify this statement. The proposed replacement is:
+
+"This study provides a documented empirical benchmark and identifies trade-offs
+that are obscured by discrimination-only comparisons."
+
+The same scope should govern the abstract, introduction, discussion, and
+conclusion. The study does not establish a new standard, validate a general
+reliability measure, or certify deployment readiness.
+
+
+REFERENCES CITED IN THIS RESPONSE
+
+[1] SAFE AI metrics: An integrated approach. Machine Learning with Applications
+    23, 100821 (2026).
+    https://doi.org/10.1016/j.mlwa.2025.100821
+    The DOI contains 2025; the publisher lists the volume as March 2026.
+
+[2] Calzarossa, M. C., Giudici, P., and Zieni, R. An assessment framework for
+    explainable AI with applications to cybersecurity. Artificial Intelligence
+    Review 58, 150 (2025).
+    https://doi.org/10.1007/s10462-025-11141-w
+
+[3] Hardt, M., Price, E., and Srebro, N. Equality of Opportunity in Supervised
+    Learning. Advances in Neural Information Processing Systems 29 (2016).
+    https://arxiv.org/abs/1610.02413
+
+[4] Pleiss, G., Raghavan, M., Wu, F., Kleinberg, J., and Weinberger, K. Q.
+    On Fairness and Calibration. Advances in Neural Information Processing
+    Systems 30 (2017).
+    https://arxiv.org/abs/1709.02012
+
+[5] Evaluating AI-driven credit scoring models versus traditional statistical
+    techniques. Discover Artificial Intelligence 6, 72 (2026).
+    https://doi.org/10.1007/s44163-025-00772-1
+
+[6] An explainable ensemble learning framework for transparent and accurate loan
+    approval prediction. Discover Artificial Intelligence 6, 1070 (2026).
+    https://doi.org/10.1007/s44163-026-01569-6
+
+[7] A multi-metric evaluation framework for machine learning credit scoring models
+    aligned with Basel III and IFRS 9 regulatory validation requirements.
+    Discover Informatics 1, 18 (2026).
+    https://doi.org/10.1007/s44564-026-00017-y

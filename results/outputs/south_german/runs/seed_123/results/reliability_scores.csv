@@ -1,2 +1,2 @@
 model,predictive_quality,robustness_retention,explanation_diagnostics,inverse_group_gap,reliability_score,score_status
-LightGBM,0.3877841815089566,0.9939595031478646,0.5668537939827312,0.0,0.0,descriptive_only
+Random Forest,0.39859809339169316,0.9994155613152413,0.5230478499028859,0.4,0.5373047552886341,descriptive_only

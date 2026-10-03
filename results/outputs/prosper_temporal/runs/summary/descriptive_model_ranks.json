@@ -1,0 +1,65 @@
+{
+  "scope": "descriptive_only; runs share observations and training data",
+  "metrics": {
+    "AUROC": {
+      "n_blocks": 6,
+      "block": "cutoff",
+      "average_rank": {
+        "CatBoost": 2.3333333333333335,
+        "XGBoost": 2.3333333333333335,
+        "Logistic Reg.": 3.0,
+        "LightGBM": 3.3333333333333335,
+        "Random Forest": 4.0,
+        "TabNet": 6.0
+      }
+    },
+    "AUPRC": {
+      "n_blocks": 6,
+      "block": "cutoff",
+      "average_rank": {
+        "CatBoost": 2.1666666666666665,
+        "XGBoost": 3.0,
+        "LightGBM": 3.3333333333333335,
+        "Logistic Reg.": 3.3333333333333335,
+        "Random Forest": 3.3333333333333335,
+        "TabNet": 5.833333333333333
+      }
+    },
+    "F1": {
+      "n_blocks": 6,
+      "block": "cutoff",
+      "average_rank": {
+        "LightGBM": 2.3333333333333335,
+        "Logistic Reg.": 3.0,
+        "XGBoost": 3.0,
+        "CatBoost": 3.1666666666666665,
+        "Random Forest": 3.6666666666666665,
+        "TabNet": 5.833333333333333
+      }
+    },
+    "MCC": {
+      "n_blocks": 6,
+      "block": "cutoff",
+      "average_rank": {
+        "LightGBM": 2.3333333333333335,
+        "XGBoost": 2.8333333333333335,
+        "CatBoost": 3.0,
+        "Random Forest": 3.1666666666666665,
+        "Logistic Reg.": 3.8333333333333335,
+        "TabNet": 5.833333333333333
+      }
+    },
+    "Brier": {
+      "n_blocks": 6,
+      "block": "cutoff",
+      "average_rank": {
+        "LightGBM": 1.0,
+        "Random Forest": 3.0,
+        "CatBoost": 3.1666666666666665,
+        "TabNet": 3.5,
+        "XGBoost": 4.5,
+        "Logistic Reg.": 5.833333333333333
+      }
+    }
+  }
+}

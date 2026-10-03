@@ -1,154 +1,198 @@
 """
 preprocessing/imbalance_handler.py — Class-imbalance treatment strategies.
 
-Implements and benchmarks:
-  • SMOTE          (Chawla et al., 2002)
-  • BorderlineSMOTE (Han et al., 2005)
-  • SVM-SMOTE       (Nguyen et al., 2011)
-  • ADASYN          (He et al., 2008)
-  • Baseline (no resampling)
+Strategies
+----------
+  • None             no resampling, no reweighting (plain baseline)
+  • ClassWeight      cost-sensitive learning: inverse-frequency class weights
+                     (scale_pos_weight / class_weight / auto_class_weights);
+                     implemented on the model side, see models.build_model
+  • SMOTE            (Chawla et al., 2002)
+  • BorderlineSMOTE  (Han et al., 2005)
+  • SVMSMOTE         (Nguyen et al., 2011)
+  • ADASYN           (He et al., 2008)
 
-All samplers are wrapped in a consistent API that also logs before/after
-class distributions to aid reporting in the paper.
+Nominal columns are never interpolated. Oversamplers operate on the continuous
+block only; each synthetic row receives the nominal values that are most
+frequent among its k nearest original minority neighbours (the SMOTE-NC rule,
+Chawla et al. 2002, §6.1), so every synthetic row carries a real category code.
+
+All samplers are exposed through :class:`NominalAwareOverSampler`, an
+imbalanced-learn compatible sampler, so they can sit inside an
+``imblearn.pipeline.Pipeline`` and be re-fitted inside every cross-validation
+fold (no synthetic rows ever reach a validation fold).
 """
 
 from __future__ import annotations
 
 import logging
-from typing import Optional, Tuple, Dict, Any
+from typing import Any, Dict, Optional, Sequence, Tuple
 
 import numpy as np
 import pandas as pd
-from imblearn.over_sampling import (
-    SMOTE,
-    BorderlineSMOTE,
-    SVMSMOTE,
-    ADASYN,
-)
+from imblearn.base import BaseSampler
+from imblearn.over_sampling import ADASYN, SMOTE, SVMSMOTE, BorderlineSMOTE
+from sklearn.neighbors import NearestNeighbors
 
 log = logging.getLogger(__name__)
 
-# ── Registry ──────────────────────────────────────────────────────────────────
-
-SAMPLER_REGISTRY: Dict[str, type] = {
+SAMPLER_REGISTRY: Dict[str, Optional[type]] = {
     "SMOTE"           : SMOTE,
     "BorderlineSMOTE" : BorderlineSMOTE,
     "SVMSMOTE"        : SVMSMOTE,
     "ADASYN"          : ADASYN,
-    "None"            : None,               # passthrough
+    "None"            : None,
+    "ClassWeight"     : None,
 }
+RESAMPLING_STRATEGIES = ("SMOTE", "BorderlineSMOTE", "SVMSMOTE", "ADASYN")
 
 
-# ── Core function ─────────────────────────────────────────────────────────────
+class NominalAwareOverSampler(BaseSampler):
+    """
+    Wrap any imbalanced-learn oversampler so nominal columns are not interpolated.
+
+    Parameters
+    ----------
+    strategy : name from SAMPLER_REGISTRY. "None"/"ClassWeight" pass data through.
+    nominal_indices : positional indices of nominal (integer-coded) columns.
+    sampler_kwargs : forwarded to the base sampler constructor.
+    k_neighbors_nominal : neighbours used to vote the nominal values of a
+        synthetic row (mode of the k nearest original minority rows).
+    """
+
+    _sampling_type = "over-sampling"
+    _parameter_constraints: dict = {}
+
+    def __init__(
+        self,
+        strategy: str = "SMOTE",
+        nominal_indices: Sequence[int] = (),
+        sampler_kwargs: Optional[Dict[str, Any]] = None,
+        k_neighbors_nominal: int = 5,
+        sampling_strategy="auto",
+    ):
+        super().__init__(sampling_strategy=sampling_strategy)
+        self.strategy = strategy
+        self.nominal_indices = nominal_indices
+        self.sampler_kwargs = sampler_kwargs
+        self.k_neighbors_nominal = k_neighbors_nominal
+
+    def _check_X_y(self, X, y, accept_sparse=None):
+        # Keep pandas containers; nothing here needs sparse support.
+        y, binarize_y = self._check_y_binary(y)
+        return X, y, binarize_y
+
+    @staticmethod
+    def _check_y_binary(y):
+        from imblearn.utils import check_target_type
+        return check_target_type(y, indicate_one_vs_all=True)
+
+    def fit_resample(self, X, y):
+        if self.strategy not in SAMPLER_REGISTRY:
+            raise ValueError(
+                f"Unknown strategy '{self.strategy}'. Choose from {list(SAMPLER_REGISTRY)}."
+            )
+        if SAMPLER_REGISTRY[self.strategy] is None:
+            return X, y
+        columns = list(X.columns) if isinstance(X, pd.DataFrame) else None
+        index_name = y.name if isinstance(y, pd.Series) else None
+        X_arr = np.asarray(X, dtype=float)
+        y_arr = np.asarray(y).astype(int)
+
+        nominal = np.asarray(sorted(set(self.nominal_indices)), dtype=int)
+        continuous = np.asarray([i for i in range(X_arr.shape[1]) if i not in set(nominal.tolist())], dtype=int)
+        if continuous.size == 0:
+            raise ValueError("Oversampling requires at least one continuous column.")
+
+        sampler = SAMPLER_REGISTRY[self.strategy](**(self.sampler_kwargs or {}))
+        X_cont_res, y_res = sampler.fit_resample(X_arr[:, continuous], y_arr)
+        y_res = np.asarray(y_res).astype(int)
+
+        n_original = len(y_arr)
+        n_synthetic = len(y_res) - n_original
+        X_res = np.empty((len(y_res), X_arr.shape[1]), dtype=float)
+        X_res[:, continuous] = X_cont_res
+        X_res[:n_original, nominal] = X_arr[:, nominal]
+
+        if n_synthetic > 0 and nominal.size > 0:
+            synthetic_cont = X_cont_res[n_original:]
+            synthetic_y = y_res[n_original:]
+            for cls in np.unique(synthetic_y):
+                real_mask = y_arr == cls
+                syn_mask = synthetic_y == cls
+                real_cont = X_arr[real_mask][:, continuous]
+                real_nom = X_arr[real_mask][:, nominal]
+                k = int(min(self.k_neighbors_nominal, len(real_cont)))
+                nn = NearestNeighbors(n_neighbors=k).fit(real_cont)
+                _, neighbours = nn.kneighbors(synthetic_cont[syn_mask])
+                votes = real_nom[neighbours]                      # (n_syn, k, n_nom)
+                modes = np.empty((votes.shape[0], votes.shape[2]))
+                for j in range(votes.shape[2]):
+                    col = votes[:, :, j].astype(int)
+                    for r in range(col.shape[0]):
+                        vals, counts = np.unique(col[r], return_counts=True)
+                        # tie-break towards the nearest neighbour's value
+                        best = vals[counts == counts.max()]
+                        modes[r, j] = col[r, 0] if col[r, 0] in best else best[0]
+                rows = np.where(syn_mask)[0] + n_original
+                X_res[np.ix_(rows, nominal)] = modes
+        elif n_synthetic > 0:
+            pass  # no nominal columns: nothing to restore
+
+        if columns is not None:
+            X_out = pd.DataFrame(X_res, columns=columns)
+            X_out = X_out.astype({columns[i]: "int32" for i in nominal})
+            return X_out, pd.Series(y_res, name=index_name)
+        return X_res, y_res
+
+    def _fit_resample(self, X, y):  # pragma: no cover - BaseSampler API
+        return self.fit_resample(X, y)
+
 
 def apply_resampling(
     X_train: pd.DataFrame,
     y_train: pd.Series,
     strategy: str = "SMOTE",
     sampler_kwargs: Optional[Dict[str, Any]] = None,
+    nominal_columns: Optional[Sequence[str]] = None,
 ) -> Tuple[pd.DataFrame, pd.Series]:
-    """
-    Apply the chosen over-sampling strategy to the training set.
-
-    Parameters
-    ──────────
-    X_train         : Training features (DataFrame)
-    y_train         : Training labels  (Series, binary 0/1)
-    strategy        : One of 'SMOTE', 'BorderlineSMOTE', 'SVMSMOTE',
-                      'ADASYN', or 'None'.
-    sampler_kwargs  : Extra kwargs forwarded to the sampler constructor.
-
-    Returns
-    ───────
-    X_res, y_res    : Resampled arrays wrapped back in DataFrame / Series.
-    """
+    """Apply one strategy to a training partition (nominal-aware)."""
     if strategy not in SAMPLER_REGISTRY:
         raise ValueError(
-            f"Unknown strategy '{strategy}'. "
-            f"Choose from {list(SAMPLER_REGISTRY.keys())}."
+            f"Unknown strategy '{strategy}'. Choose from {list(SAMPLER_REGISTRY.keys())}."
         )
-
     _log_distribution("Before resampling", y_train)
-
-    if strategy == "None" or SAMPLER_REGISTRY[strategy] is None:
-        log.info("No resampling applied.")
+    if SAMPLER_REGISTRY[strategy] is None:
+        log.info("Strategy '%s': no resampling applied.", strategy)
         return X_train, y_train
-
-    kwargs   = sampler_kwargs or {}
-    sampler  = SAMPLER_REGISTRY[strategy](**kwargs)
-
-    X_res_arr, y_res_arr = sampler.fit_resample(X_train.values, y_train.values)
-
-    X_res = pd.DataFrame(X_res_arr, columns=X_train.columns)
-    y_res = pd.Series(y_res_arr.astype(int), name=y_train.name)
-
+    nominal_idx = [X_train.columns.get_loc(c) for c in (nominal_columns or []) if c in X_train.columns]
+    sampler = NominalAwareOverSampler(strategy, nominal_idx, sampler_kwargs)
+    X_res, y_res = sampler.fit_resample(X_train, y_train)
+    y_res = pd.Series(np.asarray(y_res).astype(int), name=y_train.name)
     _log_distribution(f"After {strategy}", y_res)
-
     return X_res, y_res
 
 
 def _log_distribution(label: str, y: pd.Series) -> None:
-    counts = y.value_counts().sort_index()
-    ir     = counts.iloc[0] / counts.iloc[1]          # imbalance ratio (maj/min)
+    counts = pd.Series(y).value_counts().sort_index()
+    if len(counts) < 2:
+        log.info("%s | single class present (n=%d)", label, len(y))
+        return
+    ir = counts.iloc[0] / counts.iloc[1]
     log.info(
         "%s | class 0: %d (%.1f%%)  class 1: %d (%.1f%%)  IR=%.2f",
-        label,
-        counts.iloc[0], counts.iloc[0] / len(y) * 100,
-        counts.iloc[1], counts.iloc[1] / len(y) * 100,
-        ir,
+        label, counts.iloc[0], counts.iloc[0] / len(y) * 100,
+        counts.iloc[1], counts.iloc[1] / len(y) * 100, ir,
     )
 
 
-# ── Ablation: run all strategies ──────────────────────────────────────────────
-
-def compare_strategies(
-    X_train: pd.DataFrame,
-    y_train: pd.Series,
-    strategies: Optional[list[str]] = None,
-) -> Dict[str, Tuple[pd.DataFrame, pd.Series]]:
-    """
-    Run every resampling strategy and return a dict of resampled sets.
-    Used by the ablation study in the pipeline.
-
-    Returns
-    ───────
-    { strategy_name : (X_res, y_res) }
-    """
-    if strategies is None:
-        strategies = list(SAMPLER_REGISTRY.keys())
-
-    from config import SMOTE_STRATEGIES
-
-    results: Dict[str, Tuple[pd.DataFrame, pd.Series]] = {}
-    for name in strategies:
-        kwargs = SMOTE_STRATEGIES.get(name) or {}
-        X_res, y_res = apply_resampling(X_train, y_train, strategy=name,
-                                        sampler_kwargs=kwargs)
-        results[name] = (X_res, y_res)
-
-    return results
-
-
-# ── Imbalance diagnostics ─────────────────────────────────────────────────────
-
 def imbalance_statistics(y: pd.Series) -> Dict[str, float]:
-    """
-    Return a dictionary of imbalance metrics for inclusion in Table I of the
-    paper.
-
-    Metrics
-    ───────
-    n_total          Total sample count
-    n_majority       Count of majority class (0)
-    n_minority       Count of minority class (1)
-    imbalance_ratio  n_majority / n_minority
-    minority_pct     Fraction of minority class (%)
-    """
-    counts = y.value_counts().sort_index()
-    n_maj  = int(counts.iloc[0])
-    n_min  = int(counts.iloc[1])
+    """Imbalance summary for Table I."""
+    counts = pd.Series(y).value_counts().sort_index()
+    n_maj = int(counts.iloc[0])
+    n_min = int(counts.iloc[1])
     return {
-        "n_total"         : len(y),
+        "n_total"         : int(len(y)),
         "n_majority"      : n_maj,
         "n_minority"      : n_min,
         "imbalance_ratio" : round(n_maj / n_min, 4),

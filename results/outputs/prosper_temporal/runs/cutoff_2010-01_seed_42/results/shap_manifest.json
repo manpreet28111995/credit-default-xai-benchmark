@@ -1,0 +1,8 @@
+{
+  "model": "LightGBM",
+  "output_space": "log_odds",
+  "n_explained": 2000,
+  "mae": 2.284804290209053e-16,
+  "pass": true,
+  "tol": 0.05
+}

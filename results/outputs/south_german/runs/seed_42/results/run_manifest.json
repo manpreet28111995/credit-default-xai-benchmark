@@ -1,41 +1,158 @@
 {
+  "run_id": "seed_42",
   "seed": 42,
+  "cutoff": null,
   "dataset": "south_german",
   "split_mode": "random",
-  "temporal_column": null,
-  "external_datasets": [],
+  "protocol": "v3_nested_selection",
+  "data_meta": {
+    "dataset": "south_german",
+    "split_mode": "random",
+    "n_train": 800,
+    "n_test": 200,
+    "default_rate_train": 0.3,
+    "default_rate_test": 0.3,
+    "nominal_columns": [
+      "status",
+      "credit_history",
+      "purpose",
+      "savings",
+      "employment_duration",
+      "personal_status_sex",
+      "other_debtors",
+      "property",
+      "other_installment_plans",
+      "housing",
+      "job",
+      "telephone",
+      "foreign_worker"
+    ],
+    "nominal_categories": {
+      "status": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "credit_history": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "purpose": [
+        "0",
+        "1",
+        "10",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "8",
+        "9"
+      ],
+      "savings": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "employment_duration": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "personal_status_sex": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "other_debtors": [
+        "1",
+        "2",
+        "3"
+      ],
+      "property": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "other_installment_plans": [
+        "1",
+        "2",
+        "3"
+      ],
+      "housing": [
+        "1",
+        "2",
+        "3"
+      ],
+      "job": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "telephone": [
+        "1",
+        "2"
+      ],
+      "foreign_worker": [
+        "1",
+        "2"
+      ]
+    },
+    "missing_indicator_columns": [],
+    "group_columns": [
+      "personal_status_sex",
+      "foreign_worker",
+      "age_group"
+    ]
+  },
   "fast": false,
   "tune": true,
   "tune_iter": 12,
+  "inner_folds": 5,
+  "inner_temporal_folds": 3,
+  "threshold_criterion": "f1",
   "skip_xai": false,
-  "full_ablation": false,
-  "best_model": "CatBoost",
-  "best_validation_AUROC": 0.9095,
-  "best_test_AUROC": 0.7645,
-  "best_threshold": 0.45000000000000007,
-  "best_smote_strategy": "SVMSMOTE",
+  "best_model": "Random Forest",
+  "best_oof_AUROC": 0.7988318452380953,
+  "best_test_AUROC": 0.7442857142857143,
+  "best_threshold": 0.43,
+  "probe_imbalance_strategy": "SVMSMOTE",
+  "champion_imbalance_strategy": "SVMSMOTE",
+  "strategy_selection": "per_model",
   "resampling_helped": true,
-  "seed_list": [
-    42,
-    99,
-    123,
-    326,
-    456,
-    515,
-    689,
-    777,
-    872,
-    999
-  ],
-  "dataset_file_sha256": null,
   "dataset_checksums": {
     "south_german": "5f363343f356ca38a0236baab849e472846399b2176ccc5bd686483dd8a7562f"
   },
-  "split_indices": "/Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/south_german/runs/seed_42/results/split_indices.json",
-  "source_fingerprint": "102102ae5c3f95eebd190656563b1e872d211362518c9cd9ed5b81567235ee55",
+  "source_fingerprint": "556fd607373fcf5f6cfd7b0e7cf7aaec08021718f8107538689a7dc01a0bb3be",
+  "package_versions": {
+    "python": "3.13.5",
+    "platform": "macOS-26.5.1-arm64-arm-64bit-Mach-O",
+    "numpy": "2.5.3",
+    "pandas": "3.0.6",
+    "sklearn": "1.9.1",
+    "imblearn": "0.14.2",
+    "xgboost": "3.4.1",
+    "lightgbm": "4.7.0",
+    "catboost": "1.2.10",
+    "shap": "0.52.0",
+    "lime": "unknown",
+    "torch": "2.14.0",
+    "pytorch_tabnet": "unknown",
+    "scipy": "1.18.1"
+  },
   "revision_analyses": true,
   "reliability_selected_model": null,
-  "figures_dir": "/Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/south_german/runs/seed_42/figures",
-  "results_dir": "/Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/south_german/runs/seed_42/results",
-  "models_dir": "/Users/harekrishna/Downloads/discover_ai_credit_experiment_v2/results/outputs/south_german/runs/seed_42/models"
+  "results_dir": "/Users/harekrishna/Downloads/credit-default-xai-benchmark 2/results/outputs/south_german/runs/seed_42/results",
+  "figures_dir": "/Users/harekrishna/Downloads/credit-default-xai-benchmark 2/results/outputs/south_german/runs/seed_42/figures"
 }

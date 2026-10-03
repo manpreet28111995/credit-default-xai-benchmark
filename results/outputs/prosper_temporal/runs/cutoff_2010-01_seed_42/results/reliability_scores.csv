@@ -1,0 +1,2 @@
+model,predictive_quality,robustness_retention,explanation_diagnostics,inverse_group_gap,reliability_score,score_status
+LightGBM,0.10718395380841292,0.9507101112279329,0.47524714429378434,,,not_scored_fairness_unavailable

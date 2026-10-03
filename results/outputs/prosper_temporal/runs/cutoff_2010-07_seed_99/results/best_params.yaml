@@ -1,0 +1,176 @@
+seed: 99
+cutoff: "2010-07"
+probe_imbalance_strategy: "SVMSMOTE"
+strategy_selection: "per_model"
+tuning_enabled: true
+models:
+  XGBoost:
+    enabled: true
+    model: "XGBoost"
+    seed: 99
+    imbalance_strategy: "SVMSMOTE"
+    search: "RandomizedSearchCV(imblearn Pipeline)"
+    scoring: "roc_auc"
+    n_iter_requested: 12
+    inner_cv: "ObservableTimeSeriesSplit"
+    best_score: 0.6215167474119786
+    best_params:
+      subsample: 0.7
+      reg_lambda: 1.0
+      reg_alpha: 0.5
+      n_estimators: 300
+      max_depth: 3
+      learning_rate: 0.03
+      gamma: 0.05
+      colsample_bytree: 1.0
+    status: "success"
+    n_iter_actual: 12
+    final_fit: "new"
+    oof_rows: 21105
+    strategy_selection:
+      strategy: "SVMSMOTE"
+      selection: "per_model"
+      oof_auroc_by_strategy:
+        SMOTE: 0.6088016466519891
+        BorderlineSMOTE: 0.610629720075326
+        SVMSMOTE: 0.6212150376681402
+        ADASYN: 0.6069232634283607
+        None: 0.6040839188426999
+        ClassWeight: 0.6209013334100428
+  LightGBM:
+    enabled: true
+    model: "LightGBM"
+    seed: 99
+    imbalance_strategy: "SVMSMOTE"
+    search: "RandomizedSearchCV(imblearn Pipeline)"
+    scoring: "roc_auc"
+    n_iter_requested: 12
+    inner_cv: "ObservableTimeSeriesSplit"
+    best_score: 0.6117192151374875
+    best_params:
+      subsample: 1.0
+      reg_lambda: 0.5
+      reg_alpha: 0.1
+      num_leaves: 15
+      n_estimators: 800
+      min_child_samples: 40
+      max_depth: 4
+      learning_rate: 0.03
+      colsample_bytree: 0.7
+    status: "success"
+    n_iter_actual: 12
+    final_fit: "new"
+    oof_rows: 21105
+    strategy_selection:
+      strategy: "SVMSMOTE"
+      selection: "per_model"
+      oof_auroc_by_strategy:
+        SMOTE: 0.6019047658185128
+        BorderlineSMOTE: 0.6019742769699877
+        SVMSMOTE: 0.6066024909361197
+        ADASYN: 0.594590674245841
+        None: 0.5835012312904971
+        ClassWeight: 0.5335001628364988
+  CatBoost:
+    enabled: true
+    model: "CatBoost"
+    seed: 99
+    imbalance_strategy: "ClassWeight"
+    search: "RandomizedSearchCV(imblearn Pipeline)"
+    scoring: "roc_auc"
+    n_iter_requested: 12
+    inner_cv: "ObservableTimeSeriesSplit"
+    best_score: 0.6184389188706813
+    best_params:
+      learning_rate: 0.05
+      l2_leaf_reg: 3
+      iterations: 300
+      depth: 4
+    status: "success"
+    n_iter_actual: 12
+    final_fit: "new"
+    oof_rows: 21105
+    strategy_selection:
+      strategy: "ClassWeight"
+      selection: "per_model"
+      oof_auroc_by_strategy:
+        SMOTE: 0.6029515322554961
+        BorderlineSMOTE: 0.6110953913675081
+        SVMSMOTE: 0.6083360164541916
+        ADASYN: 0.6044682129798669
+        None: 0.6109615880513968
+        ClassWeight: 0.6207507327642445
+  Random Forest:
+    enabled: true
+    model: "Random Forest"
+    seed: 99
+    imbalance_strategy: "ClassWeight"
+    search: "RandomizedSearchCV(imblearn Pipeline)"
+    scoring: "roc_auc"
+    n_iter_requested: 12
+    inner_cv: "ObservableTimeSeriesSplit"
+    best_score: 0.6156983163672513
+    best_params:
+      n_estimators: 200
+      min_samples_split: 5
+      min_samples_leaf: 1
+      max_features: "sqrt"
+      max_depth: null
+    status: "success"
+    n_iter_actual: 12
+    final_fit: "new"
+    oof_rows: 21105
+    strategy_selection:
+      strategy: "ClassWeight"
+      selection: "per_model"
+      oof_auroc_by_strategy:
+        SMOTE: 0.5654844976571064
+        BorderlineSMOTE: 0.566951937035184
+        SVMSMOTE: 0.5695952305857286
+        ADASYN: 0.5650175010710224
+        None: 0.5706647941325437
+        ClassWeight: 0.5712117295701835
+  Logistic Reg.:
+    enabled: true
+    model: "Logistic Reg."
+    seed: 99
+    imbalance_strategy: "ClassWeight"
+    search: "RandomizedSearchCV(imblearn Pipeline)"
+    scoring: "roc_auc"
+    n_iter_requested: 12
+    inner_cv: "ObservableTimeSeriesSplit"
+    best_score: 0.6053338577744714
+    best_params:
+      C: 0.01
+    status: "success"
+    n_iter_actual: 7
+    final_fit: "legacy_model_reused_after_split_parameter_and_metric_checks"
+    oof_rows: 21105
+    strategy_selection:
+      strategy: "ClassWeight"
+      selection: "per_model"
+      oof_auroc_by_strategy:
+        SMOTE: 0.55814993080733
+        BorderlineSMOTE: 0.5477938582387563
+        SVMSMOTE: 0.5480235244804386
+        ADASYN: 0.5562415692301685
+        None: 0.5304202414500564
+        ClassWeight: 0.5902761234434218
+  TabNet:
+    enabled: false
+    model: "TabNet"
+    seed: 99
+    imbalance_strategy: "SVMSMOTE"
+    search: "RandomizedSearchCV(imblearn Pipeline)"
+    scoring: "roc_auc"
+    n_iter_requested: 12
+    inner_cv: "ObservableTimeSeriesSplit"
+    best_score: null
+    best_params:
+    status: "skipped_no_space"
+    final_fit: "new"
+    oof_rows: 21105
+    strategy_selection:
+      strategy: "SVMSMOTE"
+      selection: "per_model"
+      oof_auroc_by_strategy:

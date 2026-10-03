@@ -1,22 +1,25 @@
 {
   "seed": 515,
+  "cutoff": null,
+  "protocol": "v3_nested_selection",
+  "selection_data": "out-of-fold predictions inside the training partition",
+  "inner_cv": "StratifiedKFold",
+  "threshold_criterion": "f1",
   "robustness_levels": [
     0.05,
     0.1,
     0.2
   ],
-  "explanation_instances": 100,
   "realistic_shift_families": [
     "missingness",
     "correlated_missingness",
     "numeric_noise",
     "covariate_shift"
   ],
-  "robustness_diagnostics": [
-    "AUROC_retention",
-    "Brier_retention",
-    "mean_abs_probability_shift",
-    "decision_flip_rate"
+  "nominal_columns_protected_from_perturbation": [
+    "SEX",
+    "EDUCATION",
+    "MARRIAGE"
   ],
   "reliability_selected_model": null,
   "reliability_constraints": {
@@ -28,18 +31,7 @@
     "false_negative": 5.0
   },
   "bootstrap_reps": 2000,
-  "multiple_testing_correction": "Holm step-down for pairwise DeLong and McNemar tests",
-  "reliability_aggregation": "descriptive_geometric_mean; unscored when group fairness data are absent",
-  "components": [
-    "predictive_quality (AUROC and Brier skill)",
-    "robustness",
-    "explanation_diagnostics",
-    "inverse_group_gap"
-  ],
-  "calibration_outputs": [
-    "heldout_calibration_diagnostics.csv",
-    "heldout_calibration_bins.csv"
-  ],
-  "fairness_postprocessing": "equal-opportunity group thresholds fitted on validation only; test set used for final descriptive evaluation",
-  "fairness_uncertainty": "row-bootstrap intervals conditional on fitted model and frozen threshold policy"
+  "multiple_testing_correction": "Holm step-down within each run; Friedman/Nemenyi across runs",
+  "fairness_postprocessing": "equal-opportunity group thresholds fitted on OOF predictions; test evaluated once",
+  "reliability_aggregation": "descriptive_geometric_mean; unscored when group fairness data are absent"
 }

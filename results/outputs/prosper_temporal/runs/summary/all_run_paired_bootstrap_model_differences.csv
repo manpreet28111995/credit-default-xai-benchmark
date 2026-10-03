@@ -1,0 +1,901 @@
+run_id,seed,cutoff,model_a,model_b,metric,difference_mean,ci_low,ci_high,bootstrap_reps,inference_scope
+cutoff_2010-01_seed_42,42,2010-01,XGBoost,LightGBM,AUROC,-0.007348914209921526,-0.030566522965390176,0.017080689529673936,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,XGBoost,LightGBM,AUPRC,-0.023104229469502975,-0.05052294346051774,-0.002754359418350367,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,XGBoost,LightGBM,Brier,0.16070370701279507,0.15437483355600545,0.1669703376471968,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,XGBoost,LightGBM,F1,-0.016513243913503152,-0.04946875434856444,0.016587424208270276,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,XGBoost,LightGBM,MCC,-0.009219842662279577,-0.04958024557947801,0.03309384792677537,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,XGBoost,CatBoost,AUROC,-0.006840696965131835,-0.03988207740236106,0.028394357950735267,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,XGBoost,CatBoost,AUPRC,-0.0435654851165516,-0.07930144455037899,-0.016594717676839444,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,XGBoost,CatBoost,Brier,0.1615480686451931,0.15473554362887998,0.16815080839428234,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,XGBoost,CatBoost,F1,-0.0417095863765802,-0.0817767542117574,-0.0019310999146712423,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,XGBoost,CatBoost,MCC,-0.03793238469698247,-0.08594883077885734,0.01205765804377309,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,XGBoost,Random Forest,AUROC,-0.005432229794877371,-0.030146466910792813,0.018411225454902792,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,XGBoost,Random Forest,AUPRC,-0.02681994897959119,-0.055019530138428564,-0.00446243860333902,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,XGBoost,Random Forest,Brier,0.14335595054946002,0.13904455308161523,0.14763265349358712,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,XGBoost,Random Forest,F1,-0.022570804494048444,-0.047353046025206486,0.0014977927571384443,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,XGBoost,Random Forest,MCC,-0.031433932247723895,-0.06946799582267456,0.006279385339003235,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,XGBoost,Logistic Reg.,AUROC,-0.03854938305608593,-0.07026268510256334,-0.005263395481172704,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,XGBoost,Logistic Reg.,AUPRC,-0.03901867774638127,-0.06961502413161665,-0.014495300407135606,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,XGBoost,Logistic Reg.,Brier,0.1289492422194997,0.1251325950213074,0.13256710780426265,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,XGBoost,Logistic Reg.,F1,-0.02179230885730936,-0.08038266846409257,0.03599005426896101,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,XGBoost,Logistic Reg.,MCC,-0.03572496564761283,-0.10034906459472173,0.026224727239686788,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,XGBoost,TabNet,AUROC,0.04373396079269774,0.0012886217720240517,0.08859660009000457,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,XGBoost,TabNet,AUPRC,0.013710518295152739,-0.0047706699573159,0.03415665240640667,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,XGBoost,TabNet,Brier,0.1359987453594804,0.12697071060538292,0.14496264494955538,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,XGBoost,TabNet,F1,0.037337434321607986,-0.004621273945641781,0.07530960953838169,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,XGBoost,TabNet,MCC,0.055749004650427994,-0.0004416445952002461,0.10694880150457309,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,LightGBM,CatBoost,AUROC,0.000508217244789691,-0.023316211520790112,0.023230160218024896,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,LightGBM,CatBoost,AUPRC,-0.02046125564704862,-0.043994993166928946,0.00011217685060746832,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,LightGBM,CatBoost,Brier,0.0008443616323980474,0.00021860323184910816,0.001440370230070763,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,LightGBM,CatBoost,F1,-0.025196342463077046,-0.06371806199433082,0.012127757146762631,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,LightGBM,CatBoost,MCC,-0.028712542034702894,-0.07341405441303318,0.015096194830127207,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,LightGBM,Random Forest,AUROC,0.001916684415044155,-0.02558286229615037,0.029812284063660988,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,LightGBM,Random Forest,AUPRC,-0.0037157195100882196,-0.034436893306900945,0.026299570157806654,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,LightGBM,Random Forest,Brier,-0.017347756463335043,-0.019920501053959563,-0.014695757591818752,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,LightGBM,Random Forest,F1,-0.006057560580545292,-0.040344946823489,0.02936457410084726,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,LightGBM,Random Forest,MCC,-0.022214089585444314,-0.06737765031944408,0.02300658211868972,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,LightGBM,Logistic Reg.,AUROC,-0.031200468846164408,-0.06259520588679965,-0.0004861995044062562,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,LightGBM,Logistic Reg.,AUPRC,-0.015914448276878303,-0.04816573962997417,0.017005748367817507,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,LightGBM,Logistic Reg.,Brier,-0.03175446479329536,-0.035595324735707506,-0.027917793386521346,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,LightGBM,Logistic Reg.,F1,-0.005279064943806207,-0.06486878812964801,0.05051942502253928,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,LightGBM,Logistic Reg.,MCC,-0.02650512298533325,-0.09301165154722664,0.036403249822040185,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,LightGBM,TabNet,AUROC,0.05108287500261927,0.007216753688339858,0.0958393858519284,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,LightGBM,TabNet,AUPRC,0.03681474776465571,0.009947054658798,0.07071450354848509,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,LightGBM,TabNet,Brier,-0.024704961653314678,-0.029897518901992718,-0.019437274869497513,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,LightGBM,TabNet,F1,0.053850678235111145,0.00037111767555145366,0.1047713625170574,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,LightGBM,TabNet,MCC,0.06496884731270756,0.0006134626768851184,0.1260487874364464,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,CatBoost,Random Forest,AUROC,0.0014084671702544638,-0.036674192561234276,0.038528988088142015,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,CatBoost,Random Forest,AUPRC,0.016745536136960403,-0.012551783216645596,0.04832719101023907,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,CatBoost,Random Forest,Brier,-0.01819211809573309,-0.021078632878803162,-0.015184718149688506,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,CatBoost,Random Forest,F1,0.019138781882531753,-0.02012581089366536,0.05880505812760719,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,CatBoost,Random Forest,MCC,0.006498452449258581,-0.042151326019511666,0.05464591532384393,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,CatBoost,Logistic Reg.,AUROC,-0.031708686090954105,-0.06633542773008679,0.002124995733122821,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,CatBoost,Logistic Reg.,AUPRC,0.00454680737017032,-0.03157527280685753,0.04379530313021801,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,CatBoost,Logistic Reg.,Brier,-0.032598826425693415,-0.036670976156295366,-0.028317171960948486,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,CatBoost,Logistic Reg.,F1,0.01991727751927084,-0.033905901618696346,0.07791511664670979,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,CatBoost,Logistic Reg.,MCC,0.002207419049369644,-0.05534746941011783,0.06548277025485418,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,CatBoost,TabNet,AUROC,0.05057465775782958,0.0053868332998700365,0.09617708025383671,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,CatBoost,TabNet,AUPRC,0.05727600341170433,0.023959735085201033,0.09867104138002139,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,CatBoost,TabNet,Brier,-0.025549323285712723,-0.030841420308227254,-0.020290731888118,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,CatBoost,TabNet,F1,0.0790470206981882,0.02412041443683246,0.13237977454931749,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,CatBoost,TabNet,MCC,0.09368138934741047,0.02946446010141239,0.15629938354601805,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,Random Forest,Logistic Reg.,AUROC,-0.03311715326120856,-0.07508826018267714,0.007267417239341033,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,Random Forest,Logistic Reg.,AUPRC,-0.012198728766790084,-0.04492228573433339,0.02043661319033185,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,Random Forest,Logistic Reg.,Brier,-0.01440670832996032,-0.016551683054930294,-0.012233033944745945,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,Random Forest,Logistic Reg.,F1,0.0007784956367390851,-0.0607603185387363,0.05736158949566982,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,Random Forest,Logistic Reg.,MCC,-0.004291033399888937,-0.06919989612461103,0.058287234071345256,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,Random Forest,TabNet,AUROC,0.04916619058757512,0.0018037003336365573,0.09551409548888101,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,Random Forest,TabNet,AUPRC,0.04053046727474393,0.010058013593739212,0.07523424511237588,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,Random Forest,TabNet,Brier,-0.007357205189979636,-0.013327992450502209,-0.0014035012260186347,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,Random Forest,TabNet,F1,0.059908238815656434,0.01821072542834394,0.10069477369244664,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,Random Forest,TabNet,MCC,0.08718293689815189,0.03204346373398579,0.14144227475148158,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,Logistic Reg.,TabNet,AUROC,0.08228334384878368,0.03455415891086969,0.13033362113184555,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,Logistic Reg.,TabNet,AUPRC,0.05272919604153402,0.021570331078367803,0.08969580126772285,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,Logistic Reg.,TabNet,Brier,0.007049503139980685,0.0005115959899163029,0.013793941799587607,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,Logistic Reg.,TabNet,F1,0.05912974317891735,-0.008782403153692895,0.12922563834011144,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_42,42,2010-01,Logistic Reg.,TabNet,MCC,0.09147397029804083,0.01654018335337109,0.16559460177601282,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,XGBoost,LightGBM,AUROC,-0.012603809843087505,-0.03142799233119551,0.0060231911300357936,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,XGBoost,LightGBM,AUPRC,-0.015751929917164408,-0.030733040728079572,-0.0031481718338443325,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,XGBoost,LightGBM,Brier,0.002855921249568298,0.0019717970218236973,0.0037305127078676205,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,XGBoost,LightGBM,F1,-0.018140500888940012,-0.054543126311017154,0.0165632899914464,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,XGBoost,LightGBM,MCC,-0.019017053560253988,-0.060320223226659794,0.0211102725102156,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,XGBoost,CatBoost,AUROC,-0.033722839455285196,-0.05736242852763033,-0.009714786427483036,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,XGBoost,CatBoost,AUPRC,-0.03473191736399056,-0.06050185453478945,-0.015725182334274623,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,XGBoost,CatBoost,Brier,-0.024786761267282104,-0.02778404180116321,-0.021725800796320555,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,XGBoost,CatBoost,F1,0.0008851174293755717,-0.04615956009616574,0.04892071162200875,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,XGBoost,CatBoost,MCC,-0.02862229053110295,-0.07984314806315795,0.024339458237917482,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,XGBoost,Random Forest,AUROC,-0.025718046772011397,-0.06104928612645216,0.009738597157165909,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,XGBoost,Random Forest,AUPRC,-0.016993289499570047,-0.04101551019612945,0.0026108305396898555,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,XGBoost,Random Forest,Brier,-0.006757474145760772,-0.008386968084129592,-0.00507987496444579,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,XGBoost,Random Forest,F1,-0.01975938527632163,-0.05889908683886548,0.020063546800132816,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,XGBoost,Random Forest,MCC,-0.024322573247847652,-0.07162970265787609,0.022435619788917997,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,XGBoost,Logistic Reg.,AUROC,-0.05254312392567209,-0.08683787273302515,-0.01783883705333851,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,XGBoost,Logistic Reg.,AUPRC,-0.03803024459963015,-0.0669115923551967,-0.015151607530743565,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,XGBoost,Logistic Reg.,Brier,-0.028909636105282507,-0.03209807204572781,-0.025534706461252454,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,XGBoost,Logistic Reg.,F1,-0.03485491791265587,-0.09163780237109627,0.021922823943745593,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,XGBoost,Logistic Reg.,MCC,-0.05956240255756017,-0.12000018957098016,0.0003968053363987151,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,XGBoost,TabNet,AUROC,0.01578847676284438,-0.029853843443035724,0.06319535143775735,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,XGBoost,TabNet,AUPRC,-0.020434849804357533,-0.060010789441195714,0.013749021398372117,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,XGBoost,TabNet,Brier,-0.014276831585913896,-0.019497725553810595,-0.00937400478869677,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,XGBoost,TabNet,F1,0.020063812812772572,-0.04354751559463113,0.08327812750115778,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,XGBoost,TabNet,MCC,0.013564416754337835,-0.054279159347639265,0.08289350377282936,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,LightGBM,CatBoost,AUROC,-0.021119029612197693,-0.03996293642134383,-0.00040480363737719304,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,LightGBM,CatBoost,AUPRC,-0.01897998744682615,-0.038939187780090784,-0.0025343121047039134,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,LightGBM,CatBoost,Brier,-0.0276426825168504,-0.03123744978138797,-0.02398691933434494,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,LightGBM,CatBoost,F1,0.01902561831831558,-0.031914066334356186,0.07167145484715096,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,LightGBM,CatBoost,MCC,-0.009605236970848963,-0.06295526619310418,0.04775164732605373,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,LightGBM,Random Forest,AUROC,-0.013114236928923897,-0.0463041096834379,0.02004099886742043,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,LightGBM,Random Forest,AUPRC,-0.0012413595824056374,-0.02324368438393025,0.018770829514632735,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,LightGBM,Random Forest,Brier,-0.009613395395329072,-0.011671860896043053,-0.007531102141135951,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,LightGBM,Random Forest,F1,-0.0016188843873816215,-0.038423692159494566,0.035682665766775354,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,LightGBM,Random Forest,MCC,-0.005305519687593668,-0.051746278797844866,0.041511362030213356,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,LightGBM,Logistic Reg.,AUROC,-0.03993931408258458,-0.07216611397948766,-0.00707375503845837,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,LightGBM,Logistic Reg.,AUPRC,-0.02227831468246574,-0.05172428895914756,0.002700347937524249,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,LightGBM,Logistic Reg.,Brier,-0.0317655573548508,-0.035580163557769676,-0.027905108775800724,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,LightGBM,Logistic Reg.,F1,-0.01671441702371586,-0.06886107357811944,0.03613285001421902,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,LightGBM,Logistic Reg.,MCC,-0.040545348997306184,-0.09554784502984494,0.014744982116468092,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,LightGBM,TabNet,AUROC,0.02839228660593188,-0.02089933669392162,0.0759253996621687,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,LightGBM,TabNet,AUPRC,-0.004682919887193124,-0.04788720304709976,0.0333043245967438,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,LightGBM,TabNet,Brier,-0.017132752835482195,-0.022250369132958133,-0.012380783047145471,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,LightGBM,TabNet,F1,0.03820431370171259,-0.02391025023516957,0.10047934132049768,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,LightGBM,TabNet,MCC,0.03258147031459181,-0.0362748466529841,0.10144254110478654,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,CatBoost,Random Forest,AUROC,0.008004792683273799,-0.022596946066523238,0.03823235139481143,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,CatBoost,Random Forest,AUPRC,0.017738627864420514,-0.003763923555482968,0.04173497591283515,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,CatBoost,Random Forest,Brier,0.01802928712152133,0.015832829460664617,0.020156452939785987,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,CatBoost,Random Forest,F1,-0.020644502705697204,-0.07376794569850208,0.03394319678025852,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,CatBoost,Random Forest,MCC,0.004299717283255295,-0.05392929968321782,0.061454576000505926,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,CatBoost,Logistic Reg.,AUROC,-0.018820284470386896,-0.047395858949919746,0.010401665146119081,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,CatBoost,Logistic Reg.,AUPRC,-0.003298327235639589,-0.03154462099632555,0.0267036256848992,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,CatBoost,Logistic Reg.,Brier,-0.004122874838000407,-0.005953378267297448,-0.0023847218995255415,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,CatBoost,Logistic Reg.,F1,-0.03574003534203145,-0.10113078867487862,0.030578170055947144,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,CatBoost,Logistic Reg.,MCC,-0.03094011202645722,-0.09955086504900287,0.0373171385845462,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,CatBoost,TabNet,AUROC,0.04951131621812958,-0.0015700300241645285,0.09875951161816485,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,CatBoost,TabNet,AUPRC,0.014297067559633024,-0.02963543129361052,0.05928530162365202,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,CatBoost,TabNet,Brier,0.010509929681368204,0.004082413749303534,0.016491643279340662,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,CatBoost,TabNet,F1,0.019178695383396997,-0.04985719180901235,0.08989266889770134,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,CatBoost,TabNet,MCC,0.042186707285440786,-0.03090040086707374,0.11755268210059484,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,Random Forest,Logistic Reg.,AUROC,-0.02682507715366069,-0.06788386980920416,0.013596699998458864,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,Random Forest,Logistic Reg.,AUPRC,-0.021036955100060102,-0.05123452456623286,0.007146190323454755,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,Random Forest,Logistic Reg.,Brier,-0.022152161959521733,-0.024612543913217752,-0.01957408778226528,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,Random Forest,Logistic Reg.,F1,-0.015095532636334237,-0.07184666243340718,0.04124333825473949,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,Random Forest,Logistic Reg.,MCC,-0.03523982930971252,-0.09570779572029621,0.02677578223053457,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,Random Forest,TabNet,AUROC,0.041506523534855774,-0.010441176030581952,0.09242404577524424,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,Random Forest,TabNet,AUPRC,-0.0034415603047874867,-0.04578246032855333,0.03678992620986217,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,Random Forest,TabNet,Brier,-0.007519357440153125,-0.01306294168639643,-0.00238606321829659,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,Random Forest,TabNet,F1,0.03982319808909421,-0.012981424617727038,0.0937235143503077,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,Random Forest,TabNet,MCC,0.03788699000218549,-0.02248689725560867,0.09807940983479332,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,Logistic Reg.,TabNet,AUROC,0.06833160068851646,0.02133446081599081,0.11618384763424718,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,Logistic Reg.,TabNet,AUPRC,0.017595394795272615,-0.02525207284320064,0.05840541614191728,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,Logistic Reg.,TabNet,Brier,0.014632804519368612,0.008014249621044297,0.02083096155013989,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,Logistic Reg.,TabNet,F1,0.05491873072542844,-0.0122735952729024,0.12369629042060655,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-01_seed_99,99,2010-01,Logistic Reg.,TabNet,MCC,0.073126819311898,0.002540945325117548,0.14475123416459884,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,XGBoost,LightGBM,AUROC,0.0026521955974982475,-0.014590559203891743,0.0198876025073411,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,XGBoost,LightGBM,AUPRC,-0.00020772764516354726,-0.01100350729109406,0.010305444996792146,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,XGBoost,LightGBM,Brier,0.03154365698250163,0.028202455151851775,0.03494615392695272,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,XGBoost,LightGBM,F1,-0.13840086180129418,-0.18531549275972925,-0.09027862453436301,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,XGBoost,LightGBM,MCC,-0.10029967889503712,-0.15556323262359376,-0.04624149710166877,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,XGBoost,CatBoost,AUROC,-0.0007716924407076459,-0.026102870863801267,0.02538699181924042,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,XGBoost,CatBoost,AUPRC,-0.0024662284995842433,-0.0153516176657258,0.009717027204810201,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,XGBoost,CatBoost,Brier,0.03175606339643553,0.028053372248337143,0.03551062411496049,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,XGBoost,CatBoost,F1,-0.12624303673711568,-0.17701730673048469,-0.07925812711140343,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,XGBoost,CatBoost,MCC,-0.08817567007126509,-0.14404019461783069,-0.03624354172387452,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,XGBoost,Random Forest,AUROC,0.0029992129575811812,-0.021935863512072003,0.028354279163201213,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,XGBoost,Random Forest,AUPRC,-0.0019142037599106686,-0.01841135682245963,0.011900214714396453,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,XGBoost,Random Forest,Brier,0.01130101891178346,0.009797665257044159,0.012713975197143875,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,XGBoost,Random Forest,F1,-0.13243129891333097,-0.1709555219273056,-0.09120229046257265,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,XGBoost,Random Forest,MCC,-0.10061761605101004,-0.14914382626885206,-0.048235325984429776,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,XGBoost,Logistic Reg.,AUROC,-0.04701014008647999,-0.08453728200728493,-0.010086085847324748,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,XGBoost,Logistic Reg.,AUPRC,-0.028998126591836773,-0.05665083285882258,-0.004751484817709055,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,XGBoost,Logistic Reg.,Brier,-0.005785961494060505,-0.00792730342394773,-0.0037104363761975654,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,XGBoost,Logistic Reg.,F1,-0.1123614681479899,-0.172394589858678,-0.054636689506073845,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,XGBoost,Logistic Reg.,MCC,-0.08760591495269873,-0.15163294849373674,-0.024191433530939725,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,XGBoost,TabNet,AUROC,0.06346819714915349,0.015859033860754115,0.11449983909601022,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,XGBoost,TabNet,AUPRC,0.017169690193035537,-0.00429152821127323,0.03901340484247001,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,XGBoost,TabNet,Brier,-0.0019018083885312081,-0.009573822282254696,0.005556254461407661,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,XGBoost,TabNet,F1,-0.08009277319924238,-0.12860513338411445,-0.0319457160659954,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,XGBoost,TabNet,MCC,-0.036638759573903036,-0.09075121461181758,0.01980950917243417,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,LightGBM,CatBoost,AUROC,-0.0034238880382058932,-0.030021360402371168,0.02253226760066687,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,LightGBM,CatBoost,AUPRC,-0.0022585008544206957,-0.015116033459692176,0.010202474793840692,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,LightGBM,CatBoost,Brier,0.00021240641393390015,-0.000383955929820254,0.0007663053488859205,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,LightGBM,CatBoost,F1,0.012157825064178528,-0.026663361301805247,0.04960905412487069,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,LightGBM,CatBoost,MCC,0.012124008823772035,-0.03159460078206159,0.05449259574035704,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,LightGBM,Random Forest,AUROC,0.0003470173600829341,-0.027803334729059725,0.026191030756426207,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,LightGBM,Random Forest,AUPRC,-0.0017064761147471217,-0.01973686797031452,0.01264990346613829,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,LightGBM,Random Forest,Brier,-0.02024263807071817,-0.022913658595333657,-0.01763222186308346,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,LightGBM,Random Forest,F1,0.005969562887963203,-0.027909468826995153,0.040582428209815044,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,LightGBM,Random Forest,MCC,-0.00031793715597289553,-0.04083788232150513,0.04134319904783994,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,LightGBM,Logistic Reg.,AUROC,-0.04966233568397824,-0.08814059791678504,-0.012630171911899251,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,LightGBM,Logistic Reg.,AUPRC,-0.028790398946673228,-0.05642342437639198,-0.0050444952673834335,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,LightGBM,Logistic Reg.,Brier,-0.03732961847656214,-0.041731207798947144,-0.03334194789791451,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,LightGBM,Logistic Reg.,F1,0.026039393653304287,-0.03420465697905823,0.0865256774047821,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,LightGBM,Logistic Reg.,MCC,0.012693763942338399,-0.05346530092716174,0.07754193978533172,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,LightGBM,TabNet,AUROC,0.06081600155165524,0.013622516529641885,0.1101159099681742,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,LightGBM,TabNet,AUPRC,0.017377417838199082,-0.0036677318398306313,0.03981166573797138,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,LightGBM,TabNet,Brier,-0.03344546537103284,-0.040125052998822165,-0.027023903606631972,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,LightGBM,TabNet,F1,0.05830808860205183,0.009973656717146836,0.10804701957411318,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,LightGBM,TabNet,MCC,0.06366091932113409,0.008204827782895129,0.11983866546789795,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,CatBoost,Random Forest,AUROC,0.003770905398288827,-0.030076468020330725,0.038263712863369256,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,CatBoost,Random Forest,AUPRC,0.0005520247396735745,-0.018757492328316194,0.018305307752087434,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,CatBoost,Random Forest,Brier,-0.02045504448465207,-0.023499081781062345,-0.017474595500158664,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,CatBoost,Random Forest,F1,-0.006188262176215325,-0.04749947409150992,0.03530816812309839,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,CatBoost,Random Forest,MCC,-0.012441945979744929,-0.06172202087748625,0.03423192988081784,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,CatBoost,Logistic Reg.,AUROC,-0.04623844764577234,-0.08445476788116309,-0.005468443109034193,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,CatBoost,Logistic Reg.,AUPRC,-0.026531898092252534,-0.05446490470909106,-0.00041343914076500527,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,CatBoost,Logistic Reg.,Brier,-0.03754202489049604,-0.04216545253868956,-0.03325419042664078,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,CatBoost,Logistic Reg.,F1,0.013881568589125759,-0.04609479289691533,0.07174604043324416,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,CatBoost,Logistic Reg.,MCC,0.0005697551185663629,-0.06438613258616968,0.06342439743996515,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,CatBoost,TabNet,AUROC,0.06423988958986114,0.017843409873709814,0.11345136652934609,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,CatBoost,TabNet,AUPRC,0.01963591869261978,-0.0010335162513109748,0.042630522969521814,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,CatBoost,TabNet,Brier,-0.03365787178496674,-0.040350088830174845,-0.027104025979481243,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,CatBoost,TabNet,F1,0.0461502635378733,-0.0054197336291902385,0.09891860182525557,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,CatBoost,TabNet,MCC,0.05153691049736205,-0.0060035845134055795,0.10989938396969366,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,Random Forest,Logistic Reg.,AUROC,-0.05000935304406117,-0.0902045777114291,-0.011329069018872224,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,Random Forest,Logistic Reg.,AUPRC,-0.027083922831926108,-0.056204920941680746,-4.54606299881276e-05,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,Random Forest,Logistic Reg.,Brier,-0.01708698040584396,-0.01954840085084741,-0.014753635559412004,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,Random Forest,Logistic Reg.,F1,0.02006983076534109,-0.037311775701639086,0.07259167077100262,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,Random Forest,Logistic Reg.,MCC,0.013011701098311294,-0.050021546179345025,0.07408060334879314,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,Random Forest,TabNet,AUROC,0.060468984191572296,0.009877915945073739,0.11022481113478504,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,Random Forest,TabNet,AUPRC,0.019083893952946206,-0.005588869987613921,0.04597650202934689,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,Random Forest,TabNet,Brier,-0.013202827300314668,-0.02043155613125811,-0.006173727934899894,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,Random Forest,TabNet,F1,0.05233852571408863,0.0109388294421258,0.0935098913785913,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,Random Forest,TabNet,MCC,0.063978856477107,0.01200281563823209,0.11515248891830197,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,Logistic Reg.,TabNet,AUROC,0.11047833723563347,0.06198696981228829,0.1580156582709395,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,Logistic Reg.,TabNet,AUPRC,0.04616781678487231,0.019408000155511078,0.0791680144558425,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,Logistic Reg.,TabNet,Brier,0.003884153105529296,-0.003990531030679927,0.011545775522656546,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,Logistic Reg.,TabNet,F1,0.03226869494874754,-0.02926580146493094,0.09489561695372006,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_42,42,2010-07,Logistic Reg.,TabNet,MCC,0.050967155378795696,-0.014075076221907581,0.11747539043517252,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,XGBoost,LightGBM,AUROC,-0.027249050316626486,-0.04740381667228184,-0.007077277464262126,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,XGBoost,LightGBM,AUPRC,-0.017411813252062744,-0.032426866812774735,-0.005439054098682504,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,XGBoost,LightGBM,Brier,0.0028096441463315385,0.001982518444207189,0.003664376811497225,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,XGBoost,LightGBM,F1,-0.05823578272449535,-0.09694257643812677,-0.02126472841173536,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,XGBoost,LightGBM,MCC,-0.06272821077218917,-0.10628223369476059,-0.021412847771383307,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,XGBoost,CatBoost,AUROC,-0.03739987575223813,-0.06058339273978298,-0.015209078496342137,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,XGBoost,CatBoost,AUPRC,-0.0167049760986647,-0.03439991884751821,-0.001538469892912783,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,XGBoost,CatBoost,Brier,-0.03123126266792577,-0.034369741701798004,-0.027978036234621095,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,XGBoost,CatBoost,F1,0.010964013498740627,-0.037116745639845614,0.0570549580101932,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,XGBoost,CatBoost,MCC,-0.021904325930301838,-0.07525462742769039,0.0282591320172074,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,XGBoost,Random Forest,AUROC,-0.021668219827398978,-0.05874436131304765,0.013621081893505723,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,XGBoost,Random Forest,AUPRC,-0.007356280347619029,-0.02942620523949364,0.013505717640856528,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,XGBoost,Random Forest,Brier,-0.008533612863683582,-0.010161096932412569,-0.006785054339381109,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,XGBoost,Random Forest,F1,-0.027068875800245848,-0.07084656485963856,0.014485123729544018,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,XGBoost,Random Forest,MCC,-0.024432554067119704,-0.07575544186541296,0.023819503377313995,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,XGBoost,Logistic Reg.,AUROC,-0.062381026871958054,-0.10182841481257933,-0.024200097925731485,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,XGBoost,Logistic Reg.,AUPRC,-0.031289636670746634,-0.05715413598718744,-0.008327177683774889,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,XGBoost,Logistic Reg.,Brier,-0.03505605424554912,-0.03870431251512865,-0.03131118100533877,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,XGBoost,Logistic Reg.,F1,-0.01873551799407811,-0.07607492868817857,0.035664706936603965,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,XGBoost,Logistic Reg.,MCC,-0.03505355433826623,-0.09677377560735792,0.02216261558518332,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,XGBoost,TabNet,AUROC,0.0054209554824331836,-0.042356416767744605,0.054770369086570056,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,XGBoost,TabNet,AUPRC,0.009342379419078985,-0.012681109443380334,0.034209938971991656,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,XGBoost,TabNet,Brier,-0.018431586233898997,-0.023693219013512134,-0.013318596128374341,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,XGBoost,TabNet,F1,0.008605314074921787,-0.050772828374564254,0.06769767548356177,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,XGBoost,TabNet,MCC,0.0014828825994813533,-0.06421918244912433,0.06636974984421226,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,LightGBM,CatBoost,AUROC,-0.010150825435611641,-0.029701083834015183,0.008769438626390274,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,LightGBM,CatBoost,AUPRC,0.0007068371533980402,-0.01417282347888475,0.018695103576914885,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,LightGBM,CatBoost,Brier,-0.03404090681425731,-0.03783819110181505,-0.03026272504296184,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,LightGBM,CatBoost,F1,0.06919979622323598,0.01730918187841263,0.12066908571016792,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,LightGBM,CatBoost,MCC,0.040823884841887335,-0.01394237590395563,0.09602693222277746,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,LightGBM,Random Forest,AUROC,0.005580830489227511,-0.02635103567841016,0.03647119110194531,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,LightGBM,Random Forest,AUPRC,0.010055532904443715,-0.013357611910366015,0.03510882405436615,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,LightGBM,Random Forest,Brier,-0.011343257010015123,-0.013426008701952402,-0.009234573919676895,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,LightGBM,Random Forest,F1,0.03116690692424951,-0.00506823457108903,0.07017895077092164,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,LightGBM,Random Forest,MCC,0.03829565670506946,-0.008136582404426216,0.08578938868575528,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,LightGBM,Logistic Reg.,AUROC,-0.03513197655533157,-0.07239619608215865,0.0033928959161628625,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,LightGBM,Logistic Reg.,AUPRC,-0.013877823418683889,-0.04128921155917592,0.01448707428832477,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,LightGBM,Logistic Reg.,Brier,-0.037865698391880656,-0.04211299076007987,-0.033557833901176684,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,LightGBM,Logistic Reg.,F1,0.03950026473041724,-0.019752964668943388,0.10161029896481727,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,LightGBM,Logistic Reg.,MCC,0.027674656433922938,-0.035817655149628286,0.09369880085980867,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,LightGBM,TabNet,AUROC,0.03267000579905967,-0.011472705854009538,0.07933010792156309,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,LightGBM,TabNet,AUPRC,0.026754192671141732,0.0009192553303119741,0.05752638321024819,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,LightGBM,TabNet,Brier,-0.021241230380230538,-0.026381615600369057,-0.01624171914022793,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,LightGBM,TabNet,F1,0.06684109679941715,0.006625138920007372,0.12606888328024654,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,LightGBM,TabNet,MCC,0.06421109337167052,-0.0028953999497752063,0.1303096605356209,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,CatBoost,Random Forest,AUROC,0.01573165592483915,-0.013875277837417632,0.04597462428918243,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,CatBoost,Random Forest,AUPRC,0.009348695751045674,-0.010882229012593494,0.03050519925510902,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,CatBoost,Random Forest,Brier,0.02269764980424219,0.020331981551671374,0.025098311859433925,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,CatBoost,Random Forest,F1,-0.038032889298986475,-0.0879573973110248,0.014458240826712983,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,CatBoost,Random Forest,MCC,-0.0025282281368178687,-0.057815499017540135,0.053618527438819945,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,CatBoost,Logistic Reg.,AUROC,-0.024981151119719932,-0.06012077937730798,0.009767926861912607,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,CatBoost,Logistic Reg.,AUPRC,-0.01458466057208193,-0.039452978292223786,0.007417091544474703,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,CatBoost,Logistic Reg.,Brier,-0.0038247915776233486,-0.005802294464377708,-0.0019585560199208867,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,CatBoost,Logistic Reg.,F1,-0.02969953149281874,-0.09284449310911799,0.03332664544758163,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,CatBoost,Logistic Reg.,MCC,-0.013149228407964397,-0.0789107037701608,0.052576674812064926,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,CatBoost,TabNet,AUROC,0.042820831234671314,-0.0017002511768755945,0.08964564753199628,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,CatBoost,TabNet,AUPRC,0.02604735551774369,0.0014776143448976663,0.05451188031050535,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,CatBoost,TabNet,Brier,0.012799676434026776,0.006410437066791772,0.019262067481118594,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,CatBoost,TabNet,F1,-0.002358699423818839,-0.06834050341859939,0.06588877352523477,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,CatBoost,TabNet,MCC,0.02338720852978319,-0.04819928313800672,0.09577346415474522,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,Random Forest,Logistic Reg.,AUROC,-0.040712807044559075,-0.08238557823640405,0.001786364615501286,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,Random Forest,Logistic Reg.,AUPRC,-0.023933356323127604,-0.05415004660768769,0.004722085132846533,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,Random Forest,Logistic Reg.,Brier,-0.026522441381865536,-0.029377794950090533,-0.023681723657580468,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,Random Forest,Logistic Reg.,F1,0.008333357806167735,-0.046375028266401164,0.0627133172021343,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,Random Forest,Logistic Reg.,MCC,-0.010621000271146527,-0.07143861147407908,0.050109938438509555,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,Random Forest,TabNet,AUROC,0.02708917530983216,-0.020594326471994856,0.07474215971010684,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,Random Forest,TabNet,AUPRC,0.016698659766698015,-0.006866198935661827,0.0430519887059301,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,Random Forest,TabNet,Brier,-0.009897973370215415,-0.015443628777520377,-0.004471959993469728,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,Random Forest,TabNet,F1,0.03567418987516763,-0.016508381173575948,0.08644044612940116,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,Random Forest,TabNet,MCC,0.025915436666601056,-0.03411187730885181,0.08507755256763894,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,Logistic Reg.,TabNet,AUROC,0.06780198235439125,0.02299757443747733,0.11074833556040004,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,Logistic Reg.,TabNet,AUPRC,0.04063201608982562,0.012365591019513397,0.07407944984706263,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,Logistic Reg.,TabNet,Brier,0.016624468011650125,0.01017733167427257,0.023229826331518176,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,Logistic Reg.,TabNet,F1,0.027340832068999902,-0.03991708143630697,0.09300690327184882,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2010-07_seed_99,99,2010-07,Logistic Reg.,TabNet,MCC,0.036536436937747586,-0.03175298733806302,0.10554739282324944,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,XGBoost,LightGBM,AUROC,0.0086998389693659,-0.007670014515233195,0.02488985656232137,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,XGBoost,LightGBM,AUPRC,0.004959645279406868,-0.00981658776672366,0.020531649835739168,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,XGBoost,LightGBM,Brier,0.04536070908706273,0.04095185448239828,0.049947237920776606,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,XGBoost,LightGBM,F1,-0.025676825441390567,-0.0644957814861996,0.009773356729135907,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,XGBoost,LightGBM,MCC,-0.016444243719233108,-0.058046217838378586,0.02325900710923967,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,XGBoost,CatBoost,AUROC,0.015158610416995096,-0.0006318132088127757,0.031111906424685917,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,XGBoost,CatBoost,AUPRC,0.010197761353246366,-0.004155917898835178,0.02454007487188205,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,XGBoost,CatBoost,Brier,0.04525892079650342,0.04087451451746899,0.049994095743977826,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,XGBoost,CatBoost,F1,0.020863696624987837,-0.01424150697545962,0.058362315365306984,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,XGBoost,CatBoost,MCC,0.018997087929307956,-0.018974470799330175,0.05937073168644182,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,XGBoost,Random Forest,AUROC,0.028797177941427676,0.010046881750148484,0.04644748204332518,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,XGBoost,Random Forest,AUPRC,0.0023036318331303377,-0.013332400880085624,0.01759464005184841,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,XGBoost,Random Forest,Brier,0.024998168615224935,0.02278673132750457,0.027258070465785957,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,XGBoost,Random Forest,F1,-0.011040179444369694,-0.04667729145898091,0.02453366995797463,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,XGBoost,Random Forest,MCC,0.0003533455819828996,-0.03979068642617556,0.04045788974204796,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,XGBoost,Logistic Reg.,AUROC,0.013567940183363745,-0.008958024710351948,0.03596199807508025,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,XGBoost,Logistic Reg.,AUPRC,0.016877281135648514,5.705013970108561e-05,0.0343731876142012,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,XGBoost,Logistic Reg.,Brier,-0.008675324834291008,-0.010777180744166358,-0.006609363093034477,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,XGBoost,Logistic Reg.,F1,-0.01009933412441761,-0.047432806431596045,0.026028901046434395,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,XGBoost,Logistic Reg.,MCC,0.008539160413917543,-0.03274225401717981,0.04878740413090235,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,XGBoost,TabNet,AUROC,0.10689490663776084,0.06860995815590211,0.1439078185327622,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,XGBoost,TabNet,AUPRC,0.04383420046913937,0.017274756554758176,0.06931219067819355,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,XGBoost,TabNet,Brier,0.004282031416893006,-0.003019026294350624,0.011587856523692605,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,XGBoost,TabNet,F1,0.04981304205555127,0.004764069590861402,0.09412034123346469,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,XGBoost,TabNet,MCC,0.07410809924640242,0.023782366558772607,0.12337300614600677,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,LightGBM,CatBoost,AUROC,0.006458771447629195,-0.005585942937433727,0.018980084703113045,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,LightGBM,CatBoost,AUPRC,0.005238116073839499,-0.006354974860487074,0.01696760115109168,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,LightGBM,CatBoost,Brier,-0.00010178829055931102,-0.0006172445194793551,0.00039322183563075434,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,LightGBM,CatBoost,F1,0.046540522066378404,0.008851955499226825,0.08267262171334674,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,LightGBM,CatBoost,MCC,0.03544133164854106,-0.0053215471927403534,0.07603532913140065,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,LightGBM,Random Forest,AUROC,0.020097338972061774,-0.003116178173022654,0.0419038419998252,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,LightGBM,Random Forest,AUPRC,-0.002656013446276529,-0.02325565900756877,0.015481042588040004,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,LightGBM,Random Forest,Brier,-0.02036254047183779,-0.023183844072365678,-0.017711862563924083,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,LightGBM,Random Forest,F1,0.014636645997020874,-0.005251146825321168,0.034076608426545696,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,LightGBM,Random Forest,MCC,0.01679758930121601,-0.014553451464616856,0.04601980655334135,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,LightGBM,Logistic Reg.,AUROC,0.004868101213997844,-0.018794385902085233,0.02726537140142207,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,LightGBM,Logistic Reg.,AUPRC,0.011917635856241645,-0.0060323429592185765,0.030429732399219846,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,LightGBM,Logistic Reg.,Brier,-0.054036033921353734,-0.058897489813822035,-0.049550800205631025,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,LightGBM,Logistic Reg.,F1,0.015577491316972957,-0.012201421341962764,0.04391265939595371,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,LightGBM,Logistic Reg.,MCC,0.02498340413315065,-0.012034688785487156,0.06291217178276928,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,LightGBM,TabNet,AUROC,0.09819506766839493,0.06140456594477831,0.13358302259264798,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,LightGBM,TabNet,AUPRC,0.0388745551897325,0.013583687702771127,0.0647833993940812,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,LightGBM,TabNet,Brier,-0.041078677670169726,-0.04739212718604744,-0.0350834308951346,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,LightGBM,TabNet,F1,0.07548986749694184,0.041572221640888835,0.10885139450718907,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,LightGBM,TabNet,MCC,0.09055234296563552,0.04691143817652559,0.13234910055223978,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,CatBoost,Random Forest,AUROC,0.01363856752443258,-0.008002387901025216,0.0353120530115901,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,CatBoost,Random Forest,AUPRC,-0.007894129520116028,-0.028956866198892952,0.011693309907428843,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,CatBoost,Random Forest,Brier,-0.020260752181278482,-0.023120087535066572,-0.01743001413897198,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,CatBoost,Random Forest,F1,-0.03190387606935753,-0.07016885631620802,0.007613972364819247,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,CatBoost,Random Forest,MCC,-0.018643742347325055,-0.0636373734536595,0.025215139610326776,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,CatBoost,Logistic Reg.,AUROC,-0.0015906702336313497,-0.025236431725015086,0.02037855070999111,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,CatBoost,Logistic Reg.,AUPRC,0.0066795197824021475,-0.011133884700127853,0.02448411952921439,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,CatBoost,Logistic Reg.,Brier,-0.05393424563079442,-0.05899916848481131,-0.049339761929388985,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,CatBoost,Logistic Reg.,F1,-0.030963030749405446,-0.07053751637504073,0.012211383019095313,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,CatBoost,Logistic Reg.,MCC,-0.010457927515390411,-0.05413097527152923,0.036613944072741406,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,CatBoost,TabNet,AUROC,0.09173629622076573,0.05554196046224,0.1269260098124468,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,CatBoost,TabNet,AUPRC,0.03363643911589301,0.009184333968910694,0.058900976487215435,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,CatBoost,TabNet,Brier,-0.040976889379610415,-0.0471177646147255,-0.034969605429413964,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,CatBoost,TabNet,F1,0.028949345430563433,-0.01800313777307711,0.07609414231767862,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,CatBoost,TabNet,MCC,0.055111011317094456,0.002675960539327206,0.10617548805138641,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,Random Forest,Logistic Reg.,AUROC,-0.015229237758063927,-0.042423466789023236,0.012248140280691835,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,Random Forest,Logistic Reg.,AUPRC,0.014573649302518175,-0.007469825551926084,0.037927375103380935,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,Random Forest,Logistic Reg.,Brier,-0.03367349344951594,-0.03640286209299888,-0.030983139943448437,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,Random Forest,Logistic Reg.,F1,0.0009408453199520839,-0.02570010433935476,0.02875659044448191,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,Random Forest,Logistic Reg.,MCC,0.008185814831934644,-0.02765187990959162,0.046151421741014095,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,Random Forest,TabNet,AUROC,0.07809772869633316,0.038926277762277514,0.115361151770076,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,Random Forest,TabNet,AUPRC,0.04153056863600903,0.013579290563011007,0.07188357771552484,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,Random Forest,TabNet,Brier,-0.02071613719833193,-0.027292323021029647,-0.013958111704626026,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,Random Forest,TabNet,F1,0.060853221499920965,0.025889674787646193,0.09492512762307885,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,Random Forest,TabNet,MCC,0.07375475366441953,0.028553943910401832,0.11760834194624,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,Logistic Reg.,TabNet,AUROC,0.0933269664543971,0.056257829612220325,0.13021613493768405,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,Logistic Reg.,TabNet,AUPRC,0.026956919333490856,0.0030462193352123463,0.05008370456400019,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,Logistic Reg.,TabNet,Brier,0.012957356251184013,0.005429300069624123,0.0204160319950551,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,Logistic Reg.,TabNet,F1,0.05991237617996888,0.021682861762018436,0.09791303144931676,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_42,42,2011-01,Logistic Reg.,TabNet,MCC,0.06556893883248488,0.019632388370425784,0.11183006282990067,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,XGBoost,LightGBM,AUROC,0.0007559608870438713,-0.016561237133539016,0.01986602850944801,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,XGBoost,LightGBM,AUPRC,-0.006076588403420626,-0.02408475006737131,0.011199897413060912,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,XGBoost,LightGBM,Brier,0.00019704147872109617,-0.0007919913232881607,0.0011554010146999562,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,XGBoost,LightGBM,F1,0.00552267903926322,-0.02134208598141907,0.030799812034589882,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,XGBoost,LightGBM,MCC,-0.006656482897307353,-0.041017830174846504,0.025972993830422675,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,XGBoost,CatBoost,AUROC,0.007729562544229724,-0.00670372367998093,0.022568698818469055,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,XGBoost,CatBoost,AUPRC,0.004841439728303714,-0.007879086431604777,0.01810003457380176,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,XGBoost,CatBoost,Brier,5.447127391014012e-05,-0.0007975698235933831,0.0008858080871673248,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,XGBoost,CatBoost,F1,0.04259483377394389,0.009301138827185555,0.07554985208813585,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,XGBoost,CatBoost,MCC,0.023333172431673817,-0.012192730304147414,0.06034504500297998,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,XGBoost,Random Forest,AUROC,0.008553478305186102,-0.008255894586057178,0.026000760451539758,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,XGBoost,Random Forest,AUPRC,-0.010135048892778645,-0.032416599821931354,0.010809370814850432,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,XGBoost,Random Forest,Brier,-0.035263899745257773,-0.038323103397455364,-0.03212275122087129,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,XGBoost,Random Forest,F1,0.01151598696669173,-0.015019918703806211,0.04004900218525621,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,XGBoost,Random Forest,MCC,-0.00950431157700481,-0.04472301229215397,0.027315352038993504,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,XGBoost,Logistic Reg.,AUROC,0.0021010733720613194,-0.01925542761016686,0.023565043510104345,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,XGBoost,Logistic Reg.,AUPRC,0.008414955856320617,-0.007864123371562724,0.02725238760972549,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,XGBoost,Logistic Reg.,Brier,-0.053670854818058646,-0.05785157640787253,-0.04942229002462318,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,XGBoost,Logistic Reg.,F1,0.003131638153558832,-0.02481447239253548,0.03412650218377063,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,XGBoost,Logistic Reg.,MCC,0.00393057858625539,-0.031379503819661675,0.04265210773347425,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,XGBoost,TabNet,AUROC,0.06465472230093704,0.03532436879000821,0.09512626561497296,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,XGBoost,TabNet,AUPRC,0.025776047648171586,0.0033593878046497302,0.0496485019241755,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,XGBoost,TabNet,Brier,-0.029626236088573933,-0.0346470057964325,-0.024569821171462537,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,XGBoost,TabNet,F1,0.05234596246508677,0.013011901203013628,0.09136774258930076,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,XGBoost,TabNet,MCC,0.05118351356012278,0.004351894306818659,0.09655415491098635,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,LightGBM,CatBoost,AUROC,0.006973601657185853,-0.007600876578074123,0.021476482731092598,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,LightGBM,CatBoost,AUPRC,0.01091802813172434,-0.002433842448140853,0.026143799919026874,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,LightGBM,CatBoost,Brier,-0.00014257020481095605,-0.0008570596239056525,0.0005648550511725027,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,LightGBM,CatBoost,F1,0.03707215473468067,-0.001488947799965016,0.07314812817304693,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,LightGBM,CatBoost,MCC,0.029989655328981166,-0.01127029353225353,0.07168421240820172,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,LightGBM,Random Forest,AUROC,0.00779751741814223,-0.014470843212389863,0.03051124597937024,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,LightGBM,Random Forest,AUPRC,-0.004058460489358021,-0.028563089693134616,0.017370690127513768,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,LightGBM,Random Forest,Brier,-0.035460941223978866,-0.0389854836917897,-0.031997815858449935,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,LightGBM,Random Forest,F1,0.00599330792742851,-0.0077102865743594595,0.01984673616920894,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,LightGBM,Random Forest,MCC,-0.002847828679697457,-0.03037624146652691,0.024088535020180074,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,LightGBM,Logistic Reg.,AUROC,0.0013451124850174488,-0.022159368667221405,0.02463070593244782,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,LightGBM,Logistic Reg.,AUPRC,0.014491544259741241,-0.005001799787386519,0.034480345249219536,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,LightGBM,Logistic Reg.,Brier,-0.05386789629677974,-0.05849812406688771,-0.04909990988104226,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,LightGBM,Logistic Reg.,F1,-0.0023910408857043893,-0.029920587881158377,0.024912253811286155,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,LightGBM,Logistic Reg.,MCC,0.010587061483562742,-0.025631354512809408,0.04800809461345212,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,LightGBM,TabNet,AUROC,0.06389876141389318,0.03422687713712578,0.09553610859988326,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,LightGBM,TabNet,AUPRC,0.03185263605159221,0.009786735895870178,0.055617607968797236,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,LightGBM,TabNet,Brier,-0.02982327756729503,-0.03469799819785396,-0.02491172592550565,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,LightGBM,TabNet,F1,0.04682328342582355,0.0119173275758197,0.0812649402206887,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,LightGBM,TabNet,MCC,0.05783999645743014,0.015861839042835287,0.09993173858218887,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,CatBoost,Random Forest,AUROC,0.0008239157609563772,-0.02022936240653305,0.021465335654080472,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,CatBoost,Random Forest,AUPRC,-0.01497648862108236,-0.03808468622350055,0.0050538560774040725,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,CatBoost,Random Forest,Brier,-0.03531837101916791,-0.038952592420849544,-0.03170973914000462,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,CatBoost,Random Forest,F1,-0.03107884680725216,-0.06875659044902467,0.008432986879322486,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,CatBoost,Random Forest,MCC,-0.03283748400867862,-0.07517182391939146,0.010592747812257048,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,CatBoost,Logistic Reg.,AUROC,-0.005628489172168404,-0.02761267668268466,0.016533369109757612,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,CatBoost,Logistic Reg.,AUPRC,0.0035735161280169027,-0.012924953986708225,0.020634874044889905,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,CatBoost,Logistic Reg.,Brier,-0.053725326091968784,-0.05845509246532848,-0.048893633884137186,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,CatBoost,Logistic Reg.,F1,-0.03946319562038506,-0.07939299567243827,0.0010416495459124578,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,CatBoost,Logistic Reg.,MCC,-0.019402593845418422,-0.06371043218438223,0.023412712052044402,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,CatBoost,TabNet,AUROC,0.05692515975670732,0.02690164227132862,0.08677686797754032,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,CatBoost,TabNet,AUPRC,0.020934607919867874,2.3117256889969108e-05,0.042407466863039096,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,CatBoost,TabNet,Brier,-0.029680707362484075,-0.03458300627767838,-0.02464991764407205,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,CatBoost,TabNet,F1,0.00975112869114288,-0.03448655875966538,0.05427097342808313,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,CatBoost,TabNet,MCC,0.027850341128448974,-0.019645181346669222,0.07630840198418863,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,Random Forest,Logistic Reg.,AUROC,-0.0064524049331247816,-0.03046973634676716,0.018583244768782016,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,Random Forest,Logistic Reg.,AUPRC,0.018550004749099264,-0.004246433595360204,0.04515771784441833,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,Random Forest,Logistic Reg.,Brier,-0.01840695507280087,-0.02064321976183604,-0.016170042531453266,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,Random Forest,Logistic Reg.,F1,-0.0083843488131329,-0.0357508315383362,0.018295554715780146,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,Random Forest,Logistic Reg.,MCC,0.0134348901632602,-0.023668194647023372,0.050880693295182765,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,Random Forest,TabNet,AUROC,0.05610124399575094,0.024941607181293624,0.08835685854855581,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,Random Forest,TabNet,AUPRC,0.035911096540950226,0.009414095021202237,0.06585631624552589,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,Random Forest,TabNet,Brier,0.005637663656683841,-0.000555181256970999,0.012102141719135416,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,Random Forest,TabNet,F1,0.040829975498395045,0.005613590980133984,0.07563750081263948,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,Random Forest,TabNet,MCC,0.060687825137127595,0.017582670913118072,0.10283223930303637,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,Logistic Reg.,TabNet,AUROC,0.06255364892887573,0.0304454429917644,0.0938880413328383,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,Logistic Reg.,TabNet,AUPRC,0.017361091791850972,-0.00360098371870341,0.038050341020196686,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,Logistic Reg.,TabNet,Brier,0.02404461872948471,0.017352115083657926,0.03091531464096354,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,Logistic Reg.,TabNet,F1,0.049214324311527946,0.010355283148403203,0.08682174019426518,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-01_seed_99,99,2011-01,Logistic Reg.,TabNet,MCC,0.0472529349738674,0.001911229105977894,0.09053001813081533,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,XGBoost,LightGBM,AUROC,0.029578940172325333,0.01479240547514423,0.0437850448263603,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,XGBoost,LightGBM,AUPRC,0.01559592228416496,0.0021434288915350404,0.029446976215452704,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,XGBoost,LightGBM,Brier,0.05834132888972101,0.05478022898958201,0.061799705524638864,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,XGBoost,LightGBM,F1,-0.005056737031553826,-0.019394735810317632,0.010043024208221701,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,XGBoost,LightGBM,MCC,-0.0018575694997516488,-0.02284043590896079,0.020444377647767152,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,XGBoost,CatBoost,AUROC,0.005937508831843809,-0.004166833204570225,0.01587228733167701,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,XGBoost,CatBoost,AUPRC,-0.002910162369537483,-0.014477155509080441,0.008427316340439837,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,XGBoost,CatBoost,Brier,0.0004949385548810617,-0.0005205490276115485,0.0014362859353636303,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,XGBoost,CatBoost,F1,0.017037606580803513,0.004547950259371913,0.029041058552083096,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,XGBoost,CatBoost,MCC,0.007898303468108877,-0.013021137209301441,0.02717181032506907,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,XGBoost,Random Forest,AUROC,0.028799054638547213,0.015074367144855128,0.04293570474167737,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,XGBoost,Random Forest,AUPRC,0.014179379025785475,0.00097508783914523,0.02784864297967511,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,XGBoost,Random Forest,Brier,0.03354889997085111,0.03164440822819827,0.03536883141128641,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,XGBoost,Random Forest,F1,0.010522415885302156,-0.0022345800951883536,0.023093946632879496,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,XGBoost,Random Forest,MCC,0.012732618214527279,-0.00802872958701315,0.03306257215736947,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,XGBoost,Logistic Reg.,AUROC,0.012362415326231122,-0.005329698201756064,0.03145108471397287,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,XGBoost,Logistic Reg.,AUPRC,0.009605970912275637,-0.008892040210175572,0.028049836683960615,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,XGBoost,Logistic Reg.,Brier,-0.01179277830596325,-0.01353916908662077,-0.010013233699785596,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,XGBoost,Logistic Reg.,F1,0.005942809037528288,-0.01142053839284533,0.02355604568261395,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,XGBoost,Logistic Reg.,MCC,0.01291072051181304,-0.013353220222999491,0.039326169294292085,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,XGBoost,TabNet,AUROC,0.07116188451491974,0.04157035175051192,0.09937431938025634,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,XGBoost,TabNet,AUPRC,0.04121415108847891,0.021750867807726143,0.062177271181844636,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,XGBoost,TabNet,Brier,0.0162942105345428,0.010454217717051507,0.021680816262960433,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,XGBoost,TabNet,F1,0.058460830883052935,0.03092317698913451,0.08587753723673959,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,XGBoost,TabNet,MCC,0.0660771647781463,0.033063974260017434,0.09872853870814388,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,LightGBM,CatBoost,AUROC,-0.023641431340481526,-0.03944128646709361,-0.007925317268612104,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,LightGBM,CatBoost,AUPRC,-0.018506084653702445,-0.03359376412436957,-0.0029731977791955214,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,LightGBM,CatBoost,Brier,-0.05784639033483995,-0.06117486989815521,-0.05435489422396959,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,LightGBM,CatBoost,F1,0.02209434361235734,0.006083857366227761,0.038650462043682283,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,LightGBM,CatBoost,MCC,0.009755872967860525,-0.01599252780344375,0.0344463773935363,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,LightGBM,Random Forest,AUROC,-0.0007798855337781232,-0.01771288276216899,0.01537907337118865,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,LightGBM,Random Forest,AUPRC,-0.0014165432583794844,-0.014997511615612823,0.012366014473533736,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,LightGBM,Random Forest,Brier,-0.024792428918869906,-0.026724951201839275,-0.02280302809024818,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,LightGBM,Random Forest,F1,0.015579152916855982,-0.0006762322072004875,0.03205973298554576,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,LightGBM,Random Forest,MCC,0.014590187714278925,-0.010365662023477142,0.03947720144808954,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,LightGBM,Logistic Reg.,AUROC,-0.01721652484609421,-0.03740495485658295,0.0031697938388177017,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,LightGBM,Logistic Reg.,AUPRC,-0.005989951371889323,-0.027515364463256184,0.01390376134199769,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,LightGBM,Logistic Reg.,Brier,-0.07013410719568426,-0.07379709361334028,-0.06619531076803506,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,LightGBM,Logistic Reg.,F1,0.010999546069082114,-0.008329623190535528,0.029849832611232887,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,LightGBM,Logistic Reg.,MCC,0.014768290011564688,-0.01290742756674861,0.041826535306690636,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,LightGBM,TabNet,AUROC,0.041582944342594415,0.013319457448938105,0.06891246827957379,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,LightGBM,TabNet,AUPRC,0.02561822880431395,0.00905857888833376,0.04410577505185853,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,LightGBM,TabNet,Brier,-0.042047118355178215,-0.046962930006106955,-0.037440171480054595,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,LightGBM,TabNet,F1,0.06351756791460676,0.035110216978350414,0.0923070896066325,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,LightGBM,TabNet,MCC,0.06793473427789798,0.03440448955968683,0.1014984306121793,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,CatBoost,Random Forest,AUROC,0.022861545806703396,0.00851908956128639,0.0379658470244681,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,CatBoost,Random Forest,AUPRC,0.01708954139532296,0.002508580982395807,0.031648823787379404,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,CatBoost,Random Forest,Brier,0.03305396141597004,0.031299139075886294,0.034774736522881315,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,CatBoost,Random Forest,F1,-0.00651519069550136,-0.019181496267332693,0.006175701586344205,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,CatBoost,Random Forest,MCC,0.004834314746418401,-0.018064115262436887,0.027862785891030282,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,CatBoost,Logistic Reg.,AUROC,0.006424906494387313,-0.012674562085895222,0.025549095361667554,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,CatBoost,Logistic Reg.,AUPRC,0.01251613328181312,-0.008311290254696093,0.033118781321719505,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,CatBoost,Logistic Reg.,Brier,-0.012287716860844311,-0.014102432120874751,-0.010489104725012136,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,CatBoost,Logistic Reg.,F1,-0.011094797543275223,-0.028136097372534186,0.006294395902647877,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,CatBoost,Logistic Reg.,MCC,0.005012417043704165,-0.02113259960608494,0.03176642799630605,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,CatBoost,TabNet,AUROC,0.06522437568307594,0.036087585882242056,0.09330164798517311,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,CatBoost,TabNet,AUPRC,0.044124313458016394,0.02341123839674571,0.06698215851527935,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,CatBoost,TabNet,Brier,0.015799271979661737,0.009810095133402986,0.02114152269595669,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,CatBoost,TabNet,F1,0.04142322430224942,0.01457872234425993,0.06881226912121143,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,CatBoost,TabNet,MCC,0.058178861310037445,0.02302621176907817,0.0910760205568596,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,Random Forest,Logistic Reg.,AUROC,-0.01643663931231609,-0.03889831195749949,0.005615408287328027,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,Random Forest,Logistic Reg.,AUPRC,-0.004573408113509838,-0.026586070961897773,0.01695454122991347,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,Random Forest,Logistic Reg.,Brier,-0.04534167827681436,-0.047611385699117506,-0.04297538273927535,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,Random Forest,Logistic Reg.,F1,-0.004579606847773866,-0.02355790774487974,0.013828923993367189,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,Random Forest,Logistic Reg.,MCC,0.0001781022972857642,-0.02859779022704104,0.028745648839606064,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,Random Forest,TabNet,AUROC,0.042362829876372535,0.013215114570929314,0.07009024405286807,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,Random Forest,TabNet,AUPRC,0.027034772062693436,0.009120096644420777,0.04717066245058956,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,Random Forest,TabNet,Brier,-0.017254689436308313,-0.022279102745352143,-0.01252844357916319,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,Random Forest,TabNet,F1,0.04793841499775078,0.02043904655824287,0.0749094637783265,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,Random Forest,TabNet,MCC,0.05334454656361904,0.020398982934868252,0.08629295220818257,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,Logistic Reg.,TabNet,AUROC,0.05879946918868863,0.029227328824167422,0.08932500018344487,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,Logistic Reg.,TabNet,AUPRC,0.03160818017620327,0.012475721561894415,0.05306680167134499,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,Logistic Reg.,TabNet,Brier,0.028086988840506047,0.022037563874418548,0.03365788246217487,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,Logistic Reg.,TabNet,F1,0.05251802184552464,0.022510537831460595,0.0813035127646253,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_42,42,2011-07,Logistic Reg.,TabNet,MCC,0.05316644426633328,0.017469056038455527,0.08814205501770815,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,XGBoost,LightGBM,AUROC,-0.001468546241078238,-0.01419994077230318,0.012132833963061695,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,XGBoost,LightGBM,AUPRC,0.0018999102244930967,-0.01053718106870304,0.015032099041492986,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,XGBoost,LightGBM,Brier,0.05348130766672523,0.04997832427721648,0.056729686472181885,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,XGBoost,LightGBM,F1,0.021652102173544973,0.008868153396071629,0.03377662288640531,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,XGBoost,LightGBM,MCC,0.015063599329478638,-0.005033704499891791,0.03485087120869902,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,XGBoost,CatBoost,AUROC,0.0011070798767022958,-0.009019146772342146,0.011170489437082145,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,XGBoost,CatBoost,AUPRC,0.0009509978129525665,-0.00914922898790052,0.010690559620572075,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,XGBoost,CatBoost,Brier,-0.011511915638384454,-0.012651023164487647,-0.010395462805909727,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,XGBoost,CatBoost,F1,0.013316055283378418,-0.010017136028508644,0.03700639603165049,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,XGBoost,CatBoost,MCC,0.023968255437333746,-0.00395507005480729,0.05197862493077352,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,XGBoost,Random Forest,AUROC,0.024444210560108044,0.01041580223342633,0.03899487476285084,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,XGBoost,Random Forest,AUPRC,0.012340154589285323,0.00016925590726643095,0.025382006493943992,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,XGBoost,Random Forest,Brier,0.010223769825736764,0.008799138104433576,0.011755959897839355,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,XGBoost,Random Forest,F1,0.023417042435511504,0.010636670157174644,0.035689501104802165,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,XGBoost,Random Forest,MCC,0.03174050740328434,0.010497830915889728,0.051729277645900566,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,XGBoost,Logistic Reg.,AUROC,0.012182026958797259,-0.007047446804450966,0.03164461712965153,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,XGBoost,Logistic Reg.,AUPRC,0.005909906652277234,-0.01292749395031073,0.024700948043614914,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,XGBoost,Logistic Reg.,Brier,-0.01767363244133029,-0.019582933140030085,-0.01577948591600997,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,XGBoost,Logistic Reg.,F1,0.018167038393024214,0.0003343190598495423,0.03650622412312822,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,XGBoost,Logistic Reg.,MCC,0.03152640483132446,0.004687112077548671,0.05867672861784542,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,XGBoost,TabNet,AUROC,0.0781646964704461,0.05151882658892332,0.10541303387493345,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,XGBoost,TabNet,AUPRC,0.034495784513588826,0.01550384306668509,0.05489801571692195,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,XGBoost,TabNet,Brier,0.028554555550217627,0.02349963318556547,0.03364625107496977,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,XGBoost,TabNet,F1,0.06060965079192487,0.037479558934063906,0.08351874521240354,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,XGBoost,TabNet,MCC,0.08971917432931079,0.05692908960277548,0.12177841700317091,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,LightGBM,CatBoost,AUROC,0.0025756261177805337,-0.010542968933725042,0.015429594773909492,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,LightGBM,CatBoost,AUPRC,-0.0009489124115405303,-0.012856319150110108,0.010634148102256604,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,LightGBM,CatBoost,Brier,-0.06499322330510968,-0.06854667483130075,-0.06117563640227811,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,LightGBM,CatBoost,F1,-0.00833604689016655,-0.03357985682338559,0.016335317654827194,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,LightGBM,CatBoost,MCC,0.008904656107855107,-0.020776642765710066,0.037488140680703705,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,LightGBM,Random Forest,AUROC,0.025912756801186283,0.010664882301942069,0.0415599538847513,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,LightGBM,Random Forest,AUPRC,0.010440244364792226,-0.0035924861511055484,0.024961148351793583,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,LightGBM,Random Forest,Brier,-0.043257537840988465,-0.04585787865654982,-0.0404810169493584,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,LightGBM,Random Forest,F1,0.0017649402619665344,-0.010147007837440821,0.014158881737679778,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,LightGBM,Random Forest,MCC,0.0166769080738057,-0.004325848909674557,0.03893120083825731,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,LightGBM,Logistic Reg.,AUROC,0.013650573199875497,-0.004487745363632603,0.030651713994175604,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,LightGBM,Logistic Reg.,AUPRC,0.004009996427784138,-0.012433285056534116,0.020347957022361935,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,LightGBM,Logistic Reg.,Brier,-0.07115494010805551,-0.0748136519183647,-0.06736727487144539,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,LightGBM,Logistic Reg.,F1,-0.003485063780520755,-0.019686849310076464,0.012384773427035261,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,LightGBM,Logistic Reg.,MCC,0.01646280550184583,-0.008159968890016684,0.04164757869806846,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,LightGBM,TabNet,AUROC,0.07963324271152433,0.053852654353819446,0.10648873087871734,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,LightGBM,TabNet,AUPRC,0.03259587428909573,0.013998423719063896,0.052007972704759216,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,LightGBM,TabNet,Brier,-0.02492675211650759,-0.028466927957349137,-0.02135116851678629,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,LightGBM,TabNet,F1,0.0389575486183799,0.018476179191625707,0.059239444286746074,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,LightGBM,TabNet,MCC,0.07465557499983215,0.04508328806483404,0.10574026041509361,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,CatBoost,Random Forest,AUROC,0.023337130683405746,0.008477066273049816,0.038290766578554375,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,CatBoost,Random Forest,AUPRC,0.011389156776332756,-0.0016122801348256264,0.024947233630891307,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,CatBoost,Random Forest,Brier,0.021735685464121222,0.020134491637216697,0.023313414879650003,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,CatBoost,Random Forest,F1,0.010100987152133084,-0.013953232606232114,0.03513096064773508,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,CatBoost,Random Forest,MCC,0.0077722519659505955,-0.02113424128590316,0.036770252371793544,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,CatBoost,Logistic Reg.,AUROC,0.011074947082094961,-0.008955131909191439,0.03143078587498062,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,CatBoost,Logistic Reg.,AUPRC,0.004958908839324668,-0.013523644676500324,0.023722371601390915,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,CatBoost,Logistic Reg.,Brier,-0.006161716802945834,-0.008078371040398245,-0.004205008406172737,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,CatBoost,Logistic Reg.,F1,0.004850983109645796,-0.02007237473722867,0.03109780192260439,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,CatBoost,Logistic Reg.,MCC,0.007558149393990721,-0.02253766022324647,0.03828086975457538,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,CatBoost,TabNet,AUROC,0.07705761659374379,0.04960692785467327,0.10406912044345781,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,CatBoost,TabNet,AUPRC,0.03354478670063626,0.015017642681591366,0.05348167537748961,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,CatBoost,TabNet,Brier,0.040066471188602085,0.034801793880930215,0.04515284574942733,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,CatBoost,TabNet,F1,0.047293595508546456,0.01772574153124062,0.07903703200264285,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,CatBoost,TabNet,MCC,0.06575091889197705,0.030220548099159406,0.1036464122815728,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,Random Forest,Logistic Reg.,AUROC,-0.012262183601310785,-0.03408126343908605,0.008327073423222673,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,Random Forest,Logistic Reg.,AUPRC,-0.0064302479370080875,-0.026968709761513308,0.014080770634188071,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,Random Forest,Logistic Reg.,Brier,-0.027897402267067058,-0.029860231313344514,-0.025904841290578844,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,Random Forest,Logistic Reg.,F1,-0.00525000404248729,-0.022873007986298884,0.012679570915484613,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,Random Forest,Logistic Reg.,MCC,-0.00021410257195987449,-0.02736208821874727,0.02730483690601216,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,Random Forest,TabNet,AUROC,0.05372048591033804,0.026549189955528726,0.0817115295569262,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,Random Forest,TabNet,AUPRC,0.0221556299243035,0.0035760255920526626,0.04145737002158025,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,Random Forest,TabNet,Brier,0.018330785724480863,0.013831314110785446,0.022812690661941012,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,Random Forest,TabNet,F1,0.037192608356413366,0.014734974060645138,0.05904489258292252,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,Random Forest,TabNet,MCC,0.057978666926026455,0.02529222040902483,0.08974407551931834,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,Logistic Reg.,TabNet,AUROC,0.06598266951164883,0.0376419584694881,0.09375943794647143,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,Logistic Reg.,TabNet,AUPRC,0.02858587786131159,0.008556019723428933,0.04993288426660162,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,Logistic Reg.,TabNet,Brier,0.04622818799154792,0.04091513385119174,0.051319678978112786,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,Logistic Reg.,TabNet,F1,0.04244261239890065,0.017843327348338305,0.06701815875235728,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2011-07_seed_99,99,2011-07,Logistic Reg.,TabNet,MCC,0.05819276949798633,0.024789133365753446,0.09181668669380079,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,XGBoost,LightGBM,AUROC,0.004268713641629683,-0.0075906572333451746,0.015782729467222263,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,XGBoost,LightGBM,AUPRC,0.01420935763137781,0.0023149640512426157,0.027633344656082633,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,XGBoost,LightGBM,Brier,0.06152358828686102,0.058624053173086714,0.06449626171700006,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,XGBoost,LightGBM,F1,0.01756789140019696,0.0035198656238676538,0.031432398985659596,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,XGBoost,LightGBM,MCC,0.02013739421035087,0.0005271101923897495,0.03984921631961749,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,XGBoost,CatBoost,AUROC,0.0018219323503989285,-0.007319192887079937,0.010865738073196086,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,XGBoost,CatBoost,AUPRC,0.00708052114768981,-0.0033541478380002465,0.01783263187981447,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,XGBoost,CatBoost,Brier,0.008011158037436837,0.0072645789036071,0.008782717165809362,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,XGBoost,CatBoost,F1,0.0046026736508075336,-0.010282863596029906,0.019924610317528083,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,XGBoost,CatBoost,MCC,0.008729820821915254,-0.009790840500886338,0.02843638734842879,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,XGBoost,Random Forest,AUROC,0.020823718385515732,0.009417770884893057,0.031364616129468115,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,XGBoost,Random Forest,AUPRC,0.0131280455948575,0.0016292480886429747,0.025228418288684218,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,XGBoost,Random Forest,Brier,0.03869316822263334,0.03718376087636026,0.040232502895658856,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,XGBoost,Random Forest,F1,0.027481094570500842,0.013991154554807709,0.04070522384365677,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,XGBoost,Random Forest,MCC,0.026939574731061428,0.008000052836092548,0.045312772454472516,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,XGBoost,Logistic Reg.,AUROC,0.04143570315311047,0.025859010016717993,0.05716712276557902,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,XGBoost,Logistic Reg.,AUPRC,0.025281118775678273,0.009173443628693016,0.04144055363045272,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,XGBoost,Logistic Reg.,Brier,-0.03605830446011701,-0.03773494995716613,-0.03443015661544028,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,XGBoost,Logistic Reg.,F1,0.03977329823334573,0.024644779720376733,0.05513905892191461,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,XGBoost,Logistic Reg.,MCC,0.04396571540281252,0.021570735461140796,0.06638565402696181,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,XGBoost,TabNet,AUROC,0.1401486181888626,0.11212186999640576,0.16784954491658263,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,XGBoost,TabNet,AUPRC,0.059087553403699894,0.0405956361534632,0.07882874974837019,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,XGBoost,TabNet,Brier,0.022335709024220704,0.01738580074161291,0.027194458432495593,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,XGBoost,TabNet,F1,0.0694022991447291,0.04268379902783114,0.09456102071027106,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,XGBoost,TabNet,MCC,0.07816290131025778,0.04741194577469353,0.10748224094684561,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,LightGBM,CatBoost,AUROC,-0.002446781291230754,-0.015643172512899296,0.010501964490169132,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,LightGBM,CatBoost,AUPRC,-0.007128836483687999,-0.019540943191413085,0.005065988285402342,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,LightGBM,CatBoost,Brier,-0.05351243024942418,-0.056321030935906645,-0.05075515327420015,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,LightGBM,CatBoost,F1,-0.012965217749389425,-0.0295090450877385,0.003643980330355431,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,LightGBM,CatBoost,MCC,-0.011407573388435618,-0.03302370262987362,0.009845934721192672,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,LightGBM,Random Forest,AUROC,0.01655500474388605,0.003393785054788731,0.029272958176507817,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,LightGBM,Random Forest,AUPRC,-0.0010813120365203083,-0.01297163147353927,0.010271886811073893,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,LightGBM,Random Forest,Brier,-0.022830420064227686,-0.02446968952415208,-0.021129471350305296,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,LightGBM,Random Forest,F1,0.00991320317030389,-0.0025556964083620695,0.022139181120151143,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,LightGBM,Random Forest,MCC,0.006802180520710555,-0.01317923256426166,0.025914332821848678,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,LightGBM,Logistic Reg.,AUROC,0.03716698951148079,0.019790503978124686,0.055659128907435136,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,LightGBM,Logistic Reg.,AUPRC,0.011071761144300462,-0.002901390229787732,0.02512595442308043,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,LightGBM,Logistic Reg.,Brier,-0.09758189274697804,-0.10136268516273775,-0.09386751284357002,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,LightGBM,Logistic Reg.,F1,0.02220540683314877,0.009120264647610047,0.036648526408645674,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,LightGBM,Logistic Reg.,MCC,0.023828321192461643,0.0028409412724395297,0.04692280858977328,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,LightGBM,TabNet,AUROC,0.13587990454723292,0.10976354582295368,0.162560263449991,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,LightGBM,TabNet,AUPRC,0.04487819577232208,0.030910117094503357,0.05995440591778005,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,LightGBM,TabNet,Brier,-0.039187879262640314,-0.04303902758571852,-0.03530215781183679,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,LightGBM,TabNet,F1,0.05183440774453214,0.02797316075965172,0.07568819771736367,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,LightGBM,TabNet,MCC,0.058025507099906906,0.029012548931426296,0.0867033770653167,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,CatBoost,Random Forest,AUROC,0.01900178603511681,0.007582257686910185,0.029837138732956438,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,CatBoost,Random Forest,AUPRC,0.00604752444716769,-0.003944237665693195,0.016365376903847217,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,CatBoost,Random Forest,Brier,0.030682010185196496,0.029346290261856246,0.03203906733152734,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,CatBoost,Random Forest,F1,0.022878420919693315,0.005421797183392215,0.04002103115430824,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,CatBoost,Random Forest,MCC,0.018209753909146174,-0.003147854410462369,0.04023383359357911,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,CatBoost,Logistic Reg.,AUROC,0.03961377080271154,0.021631207394544032,0.05757196841232956,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,CatBoost,Logistic Reg.,AUPRC,0.018200597627988462,0.0013885368740624328,0.0355209851727784,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,CatBoost,Logistic Reg.,Brier,-0.04406946249755384,-0.04599558943078694,-0.042204841072779525,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,CatBoost,Logistic Reg.,F1,0.035170624582538196,0.015596499873433776,0.053178070104687954,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,CatBoost,Logistic Reg.,MCC,0.035235894580897265,0.010425936457367543,0.060160954338886644,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,CatBoost,TabNet,AUROC,0.13832668583846366,0.11061194978944708,0.1665500132028632,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,CatBoost,TabNet,AUPRC,0.052007032256010076,0.035698726414618145,0.06947063230146412,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,CatBoost,TabNet,Brier,0.014324550986783865,0.009503695174078765,0.01892322712033362,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,CatBoost,TabNet,F1,0.06479962549392158,0.03629075010139969,0.09182981340747534,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,CatBoost,TabNet,MCC,0.06943308048834254,0.037055528708112566,0.10095886665587837,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,Random Forest,Logistic Reg.,AUROC,0.02061198476759474,0.0023143011359252064,0.03869905051681905,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,Random Forest,Logistic Reg.,AUPRC,0.012153073180820768,-0.004431868716218266,0.029588450690758387,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,Random Forest,Logistic Reg.,Brier,-0.07475147268275034,-0.07727159600333595,-0.07231045165080605,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,Random Forest,Logistic Reg.,F1,0.01229220366284488,0.0003837953447305622,0.02485572300186385,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,Random Forest,Logistic Reg.,MCC,0.017026140671751087,-0.005172917983754962,0.04009827916300765,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,Random Forest,TabNet,AUROC,0.11932489980334685,0.09207199063074084,0.1471315456443306,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,Random Forest,TabNet,AUPRC,0.045959507808842386,0.030508670645297463,0.06337517623731859,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,Random Forest,TabNet,Brier,-0.016357459198412635,-0.02063475207044912,-0.012153173933799544,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,Random Forest,TabNet,F1,0.04192120457422826,0.01778508792624071,0.06494698286311328,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,Random Forest,TabNet,MCC,0.05122332657919635,0.02258393887107231,0.08016667610496647,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,Logistic Reg.,TabNet,AUROC,0.09871291503575212,0.07166904070874566,0.12766468804298897,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,Logistic Reg.,TabNet,AUPRC,0.03380643462802162,0.018251271947826577,0.05058535011444316,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,Logistic Reg.,TabNet,Brier,0.05839401348433771,0.05297094090722962,0.06363875360532573,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,Logistic Reg.,TabNet,F1,0.029629000911383378,0.005506812315818506,0.05268173669234795,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_42,42,2012-01,Logistic Reg.,TabNet,MCC,0.03419718590744526,0.004709025314871972,0.06390119943730234,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,XGBoost,LightGBM,AUROC,0.008726043132262294,-0.001377102698134619,0.018414160578036805,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,XGBoost,LightGBM,AUPRC,0.002942027408441175,-0.006840474540598641,0.01298322591183205,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,XGBoost,LightGBM,Brier,0.07370356079964034,0.07036966926486898,0.07701029119272347,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,XGBoost,LightGBM,F1,0.024325760848314004,0.01165282561389364,0.037037313083703303,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,XGBoost,LightGBM,MCC,0.010182430390060988,-0.009045107131458627,0.02986139527629553,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,XGBoost,CatBoost,AUROC,-0.001135087282955308,-0.008998149678670148,0.006634956285266124,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,XGBoost,CatBoost,AUPRC,0.00041764704246336447,-0.007651998336632066,0.008612890239661658,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,XGBoost,CatBoost,Brier,0.008822402430413465,0.00806835913621708,0.009599885116328869,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,XGBoost,CatBoost,F1,-0.007896288563140565,-0.018821022463429357,0.0035581188841740537,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,XGBoost,CatBoost,MCC,-0.0063134243510667605,-0.02197324345810669,0.010426893088434468,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,XGBoost,Random Forest,AUROC,0.01690618415867415,0.004204256773589862,0.02952892889433646,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,XGBoost,Random Forest,AUPRC,0.006676831644149039,-0.00635672770616197,0.019742880000996114,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,XGBoost,Random Forest,Brier,0.03115640193241915,0.029639323901126183,0.03264559037174759,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,XGBoost,Random Forest,F1,0.031013987154622818,0.017888726591275772,0.04397822364787758,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,XGBoost,Random Forest,MCC,0.022056219988778797,0.0017615920453277337,0.04280518740495664,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,XGBoost,Logistic Reg.,AUROC,0.038072657825107804,0.023636415801637743,0.053163409676008695,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,XGBoost,Logistic Reg.,AUPRC,0.019068074282367727,0.005608845871936316,0.03318002460293678,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,XGBoost,Logistic Reg.,Brier,-0.024123819371222686,-0.025782617372022202,-0.022493493247841233,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,XGBoost,Logistic Reg.,F1,0.02906540925533461,0.01648978599417946,0.041947956177450764,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,XGBoost,Logistic Reg.,MCC,0.034632979972402334,0.013693761479744415,0.05507201659466517,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,XGBoost,TabNet,AUROC,0.06561175139762693,0.04138701149198498,0.089476781135667,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,XGBoost,TabNet,AUPRC,0.04028445232240187,0.02421296711244591,0.057600643266547236,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,XGBoost,TabNet,Brier,0.040235486276447775,0.035276197269558905,0.0451775349676609,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,XGBoost,TabNet,F1,0.05144305318204797,0.028198519545312002,0.07602907444447697,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,XGBoost,TabNet,MCC,0.0656076425107479,0.03632840952940332,0.09680717834914984,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,LightGBM,CatBoost,AUROC,-0.009861130415217603,-0.020944233553435342,0.0007594491966274743,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,LightGBM,CatBoost,AUPRC,-0.00252438036597781,-0.012738504470778294,0.008035588072622961,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,LightGBM,CatBoost,Brier,-0.06488115836922687,-0.06795272595748614,-0.06172101946719148,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,LightGBM,CatBoost,F1,-0.03222204941145457,-0.04750088581409085,-0.01727888227735831,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,LightGBM,CatBoost,MCC,-0.016495854741127747,-0.03888499579917808,0.004889951702115939,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,LightGBM,Random Forest,AUROC,0.008180141026411857,-0.006333462527507425,0.022391628640910696,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,LightGBM,Random Forest,AUPRC,0.0037348042357078634,-0.010134394170552943,0.01762329584654634,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,LightGBM,Random Forest,Brier,-0.04254715886722119,-0.0448727195537882,-0.04018518629857682,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,LightGBM,Random Forest,F1,0.0066882263063088145,-0.0001691072374126197,0.01363621075493568,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,LightGBM,Random Forest,MCC,0.011873789598717807,-0.0051086338488895745,0.028812418140226472,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,LightGBM,Logistic Reg.,AUROC,0.029346614692845507,0.013519515723829029,0.044411692337342476,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,LightGBM,Logistic Reg.,AUPRC,0.01612604687392655,0.0029174210023395286,0.03088243805642032,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,LightGBM,Logistic Reg.,Brier,-0.09782738017086302,-0.10151389717045148,-0.09409812628419105,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,LightGBM,Logistic Reg.,F1,0.004739648407020606,-0.004911682036124424,0.013904138417448676,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,LightGBM,Logistic Reg.,MCC,0.024450549582341344,0.004533927222030504,0.043668508043050544,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,LightGBM,TabNet,AUROC,0.056885708265364626,0.03228216207116758,0.08109721481185052,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,LightGBM,TabNet,AUPRC,0.03734242491396069,0.021931657689021146,0.05427858815081072,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,LightGBM,TabNet,Brier,-0.03346807452319255,-0.03692992773843955,-0.0300774972813992,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,LightGBM,TabNet,F1,0.02711729233373397,0.005385262552761746,0.04909388888170602,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,LightGBM,TabNet,MCC,0.055425212120686906,0.02658924208810503,0.08346085692688154,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,CatBoost,Random Forest,AUROC,0.01804127144162946,0.0051040883446993816,0.03078162153208511,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,CatBoost,Random Forest,AUPRC,0.006259184601685673,-0.00748911701277641,0.019415097563776754,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,CatBoost,Random Forest,Brier,0.02233399950200568,0.021119303095444807,0.023538834896320995,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,CatBoost,Random Forest,F1,0.038910275717763385,0.024165344077081933,0.053911919150023614,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,CatBoost,Random Forest,MCC,0.028369644339845557,0.00629213201598818,0.05016419088290278,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,CatBoost,Logistic Reg.,AUROC,0.03920774510806311,0.024276059201487767,0.0547727222921719,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,CatBoost,Logistic Reg.,AUPRC,0.01865042723990436,0.005669426682220818,0.03250496042275254,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,CatBoost,Logistic Reg.,Brier,-0.032946221801636144,-0.03460177014508242,-0.03127895061238236,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,CatBoost,Logistic Reg.,F1,0.03696169781847517,0.02204309373639748,0.05246079245504382,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,CatBoost,Logistic Reg.,MCC,0.0409464043234691,0.01905186081330309,0.06343450461022587,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,CatBoost,TabNet,AUROC,0.06674683868058225,0.04372109181996288,0.09045508141979232,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,CatBoost,TabNet,AUPRC,0.0398668052799385,0.024308156568858943,0.056182983532757934,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,CatBoost,TabNet,Brier,0.03141308384603431,0.02673374177618351,0.03612671018228602,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,CatBoost,TabNet,F1,0.05933934174518853,0.03458116250823017,0.08487849305393597,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,CatBoost,TabNet,MCC,0.07192106686181464,0.041578696640294316,0.1031293756956072,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,Random Forest,Logistic Reg.,AUROC,0.021166473666433653,0.0015911043598621556,0.04073205175725569,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,Random Forest,Logistic Reg.,AUPRC,0.012391242638218688,-0.005515969948914569,0.031321026040349566,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,Random Forest,Logistic Reg.,Brier,-0.05528022130364184,-0.05743995688440106,-0.053054411513294576,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,Random Forest,Logistic Reg.,F1,-0.0019485778992882072,-0.012301186825711736,0.008043386223685134,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,Random Forest,Logistic Reg.,MCC,0.012576759983623537,-0.009652115326811494,0.0332780229108873,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,Random Forest,TabNet,AUROC,0.04870556723895277,0.02450410880740319,0.07116113540558774,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,Random Forest,TabNet,AUPRC,0.03360762067825283,0.018090107929175304,0.05029780433274557,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,Random Forest,TabNet,Brier,0.009079084344028626,0.0048054470915436884,0.013346871439118793,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,Random Forest,TabNet,F1,0.020429066027425155,-0.0005276868941685483,0.041555136317108075,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,Random Forest,TabNet,MCC,0.04355142252196909,0.015957899920649787,0.07112481375345626,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,Logistic Reg.,TabNet,AUROC,0.02753909357251913,0.0020476325753848667,0.05286274341505463,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,Logistic Reg.,TabNet,AUPRC,0.02121637804003414,0.005904975057874353,0.03721859980506637,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,Logistic Reg.,TabNet,Brier,0.06435930564767045,0.05909602121276386,0.06943983039823318,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,Logistic Reg.,TabNet,F1,0.02237764392671336,0.0007930216259995496,0.04426498684345593,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-01_seed_99,99,2012-01,Logistic Reg.,TabNet,MCC,0.03097466253834556,0.0031941373872558768,0.05998437320747541,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,XGBoost,LightGBM,AUROC,0.015407055284290372,0.00428158408528799,0.026660326586582742,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,XGBoost,LightGBM,AUPRC,0.010165088578484987,-0.0031807167822778563,0.023440295912322703,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,XGBoost,LightGBM,Brier,0.06509975109063879,0.062065692275214336,0.06813308164454573,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,XGBoost,LightGBM,F1,0.009462009271407308,-0.0020481992944494467,0.021303161062798115,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,XGBoost,LightGBM,MCC,0.012249978225172431,-0.00495782075646539,0.029972733181950408,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,XGBoost,CatBoost,AUROC,0.017346144925841356,0.004817105278857875,0.029697292409020446,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,XGBoost,CatBoost,AUPRC,0.011831336873400116,-0.0012619381715897396,0.024562095658452455,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,XGBoost,CatBoost,Brier,0.06483131419907258,0.06189704474716736,0.06774918198195891,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,XGBoost,CatBoost,F1,0.0013932080777904416,-0.013942102898529575,0.01649590386632692,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,XGBoost,CatBoost,MCC,0.011741138448258387,-0.009306696997032939,0.03205747167894984,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,XGBoost,Random Forest,AUROC,0.0033572247904398553,-0.008020315404619371,0.014295816743267459,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,XGBoost,Random Forest,AUPRC,0.007719886297663297,-0.0044892595548451375,0.019128947649126437,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,XGBoost,Random Forest,Brier,0.036557680259934736,0.034975948167279065,0.038042115163082306,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,XGBoost,Random Forest,F1,0.03412499712529472,0.02172001041831054,0.04610182541045656,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,XGBoost,Random Forest,MCC,0.023559802870519668,0.004948437127510261,0.04217704961568356,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,XGBoost,Logistic Reg.,AUROC,0.04416780134173241,0.027356408344529924,0.06105242382442939,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,XGBoost,Logistic Reg.,AUPRC,0.05104093076006711,0.03162761071435007,0.07103157190048298,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,XGBoost,Logistic Reg.,Brier,-0.04112764335045149,-0.04313396987882258,-0.0391960906766621,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,XGBoost,Logistic Reg.,F1,0.04581366827232407,0.032436279549553,0.059151967240182096,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,XGBoost,Logistic Reg.,MCC,0.04781663320952292,0.026802606896770987,0.06847925362125468,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,XGBoost,TabNet,AUROC,0.08111104703157064,0.05663310471811641,0.10563841743305107,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,XGBoost,TabNet,AUPRC,0.05279488185312533,0.03343403910221196,0.07280853948364732,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,XGBoost,TabNet,Brier,0.023082337856292726,0.01791461370885372,0.027912544086575505,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,XGBoost,TabNet,F1,0.04796277181138299,0.027513548151386683,0.06852810544444778,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,XGBoost,TabNet,MCC,0.07225181757682882,0.04482517792131558,0.100620827681431,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,LightGBM,CatBoost,AUROC,0.0019390896415509829,-0.01061735267756945,0.014545263995546917,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,LightGBM,CatBoost,AUPRC,0.0016662482949151294,-0.012884113854212946,0.016172872900496016,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,LightGBM,CatBoost,Brier,-0.00026843689156621993,-0.0007648205892185425,0.00022069405773852334,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,LightGBM,CatBoost,F1,-0.008068801193616866,-0.02419181326829059,0.007336492840409522,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,LightGBM,CatBoost,MCC,-0.0005088397769140434,-0.022276184050705618,0.020494850938831896,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,LightGBM,Random Forest,AUROC,-0.012049830493850515,-0.02518668044835149,0.0010192973824632683,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,LightGBM,Random Forest,AUPRC,-0.0024452022808216876,-0.01766287468777786,0.01190138201589575,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,LightGBM,Random Forest,Brier,-0.028542070830704057,-0.030314751587035883,-0.02679043925608499,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,LightGBM,Random Forest,F1,0.02466298785388742,0.012135429691738423,0.03635720797712422,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,LightGBM,Random Forest,MCC,0.011309824645347235,-0.00906202943943334,0.029752239775841068,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,LightGBM,Logistic Reg.,AUROC,0.02876074605744204,0.010732054459039173,0.04632254485335989,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,LightGBM,Logistic Reg.,AUPRC,0.04087584218158213,0.022933123004342915,0.06157716565264791,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,LightGBM,Logistic Reg.,Brier,-0.10622739444109029,-0.10990723871294597,-0.10253639343698055,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,LightGBM,Logistic Reg.,F1,0.03635165900091676,0.02259486677442987,0.04996552010881751,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,LightGBM,Logistic Reg.,MCC,0.035566654984350486,0.01339003332601824,0.057805673239281485,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,LightGBM,TabNet,AUROC,0.06570399174728027,0.041880708822525335,0.08980991211868199,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,LightGBM,TabNet,AUPRC,0.04262979327464035,0.023364471688578293,0.061690517722803255,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,LightGBM,TabNet,Brier,-0.04201741323434607,-0.04609147544532098,-0.0379167580192033,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,LightGBM,TabNet,F1,0.03850076253997569,0.018917361292136285,0.05783945384083802,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,LightGBM,TabNet,MCC,0.06000183935165637,0.03283081551793516,0.08699726480585637,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,CatBoost,Random Forest,AUROC,-0.0139889201354015,-0.02724846552935354,-0.0006058020412325711,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,CatBoost,Random Forest,AUPRC,-0.004111450575736818,-0.017266236519422915,0.008780630885594682,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,CatBoost,Random Forest,Brier,-0.028273633939137836,-0.02998848394831607,-0.02659212587841803,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,CatBoost,Random Forest,F1,0.03273178904750428,0.016868619772697793,0.050094318914123664,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,CatBoost,Random Forest,MCC,0.011818664422261278,-0.010669187311970288,0.03460803748739428,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,CatBoost,Logistic Reg.,AUROC,0.026821656415891064,0.00935817353379689,0.043994637374008175,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,CatBoost,Logistic Reg.,AUPRC,0.03920959388666699,0.02167394763321752,0.05816558929920025,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,CatBoost,Logistic Reg.,Brier,-0.10595895754952406,-0.10963094738935451,-0.10236693594262385,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,CatBoost,Logistic Reg.,F1,0.044420460194533634,0.02760892557318001,0.0621577356674925,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,CatBoost,Logistic Reg.,MCC,0.03607549476126454,0.01305683443725539,0.059703340375335055,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,CatBoost,TabNet,AUROC,0.06376490210572927,0.039577345326137624,0.08808685460833235,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,CatBoost,TabNet,AUPRC,0.040963544979725215,0.02248415796762352,0.061006845210837525,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,CatBoost,TabNet,Brier,-0.041748976342779846,-0.045837339098935115,-0.03766782542851919,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,CatBoost,TabNet,F1,0.04656956373359256,0.02571372558828132,0.06829652881002626,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,CatBoost,TabNet,MCC,0.060510679128570416,0.03291808371690272,0.08901960349868454,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,Random Forest,Logistic Reg.,AUROC,0.040810576551292554,0.022965435727461216,0.0583277590466936,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,Random Forest,Logistic Reg.,AUPRC,0.04332104446240382,0.023386214425555548,0.06405987895012973,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,Random Forest,Logistic Reg.,Brier,-0.07768532361038623,-0.08016027800095724,-0.07528222901902878,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,Random Forest,Logistic Reg.,F1,0.011688671147029343,0.0036232747792252335,0.019870070317235134,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,Random Forest,Logistic Reg.,MCC,0.024256830339003253,0.00714909409507607,0.0420947563391929,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,Random Forest,TabNet,AUROC,0.07775382224113078,0.053427930479958335,0.10308037941921834,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,Random Forest,TabNet,AUPRC,0.04507499555546203,0.025935286758048653,0.06516554455090699,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,Random Forest,TabNet,Brier,-0.01347534240364201,-0.018108600251342102,-0.009129011478604144,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,Random Forest,TabNet,F1,0.013837774686088268,-0.00452934496576948,0.03226887137578793,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,Random Forest,TabNet,MCC,0.048692014706309135,0.022047350637233804,0.07495930237837332,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,Logistic Reg.,TabNet,AUROC,0.03694324568983822,0.010159248006357513,0.0637166555913711,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,Logistic Reg.,TabNet,AUPRC,0.001753951093058219,-0.01387385077029197,0.017092480705920527,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,Logistic Reg.,TabNet,Brier,0.06420998120674422,0.05876740998936298,0.06960997556199151,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,Logistic Reg.,TabNet,F1,0.002149103539058926,-0.017253419106055354,0.02053752370225009,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_42,42,2012-07,Logistic Reg.,TabNet,MCC,0.024435184367305886,-0.003514147642246051,0.051063550838615634,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,XGBoost,LightGBM,AUROC,-0.0001434131050606653,-0.010647359625690318,0.010402495432357795,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,XGBoost,LightGBM,AUPRC,0.009174001055583265,-0.0028662216915588635,0.020735294596960687,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,XGBoost,LightGBM,Brier,0.0884332246118479,0.08514478466733925,0.09154773645551896,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,XGBoost,LightGBM,F1,0.03596969581629465,0.026972632459884918,0.044413002878919375,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,XGBoost,LightGBM,MCC,0.03626986604524795,0.01830264177059046,0.054003858911358456,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,XGBoost,CatBoost,AUROC,-0.011860083695733607,-0.02125955752736048,-0.0016817784690682923,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,XGBoost,CatBoost,AUPRC,-0.005999479139530255,-0.015580686577294063,0.004268025716351219,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,XGBoost,CatBoost,Brier,0.010965283730315176,0.010047313839920791,0.011895388171698178,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,XGBoost,CatBoost,F1,0.003731015707279031,-0.003696083582659331,0.010562747558271492,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,XGBoost,CatBoost,MCC,-0.004999022233525729,-0.01958725273351728,0.009495944062320192,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,XGBoost,Random Forest,AUROC,0.0035472301584834917,-0.008808308202009198,0.016625454097244932,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,XGBoost,Random Forest,AUPRC,0.004196242847341175,-0.011462061815412268,0.019809306667758472,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,XGBoost,Random Forest,Brier,0.03684926961091185,0.03543987903545687,0.038245528436153614,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,XGBoost,Random Forest,F1,0.029728529510229293,0.021320514540711565,0.037720862169276816,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,XGBoost,Random Forest,MCC,0.032454943426633395,0.015937342593724705,0.04952147968807514,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,XGBoost,Logistic Reg.,AUROC,0.03549883121971928,0.019813111920586737,0.05163814260914473,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,XGBoost,Logistic Reg.,AUPRC,0.043434426609484815,0.02604151829446126,0.06276239418727622,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,XGBoost,Logistic Reg.,Brier,-0.017147963067659325,-0.0188021514872139,-0.015489004085926185,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,XGBoost,Logistic Reg.,F1,0.015250478410464879,0.00640820009886303,0.023961531613004766,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,XGBoost,Logistic Reg.,MCC,0.02386936917402178,0.006155565098684349,0.041361170395782076,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,XGBoost,TabNet,AUROC,0.07147631618301012,0.04447935797467019,0.09746583628590996,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,XGBoost,TabNet,AUPRC,0.04939445170125624,0.02937028758089393,0.0709349605320473,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,XGBoost,TabNet,Brier,0.059247081276029345,0.054391273856163026,0.0637642728164792,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,XGBoost,TabNet,F1,0.0485816266735147,0.02394367870548648,0.07409911812382582,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,XGBoost,TabNet,MCC,0.0687913478520697,0.0391050840838871,0.09621799399809869,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,LightGBM,CatBoost,AUROC,-0.011716670590672943,-0.02385003585016792,-0.0001929051740596541,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,LightGBM,CatBoost,AUPRC,-0.01517348019511352,-0.02651717268934604,-0.0037994119312818164,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,LightGBM,CatBoost,Brier,-0.07746794088153271,-0.08047602656679277,-0.07435918355497613,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,LightGBM,CatBoost,F1,-0.03223868010901562,-0.03901571197058093,-0.02561765937662997,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,LightGBM,CatBoost,MCC,-0.04126888827877368,-0.05674163497094364,-0.025754492967996517,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,LightGBM,Random Forest,AUROC,0.003690643263544157,-0.010495642377871307,0.017909836886569316,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,LightGBM,Random Forest,AUPRC,-0.00497775820824209,-0.019083290801569418,0.008435522402651257,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,LightGBM,Random Forest,Brier,-0.05158395500093603,-0.05381194609539232,-0.04935756867439078,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,LightGBM,Random Forest,F1,-0.0062411663060653565,-0.010446542776950337,-0.0021040225037745773,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,LightGBM,Random Forest,MCC,-0.0038149226186145564,-0.01717850662761606,0.009164866789476162,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,LightGBM,Logistic Reg.,AUROC,0.03564224432477995,0.018349974435821266,0.05263937148599146,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,LightGBM,Logistic Reg.,AUPRC,0.03426042555390154,0.019412690287028914,0.05029380812474485,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,LightGBM,Logistic Reg.,Brier,-0.10558118767950722,-0.10896420292099687,-0.10208779464043359,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,LightGBM,Logistic Reg.,F1,-0.020719217405829774,-0.028616038189050137,-0.012634863319792813,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,LightGBM,Logistic Reg.,MCC,-0.012400496871226172,-0.03042628965513136,0.0068509596043478515,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,LightGBM,TabNet,AUROC,0.07161972928807077,0.04565815814261552,0.09642472318974439,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,LightGBM,TabNet,AUPRC,0.04022045064567297,0.023013891418139417,0.05985399882906153,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,LightGBM,TabNet,Brier,-0.029186143335818534,-0.03246304919975334,-0.025853491573296822,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,LightGBM,TabNet,F1,0.012611930857220044,-0.010109903527816391,0.037237739548445545,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,LightGBM,TabNet,MCC,0.03252148180682174,0.005514653126686634,0.05966724026304856,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,CatBoost,Random Forest,AUROC,0.015407313854217099,0.0032121498571165835,0.027655610355084945,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,CatBoost,Random Forest,AUPRC,0.01019572198687143,-0.0031403333897807814,0.02466639834694477,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,CatBoost,Random Forest,Brier,0.02588398588059668,0.024633349465521506,0.027164607810087303,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,CatBoost,Random Forest,F1,0.02599751380295026,0.019770298356779875,0.0318909430094618,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,CatBoost,Random Forest,MCC,0.03745396566015913,0.023514570137579422,0.051358441880910134,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,CatBoost,Logistic Reg.,AUROC,0.047358914915452896,0.030355451913139937,0.06465034175027164,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,CatBoost,Logistic Reg.,AUPRC,0.049433905749015065,0.03161561294882356,0.06852062138997901,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,CatBoost,Logistic Reg.,Brier,-0.028113246797974504,-0.02988969534579306,-0.026165301562484658,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,CatBoost,Logistic Reg.,F1,0.011519462703185848,0.003008617726182834,0.0203230665683226,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,CatBoost,Logistic Reg.,MCC,0.02886839140754751,0.011041835968468137,0.047895998164628695,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,CatBoost,TabNet,AUROC,0.0833363998787437,0.058361255066263405,0.10658960414353834,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,CatBoost,TabNet,AUPRC,0.05539393084078648,0.03573110466306683,0.07648074666077495,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,CatBoost,TabNet,Brier,0.04828179754571417,0.043641464334558906,0.05272303346493481,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,CatBoost,TabNet,F1,0.04485061096623567,0.02064259718873742,0.06995914119350519,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,CatBoost,TabNet,MCC,0.07379037008559543,0.04544359964925653,0.10056317245804519,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,Random Forest,Logistic Reg.,AUROC,0.03195160106123579,0.013265486208779728,0.05043320873533546,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,Random Forest,Logistic Reg.,AUPRC,0.039238183762143636,0.019846502542928378,0.06023138933154213,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,Random Forest,Logistic Reg.,Brier,-0.053997232678571185,-0.05606132468485631,-0.05187067517870274,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,Random Forest,Logistic Reg.,F1,-0.014478051099764418,-0.022560827254058717,-0.006778532996548559,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,Random Forest,Logistic Reg.,MCC,-0.008585574252611616,-0.027125315323559628,0.009163895654087212,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,Random Forest,TabNet,AUROC,0.06792908602452662,0.0430775105392975,0.09265382100585465,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,Random Forest,TabNet,AUPRC,0.04519820885391506,0.02697011865782889,0.06535275187711412,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,Random Forest,TabNet,Brier,0.022397811665117496,0.018215918877909236,0.026358535208261452,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,Random Forest,TabNet,F1,0.018853097163285402,-0.004891338501979554,0.044059693400623046,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,Random Forest,TabNet,MCC,0.03633640442543629,0.008564446003105602,0.06440864017063212,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,Logistic Reg.,TabNet,AUROC,0.03597748496329082,0.008994220672951586,0.06156838394862928,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,Logistic Reg.,TabNet,AUPRC,0.0059600250917714245,-0.007826562546964807,0.02040848372289516,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,Logistic Reg.,TabNet,Brier,0.07639504434368868,0.071405647868959,0.08104499298974234,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,Logistic Reg.,TabNet,F1,0.033331148263049816,0.009371000497266125,0.05895766806213949,2000,conditional_on_fitted_models_and_selected_thresholds
+cutoff_2012-07_seed_99,99,2012-07,Logistic Reg.,TabNet,MCC,0.044921978678047904,0.016862583443581325,0.07281755992015623,2000,conditional_on_fitted_models_and_selected_thresholds

@@ -1,0 +1,19 @@
+\begin{table}
+\centering
+\caption{Explanation parsimony, stability, and SHAP--LIME agreement}
+\label{tab:explanation_quality}
+\begin{tabular}{lccccccccc}
+\toprule
+instance & shap_parsimony & shap_features_for_80pct & lime_parsimony & lime_features_for_80pct & shap_lime_abs_rank_rho & shap_lime_signed_abs_attribution_rho & lime_local_r2 & lime_stability_rho & lime_top10_jaccard \\
+\midrule
+100.0000 & 100.0000 & 100.0000 & 100.0000 & 100.0000 & 100.0000 & 100.0000 & 100.0000 & 100.0000 & 100.0000 \\
+49.5000 & 0.7201 & 15.5000 & 0.8183 & 10.5100 & 0.1846 & 0.1846 & 0.2072 & 0.4804 & 0.3156 \\
+29.0115 & 0.0336 & 1.8829 & 0.0119 & 0.5595 & 0.2758 & 0.2758 & 0.0760 & 0.0810 & 0.0709 \\
+0.0000 & 0.6322 & 9.0000 & 0.7961 & 9.0000 & -0.6893 & -0.6893 & 0.0748 & 0.2529 & 0.1792 \\
+24.7500 & 0.6979 & 14.0000 & 0.8093 & 10.0000 & 0.0196 & 0.0196 & 0.1580 & 0.4323 & 0.2625 \\
+49.5000 & 0.7141 & 16.0000 & 0.8188 & 11.0000 & 0.1821 & 0.1821 & 0.1993 & 0.4784 & 0.3075 \\
+74.2500 & 0.7381 & 17.0000 & 0.8276 & 11.0000 & 0.3732 & 0.3732 & 0.2558 & 0.5385 & 0.3651 \\
+99.0000 & 0.8200 & 20.0000 & 0.8552 & 12.0000 & 0.7857 & 0.7857 & 0.4079 & 0.7207 & 0.5018 \\
+\bottomrule
+\end{tabular}
+\end{table}
